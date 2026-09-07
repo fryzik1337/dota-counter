@@ -2,289 +2,592 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
->
-
-<title>Dota Counter Assistant</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dota Draft Lab</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+:root{
+  --bg:#070a0f;
+  --panel:#0e141d;
+  --panel2:#121a25;
+  --line:#253140;
+  --text:#f5f7fa;
+  --muted:#7e8b9b;
+  --accent:#e65b45;
+  --accent2:#ff8a65;
+  --green:#55d68a;
+  --blue:#5da9ff;
 }
 
-body {
-  margin: 0;
-  background: #080b10;
-  color: #f5f7fa;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(230,91,69,.13),transparent 30%),
+    radial-gradient(circle at 90% 15%,rgba(93,169,255,.10),transparent 28%),
+    var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  min-height:100%;
 }
 
-button,
-input {
-  font: inherit;
+body{
+  padding-bottom:30px;
 }
 
-button {
-  cursor: pointer;
+button,input{
+  font:inherit;
 }
 
-.app {
-  width: 100%;
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 16px;
+button{
+  -webkit-tap-highlight-color:transparent;
 }
 
-header {
-  padding: 12px 2px 18px;
+.top{
+  position:sticky;
+  top:0;
+  z-index:50;
+  padding:
+    max(14px,env(safe-area-inset-top))
+    15px 12px;
+  background:rgba(7,10,15,.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.06);
 }
 
-header h1 {
-  margin: 0;
-  font-size: 27px;
-  line-height: 32px;
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-header p {
-  margin: 6px 0 0;
-  color: #8993a3;
-  font-size: 14px;
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
-.tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 14px;
+.logo-icon{
+  width:40px;
+  height:40px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#ef654d,#8c2118);
+  box-shadow:0 8px 30px rgba(230,91,69,.25);
+  font-size:21px;
 }
 
-.tab {
-  border: 0;
-  border-radius: 14px;
-  padding: 13px 8px;
-  background: #151a23;
-  color: #8e98a8;
-  font-weight: 800;
+.logo-title{
+  font-weight:900;
+  font-size:19px;
+  letter-spacing:-.4px;
 }
 
-.tab.active {
-  background: #ffffff;
-  color: #080b10;
+.logo-sub{
+  color:var(--muted);
+  font-size:10px;
+  margin-top:2px;
 }
 
-.card {
-  background: #11161f;
-  border: 1px solid #202834;
-  border-radius: 18px;
-  padding: 15px;
-  margin-bottom: 12px;
+.live{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  color:#72df9a;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
 }
 
-.title {
-  font-size: 15px;
-  font-weight: 800;
-  margin-bottom: 11px;
+.live-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#58dc8a;
+  box-shadow:0 0 12px #58dc8a;
 }
 
-.positions {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+.tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:13px;
 }
 
-.position {
-  border: 1px solid #28313d;
-  border-radius: 11px;
-  background: #0b0f15;
-  color: #8d97a7;
-  padding: 9px 2px;
-  font-size: 11px;
-  font-weight: 800;
+.tab{
+  border:1px solid var(--line);
+  background:#0d131c;
+  color:#8793a3;
+  padding:11px 8px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:850;
 }
 
-.position.active {
-  background: #202733;
-  color: white;
-  border-color: #ffffff;
+.tab.active{
+  color:#fff;
+  background:linear-gradient(135deg,#2a3442,#171f2a);
+  border-color:#48576a;
+  box-shadow:inset 0 1px rgba(255,255,255,.06);
 }
 
-.search {
-  width: 100%;
-  border: 1px solid #293240;
-  background: #0a0e14;
-  color: white;
-  outline: none;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 10px;
+main{
+  width:min(920px,100%);
+  margin:auto;
+  padding:13px;
 }
 
-.search::placeholder {
-  color: #667181;
+.page{display:none}
+.page.active{display:block}
+
+.card{
+  background:linear-gradient(145deg,rgba(18,26,37,.97),rgba(11,16,24,.97));
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:18px;
+  margin-bottom:12px;
+  padding:14px;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);
 }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+.card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
 }
 
-.hero {
-  width: 100%;
-  overflow: hidden;
-  padding: 0;
-  border-radius: 12px;
-  border: 1px solid #252e3a;
-  background: #0a0e14;
-  color: white;
+.title{
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:-.2px;
 }
 
-.hero.selected {
-  border-color: white;
+.hint{
+  font-size:10px;
+  color:var(--muted);
 }
 
-.hero img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  display: block;
-  object-fit: cover;
+.pos-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:6px;
 }
 
-.hero-name {
-  min-height: 29px;
-  padding: 5px 3px 6px;
-  font-size: 10px;
-  line-height: 12px;
+.pos{
+  position:relative;
+  overflow:hidden;
+  border:1px solid #293543;
+  background:#0d141d;
+  border-radius:12px;
+  color:#7e8b9b;
+  padding:11px 2px 10px;
+  font-size:10px;
+  font-weight:900;
 }
 
-.enemy-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 9px;
+.pos small{
+  display:block;
+  font-size:8px;
+  opacity:.65;
+  margin-top:3px;
 }
 
-.enemy {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  border: 1px solid #293240;
-  border-radius: 20px;
-  background: #0a0e14;
-  color: white;
-  padding: 4px 8px 4px 4px;
-  font-size: 12px;
+.pos.active{
+  color:#fff;
+  border-color:#b64d3d;
+  background:linear-gradient(145deg,#3b211e,#1b1517);
+  box-shadow:0 0 25px rgba(230,91,69,.12);
 }
 
-.enemy img {
-  width: 28px;
-  height: 28px;
-  object-fit: cover;
-  border-radius: 7px;
+.pos.active:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:2px;
+  background:#ef674f;
 }
 
-.primary {
-  width: 100%;
-  margin-top: 11px;
-  border: 0;
-  border-radius: 13px;
-  padding: 14px;
-  background: white;
-  color: #080b10;
-  font-weight: 900;
+.search-wrap{
+  position:relative;
+  margin-bottom:10px;
 }
 
-.primary:disabled {
-  opacity: .35;
+.search{
+  width:100%;
+  height:43px;
+  padding:0 13px 0 39px;
+  border:1px solid #283442;
+  border-radius:12px;
+  outline:none;
+  color:#fff;
+  background:#090e15;
 }
 
-.status {
-  color: #929cad;
-  font-size: 13px;
-  line-height: 19px;
+.search:focus{
+  border-color:#55677b;
+  box-shadow:0 0 0 3px rgba(93,169,255,.06);
 }
 
-.error {
-  color: #ff8585;
+.search-icon{
+  position:absolute;
+  left:13px;
+  top:12px;
+  color:#718093;
 }
 
-.result {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 11px 0;
-  border-bottom: 1px solid #202733;
+.filters{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding-bottom:9px;
+  scrollbar-width:none;
 }
 
-.result:last-child {
-  border-bottom: 0;
+.filters::-webkit-scrollbar{display:none}
+
+.filter{
+  white-space:nowrap;
+  border:1px solid #273341;
+  background:#0b1119;
+  color:#8996a6;
+  border-radius:20px;
+  padding:7px 10px;
+  font-size:10px;
+  font-weight:800;
 }
 
-.result img {
-  width: 56px;
-  height: 56px;
-  border-radius: 10px;
-  object-fit: cover;
+.filter.active{
+  background:#273544;
+  color:#fff;
+  border-color:#536579;
 }
 
-.result-main {
-  flex: 1;
-  min-width: 0;
+.hero-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
 }
 
-.result-name {
-  font-size: 14px;
-  font-weight: 900;
+.hero{
+  min-width:0;
+  position:relative;
+  overflow:hidden;
+  border:1px solid #25303d;
+  background:#0d141d;
+  border-radius:12px;
+  padding:4px;
+  color:#fff;
+  text-align:left;
+  transition:.15s;
 }
 
-.result-meta {
-  color: #8993a3;
-  font-size: 11px;
-  line-height: 16px;
-  margin-top: 4px;
+.hero:active{
+  transform:scale(.96);
 }
 
-.result-right {
-  text-align: right;
-  font-weight: 900;
-  font-size: 14px;
+.hero.selected{
+  border-color:#e15e49;
+  box-shadow:
+    0 0 0 1px #e15e49,
+    0 7px 25px rgba(230,91,69,.13);
 }
 
-.result-right small {
-  display: block;
-  color: #727c8c;
-  font-size: 10px;
-  margin-top: 2px;
+.hero.taken{
+  opacity:.24;
 }
 
-.hidden {
-  display: none !important;
+.hero img{
+  width:100%;
+  aspect-ratio:1.32/1;
+  object-fit:cover;
+  display:block;
+  border-radius:8px;
+  background:#171e28;
 }
 
-.muted {
-  color: #727c8c;
-  font-size: 11px;
+.hero-name{
+  padding:5px 3px 4px;
+  font-size:9px;
+  font-weight:800;
+  line-height:11px;
+  min-height:21px;
 }
 
-.loading {
-  opacity: .65;
+.hero-tag{
+  position:absolute;
+  top:7px;
+  right:7px;
+  background:rgba(0,0,0,.72);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:6px;
+  padding:3px 4px;
+  font-size:7px;
+  font-weight:900;
 }
 
-@media (max-width: 430px) {
-  .hero-grid {
-    grid-template-columns: repeat(3, 1fr);
+.team{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:6px;
+}
+
+.team-slot{
+  position:relative;
+  overflow:hidden;
+  min-width:0;
+  aspect-ratio:.76/1;
+  border:1px solid #263240;
+  border-radius:12px;
+  background:#0a1017;
+}
+
+.team-slot.empty{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#596777;
+}
+
+.team-slot img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.slot-number{
+  position:absolute;
+  left:5px;
+  top:5px;
+  z-index:2;
+  padding:3px 5px;
+  background:rgba(0,0,0,.7);
+  border-radius:5px;
+  font-size:8px;
+  font-weight:900;
+}
+
+.slot-name{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:16px 4px 5px;
+  background:linear-gradient(transparent,rgba(0,0,0,.92));
+  font-size:8px;
+  font-weight:800;
+  text-align:center;
+}
+
+.remove{
+  position:absolute;
+  right:4px;
+  top:4px;
+  width:21px;
+  height:21px;
+  border:0;
+  border-radius:50%;
+  background:rgba(0,0,0,.72);
+  color:#fff;
+  font-size:11px;
+  z-index:4;
+}
+
+.enemy-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:6px;
+}
+
+.enemy{
+  position:relative;
+  aspect-ratio:.76/1;
+  border:1px dashed #354251;
+  border-radius:12px;
+  background:#0a1017;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#5f6c7b;
+  font-size:9px;
+  text-align:center;
+}
+
+.enemy img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.enemy-label{
+  position:absolute;
+  top:5px;
+  left:5px;
+  background:rgba(0,0,0,.75);
+  padding:3px 5px;
+  border-radius:5px;
+  color:#fff;
+  font-size:8px;
+  font-weight:900;
+}
+
+.enemy-name{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  padding:15px 3px 5px;
+  background:linear-gradient(transparent,rgba(0,0,0,.95));
+  color:#fff;
+  font-size:8px;
+  font-weight:800;
+  text-align:center;
+}
+
+.enemy-add{
+  border:0;
+  width:100%;
+  margin-top:8px;
+  border-radius:11px;
+  padding:10px;
+  color:#8d9aaa;
+  background:#111a24;
+  border:1px dashed #334151;
+  font-size:11px;
+  font-weight:800;
+}
+
+.recommendation{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:9px;
+  border:1px solid #26313e;
+  border-radius:13px;
+  background:#0c131c;
+  margin-bottom:7px;
+}
+
+.rank{
+  width:24px;
+  color:#667485;
+  font-weight:900;
+  font-size:11px;
+  text-align:center;
+}
+
+.rec-img{
+  width:52px;
+  height:52px;
+  border-radius:9px;
+  object-fit:cover;
+}
+
+.rec-info{
+  flex:1;
+  min-width:0;
+}
+
+.rec-name{
+  font-size:12px;
+  font-weight:900;
+}
+
+.rec-reason{
+  margin-top:3px;
+  color:#8491a1;
+  font-size:9px;
+  line-height:13px;
+}
+
+.score{
+  min-width:48px;
+  text-align:center;
+  color:#70dd98;
+  font-size:12px;
+  font-weight:900;
+}
+
+.score small{
+  display:block;
+  color:#667485;
+  font-size:7px;
+  margin-top:2px;
+}
+
+.empty{
+  padding:20px 8px;
+  color:#627080;
+  text-align:center;
+  font-size:11px;
+  line-height:16px;
+}
+
+.counter-hero{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:10px;
+  border:1px solid #2b3745;
+  border-radius:14px;
+  background:#0b121b;
+}
+
+.counter-hero img{
+  width:70px;
+  height:70px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.counter-hero-name{
+  font-size:17px;
+  font-weight:950;
+}
+
+.counter-hero-role{
+  color:#778596;
+  font-size:10px;
+  margin-top:4px;
+}
+
+.counter-result{
+  margin-top:10px;
+}
+
+.reason-box{
+  margin-top:7px;
+  color:#8d99a8;
+  font-size:9px;
+  line-height:13px;
+}
+
+.big-button{
+  width:100%;
+  border:0;
+  padding:12px;
+  border-radius:12px;
+  color:#fff;
+  font-weight:900;
+  background:linear-gradient(135deg,#d95843,#86281e);
+  box-shadow:0 10px 30px rgba(217,88,67,.15);
+}
+
+@media(min-width:600px){
+  .hero-grid{
+    grid-template-columns:repeat(7,1fr);
   }
+}
 
-  .app {
-    padding: 12px;
+@media(max-width:350px){
+  .hero-grid{
+    grid-template-columns:repeat(3,1fr);
   }
 }
 </style>
@@ -292,1474 +595,1203 @@ header p {
 
 <body>
 
-<div class="app">
+<header class="top">
 
-<header>
-  <h1>⚔️ Dota Counter Assistant</h1>
-  <p>Draft Assistant · Counter Finder</p>
+  <div class="brand">
+
+    <div class="logo">
+
+      <div class="logo-icon">⚔️</div>
+
+      <div>
+        <div class="logo-title">DOTA DRAFT LAB</div>
+        <div class="logo-sub">COUNTER • DRAFT • ANALYSIS</div>
+      </div>
+
+    </div>
+
+    <div class="live">
+      <span class="live-dot"></span>
+      LIVE
+    </div>
+
+  </div>
+
+  <div class="tabs">
+
+    <button class="tab active" onclick="openTab('draft',this)">
+      ⚔️ DRAFT ASSISTANT
+    </button>
+
+    <button class="tab" onclick="openTab('counter',this)">
+      🎯 COUNTER FINDER
+    </button>
+
+  </div>
+
 </header>
 
-<div class="tabs">
-  <button class="tab active" id="draftTab">
-    ⚔️ Draft Assistant
-  </button>
 
-  <button class="tab" id="counterTab">
-    🎯 Counter Finder
-  </button>
-</div>
+<main>
 
 <!-- ========================= -->
 <!-- DRAFT -->
 <!-- ========================= -->
 
-<section id="draftPage">
+<div id="draft" class="page active">
 
-<div class="card">
+  <div class="card">
 
-  <div class="title">
-    Твоя позиция
+    <div class="card-head">
+      <div class="title">YOUR POSITION</div>
+      <div class="hint">Choose role</div>
+    </div>
+
+    <div class="pos-grid">
+
+      <button class="pos active" onclick="setPos(1,this)">
+        POS 1
+        <small>CARRY</small>
+      </button>
+
+      <button class="pos" onclick="setPos(2,this)">
+        POS 2
+        <small>MID</small>
+      </button>
+
+      <button class="pos" onclick="setPos(3,this)">
+        POS 3
+        <small>OFFLANE</small>
+      </button>
+
+      <button class="pos" onclick="setPos(4,this)">
+        POS 4
+        <small>SUPPORT</small>
+      </button>
+
+      <button class="pos" onclick="setPos(5,this)">
+        POS 5
+        <small>HARD SUP</small>
+      </button>
+
+    </div>
+
   </div>
 
-  <div class="positions">
 
-    <button class="position active" data-position="1">
-      1<br>Carry
+  <div class="card">
+
+    <div class="card-head">
+      <div class="title">CHOOSE YOUR HERO</div>
+      <div class="hint" id="heroCount">128 heroes</div>
+    </div>
+
+    <div class="search-wrap">
+
+      <span class="search-icon">⌕</span>
+
+      <input
+        id="heroSearch"
+        class="search"
+        placeholder="Search hero..."
+        oninput="renderHeroes()"
+      >
+
+    </div>
+
+    <div class="filters">
+
+      <button class="filter active" onclick="setFilter('ALL',this)">ALL</button>
+      <button class="filter" onclick="setFilter('Strength',this)">💪 STR</button>
+      <button class="filter" onclick="setFilter('Agility',this)">⚡ AGI</button>
+      <button class="filter" onclick="setFilter('Intelligence',this)">🧠 INT</button>
+      <button class="filter" onclick="setFilter('Universal',this)">◈ UNI</button>
+
+    </div>
+
+    <div id="heroes" class="hero-grid"></div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="card-head">
+      <div class="title">YOUR DRAFT</div>
+      <div class="hint">5 positions</div>
+    </div>
+
+    <div id="team" class="team"></div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="card-head">
+      <div class="title">ENEMY DRAFT</div>
+      <div class="hint" id="enemyCounter">0 / 5</div>
+    </div>
+
+    <div id="enemies" class="enemy-grid"></div>
+
+    <button class="enemy-add" onclick="addEnemy()">
+      ＋ ADD ENEMY HERO
     </button>
 
-    <button class="position" data-position="2">
-      2<br>Mid
-    </button>
+  </div>
 
-    <button class="position" data-position="3">
-      3<br>Offlane
-    </button>
 
-    <button class="position" data-position="4">
-      4<br>Soft
-    </button>
+  <div class="card">
 
-    <button class="position" data-position="5">
-      5<br>Hard
-    </button>
+    <div class="card-head">
+      <div class="title">🔥 BEST PICKS</div>
+      <div class="hint">Draft recommendation</div>
+    </div>
+
+    <div id="recommendations"></div>
 
   </div>
 
 </div>
-
-
-<div class="card">
-
-  <div class="title">
-    Твой герой
-  </div>
-
-  <input
-    id="myHeroSearch"
-    class="search"
-    placeholder="🔎 Поиск героя..."
-  >
-
-  <div id="myHeroGrid" class="hero-grid"></div>
-
-</div>
-
-
-<div class="card">
-
-  <div class="title">
-    Вражеские герои
-    <span id="enemyCount" class="muted">
-      0 / 5
-    </span>
-  </div>
-
-  <input
-    id="enemySearch"
-    class="search"
-    placeholder="🔎 Добавить врага..."
-  >
-
-  <div id="enemyGrid" class="hero-grid"></div>
-
-  <div id="enemyList" class="enemy-list"></div>
-
-  <button
-    id="analyzeButton"
-    class="primary"
-    disabled
-  >
-    Найти лучшие пики
-  </button>
-
-</div>
-
-
-<div class="card">
-
-  <div class="title">
-    Лучшие пики
-  </div>
-
-  <div id="draftStatus" class="status">
-    Выбери врагов, чтобы получить рекомендации.
-  </div>
-
-  <div id="draftResults"></div>
-
-</div>
-
-</section>
 
 
 <!-- ========================= -->
-<!-- COUNTER FINDER -->
+<!-- COUNTER -->
 <!-- ========================= -->
 
-<section id="counterPage" class="hidden">
+<div id="counter" class="page">
 
-<div class="card">
+  <div class="card">
 
-  <div class="title">
-    Выбери героя
+    <div class="card-head">
+
+      <div>
+        <div class="title">COUNTER FINDER</div>
+        <div class="hint">Find the best answers to an enemy hero</div>
+      </div>
+
+    </div>
+
+    <div class="search-wrap">
+
+      <span class="search-icon">⌕</span>
+
+      <input
+        id="counterSearch"
+        class="search"
+        placeholder="Search enemy hero..."
+        oninput="renderCounterHeroes()"
+      >
+
+    </div>
+
+    <div id="counterHeroes" class="hero-grid"></div>
+
   </div>
 
-  <input
-    id="counterSearch"
-    class="search"
-    placeholder="🔎 Поиск героя..."
-  >
 
-  <div id="counterGrid" class="hero-grid"></div>
+  <div id="counterResult"></div>
 
 </div>
 
-
-<div class="card">
-
-  <div class="title">
-    Контрпики
-  </div>
-
-  <div id="counterStatus" class="status">
-    Выбери одного героя.
-  </div>
-
-  <div id="counterResults"></div>
-
-</div>
-
-</section>
-
-</div>
+</main>
 
 
 <script>
 
-/*
-====================================================
- DOTA DATA
-====================================================
-*/
+/* =====================================================
+   HERO DATABASE
+===================================================== */
 
 const HEROES = [
-
-{
-id:1,
-name:"Anti-Mage",
-slug:"antimage",
-roles:["carry","escape"],
-counters:["Axe","Bloodseeker","Doom"]
-},
-
-{
-id:2,
-name:"Axe",
-slug:"axe",
-roles:["durable","initiator","disabler"],
-counters:["Ursa","Viper","Timbersaw"]
-},
-
-{
-id:3,
-name:"Bane",
-slug:"bane",
-roles:["support","disabler"],
-counters:["Abaddon","Rubick","Oracle"]
-},
-
-{
-id:4,
-name:"Bloodseeker",
-slug:"bloodseeker",
-roles:["carry","nuker"],
-counters:["Phantom Lancer","Naga Siren","Faceless Void"]
-},
-
-{
-id:5,
-name:"Crystal Maiden",
-slug:"crystal_maiden",
-roles:["support","nuker","disabler"],
-counters:["Storm Spirit","Anti-Mage","Pudge"]
-},
-
-{
-id:6,
-name:"Drow Ranger",
-slug:"drow_ranger",
-roles:["carry"],
-counters:["Phantom Assassin","Spectre","Clockwerk"]
-},
-
-{
-id:7,
-name:"Earthshaker",
-slug:"earthshaker",
-roles:["support","initiator","disabler"],
-counters:["Rubick","Silencer","Viper"]
-},
-
-{
-id:8,
-name:"Juggernaut",
-slug:"juggernaut",
-roles:["carry"],
-counters:["Axe","Phantom Lancer","Shadow Demon"]
-},
-
-{
-id:9,
-name:"Mirana",
-slug:"mirana",
-roles:["support","escape","nuker"],
-counters:["Clockwerk","Storm Spirit","Puck"]
-},
-
-{
-id:10,
-name:"Morphling",
-slug:"morphling",
-roles:["carry","escape","nuker"],
-counters:["Ancient Apparition","Viper","Lion"]
-},
-
-{
-id:11,
-name:"Phantom Assassin",
-slug:"phantom_assassin",
-roles:["carry","escape"],
-counters:["Axe","Viper","Bloodseeker"]
-},
-
-{
-id:12,
-name:"Pudge",
-slug:"pudge",
-roles:["durable","initiator","disabler"],
-counters:["Viper","Necrophos","Drow Ranger"]
-},
-
-{
-id:13,
-name:"Puck",
-slug:"puck",
-roles:["nuker","escape","disabler"],
-counters:["Silencer","Doom","Lion"]
-},
-
-{
-id:14,
-name:"Shadow Fiend",
-slug:"nevermore",
-roles:["carry","nuker"],
-counters:["Puck","Storm Spirit","Viper"]
-},
-
-{
-id:15,
-name:"Sniper",
-slug:"sniper",
-roles:["carry","nuker"],
-counters:["Phantom Assassin","Storm Spirit","Clockwerk"]
-},
-
-{
-id:16,
-name:"Storm Spirit",
-slug:"storm_spirit",
-roles:["carry","nuker","escape"],
-counters:["Anti-Mage","Silencer","Doom"]
-},
-
-{
-id:17,
-name:"Sven",
-slug:"sven",
-roles:["carry","durable","initiator"],
-counters:["Shadow Demon","Viper","Timbersaw"]
-},
-
-{
-id:18,
-name:"Tidehunter",
-slug:"tidehunter",
-roles:["durable","initiator","disabler"],
-counters:["Viper","Ursa","Silencer"]
-},
-
-{
-id:19,
-name:"Tinker",
-slug:"tinker",
-roles:["nuker","escape"],
-counters:["Spirit Breaker","Anti-Mage","Silencer"]
-},
-
-{
-id:20,
-name:"Ursa",
-slug:"ursa",
-roles:["carry","durable"],
-counters:["Viper","Drow Ranger","Phoenix"]
-},
-
-{
-id:21,
-name:"Viper",
-slug:"viper",
-roles:["nuker","durable"],
-counters:["Drow Ranger","Phantom Assassin","Sniper"]
-},
-
-{
-id:22,
-name:"Windranger",
-slug:"windranger",
-roles:["carry","escape","nuker","disabler"],
-counters:["Silencer","Axe","Viper"]
-},
-
-{
-id:23,
-name:"Zeus",
-slug:"zuus",
-roles:["nuker"],
-counters:["Anti-Mage","Storm Spirit","Puck"]
-},
-
-{
-id:24,
-name:"Faceless Void",
-slug:"faceless_void",
-roles:["carry","escape","initiator"],
-counters:["Disruptor","Silencer","Viper"]
-},
-
-{
-id:25,
-name:"Doom",
-slug:"doom_bringer",
-roles:["durable","initiator","disabler"],
-counters:["Ursa","Viper","Lifestealer"]
-},
-
-{
-id:26,
-name:"Lifestealer",
-slug:"life_stealer",
-roles:["carry","durable"],
-counters:["Viper","Necrophos","Razor"]
-},
-
-{
-id:27,
-name:"Silencer",
-slug:"silencer",
-roles:["support","disabler","nuker"],
-counters:["Storm Spirit","Phantom Assassin","Pudge"]
-},
-
-{
-id:28,
-name:"Rubick",
-slug:"rubick",
-roles:["support","disabler","nuker"],
-counters:["Silencer","Nyx Assassin","Pudge"]
-},
-
-{
-id:29,
-name:"Lion",
-slug:"lion",
-roles:["support","disabler","nuker"],
-counters:["Abaddon","Rubick","Anti-Mage"]
-},
-
-{
-id:30,
-name:"Abaddon",
-slug:"abaddon",
-roles:["support","durable"],
-counters:["Ancient Apparition","Silencer","Doom"]
-},
-
-{
-id:31,
-name:"Ancient Apparition",
-slug:"ancient_apparition",
-roles:["support","nuker","disabler"],
-counters:["Storm Spirit","Pudge","Anti-Mage"]
-},
-
-{
-id:32,
-name:"Dazzle",
-slug:"dazzle",
-roles:["support","nuker"],
-counters:["Ancient Apparition","Silencer","Axe"]
-},
-
-{
-id:33,
-name:"Disruptor",
-slug:"disruptor",
-roles:["support","disabler","nuker"],
-counters:["Rubick","Puck","Storm Spirit"]
-},
-
-{
-id:34,
-name:"Earth Spirit",
-slug:"earth_spirit",
-roles:["support","initiator","disabler"],
-counters:["Silencer","Puck","Rubick"]
-},
-
-{
-id:35,
-name:"Ember Spirit",
-slug:"ember_spirit",
-roles:["carry","escape","nuker"],
-counters:["Silencer","Puck","Storm Spirit"]
-},
-
-{
-id:36,
-name:"Invoker",
-slug:"invoker",
-roles:["nuker","disabler","carry"],
-counters:["Anti-Mage","Silencer","Nyx Assassin"]
-},
-
-{
-id:37,
-name:"Lina",
-slug:"lina",
-roles:["carry","support","nuker","disabler"],
-counters:["Anti-Mage","Storm Spirit","Phantom Assassin"]
-},
-
-{
-id:38,
-name:"Luna",
-slug:"luna",
-roles:["carry","nuker"],
-counters:["Anti-Mage","Terrorblade","Phantom Lancer"]
-},
-
-{
-id:39,
-name:"Magnus",
-slug:"magnataur",
-roles:["initiator","disabler","durable"],
-counters:["Silencer","Viper","Rubick"]
-},
-
-{
-id:40,
-name:"Medusa",
-slug:"medusa",
-roles:["carry","durable"],
-counters:["Anti-Mage","Phantom Lancer","Doom"]
-},
-
-{
-id:41,
-name:"Necrophos",
-slug:"necrolyte",
-roles:["durable","nuker"],
-counters:["Ancient Apparition","Viper","Anti-Mage"]
-},
-
-{
-id:42,
-name:"Naga Siren",
-slug:"naga_siren",
-roles:["carry","escape","disabler"],
-counters:["Axe","Ember Spirit","Earthshaker"]
-},
-
-{
-id:43,
-name:"Nature's Prophet",
-slug:"furion",
-roles:["carry","nuker","escape"],
-counters:["Spectre","Storm Spirit","Ember Spirit"]
-},
-
-{
-id:44,
-name:"Night Stalker",
-slug:"night_stalker",
-roles:["durable","initiator","disabler"],
-counters:["Viper","Silencer","Drow Ranger"]
-},
-
-{
-id:45,
-name:"Omniknight",
-slug:"omniknight",
-roles:["support","durable"],
-counters:["Ancient Apparition","Doom","Silencer"]
-},
-
-{
-id:46,
-name:"Oracle",
-slug:"oracle",
-roles:["support","nuker","disabler"],
-counters:["Silencer","Pudge","Rubick"]
-},
-
-{
-id:47,
-name:"Phantom Lancer",
-slug:"phantom_lancer",
-roles:["carry","escape"],
-counters:["Axe","Earthshaker","Ember Spirit"]
-},
-
-{
-id:48,
-name:"Queen of Pain",
-slug:"queenofpain",
-roles:["nuker","escape"],
-counters:["Silencer","Anti-Mage","Storm Spirit"]
-},
-
-{
-id:49,
-name:"Razor",
-slug:"razor",
-roles:["carry","durable"],
-counters:["Viper","Lifestealer","Ursa"]
-},
-
-{
-id:50,
-name:"Shadow Demon",
-slug:"shadow_demon",
-roles:["support","disabler","nuker"],
-counters:["Puck","Storm Spirit","Rubick"]
-},
-
-{
-id:51,
-name:"Slark",
-slug:"slark",
-roles:["carry","escape"],
-counters:["Bloodseeker","Axe","Viper"]
-},
-
-{
-id:52,
-name:"Spectre",
-slug:"spectre",
-roles:["carry","durable","escape"],
-counters:["Anti-Mage","Viper","Bloodseeker"]
-},
-
-{
-id:53,
-name:"Spirit Breaker",
-slug:"spirit_breaker",
-roles:["durable","initiator","disabler"],
-counters:["Viper","Drow Ranger","Monkey King"]
-},
-
-{
-id:54,
-name:"Terrorblade",
-slug:"terrorblade",
-roles:["carry","escape"],
-counters:["Luna","Viper","Phantom Lancer"]
-},
-
-{
-id:55,
-name:"Timbersaw",
-slug:"shredder",
-roles:["durable","nuker"],
-counters:["Viper","Ursa","Necrophos"]
-},
-
-{
-id:56,
-name:"Tiny",
-slug:"tiny",
-roles:["carry","initiator","disabler"],
-counters:["Viper","Lifestealer","Ursa"]
-},
-
-{
-id:57,
-name:"Treant Protector",
-slug:"treant",
-roles:["support","durable","disabler"],
-counters:["Timbersaw","Silencer","Rubick"]
-},
-
-{
-id:58,
-name:"Troll Warlord",
-slug:"troll_warlord",
-roles:["carry","disabler"],
-counters:["Axe","Viper","Phantom Lancer"]
-},
-
-{
-id:59,
-name:"Underlord",
-slug:"abyssal_underlord",
-roles:["durable","nuker","disabler"],
-counters:["Viper","Ursa","Lifestealer"]
-},
-
-{
-id:60,
-name:"Undying",
-slug:"undying",
-roles:["support","durable"],
-counters:["Timbersaw","Silencer","Ancient Apparition"]
-},
-
-{
-id:61,
-name:"Venomancer",
-slug:"venomancer",
-roles:["support","nuker"],
-counters:["Abaddon","Juggernaut","Oracle"]
-},
-
-{
-id:62,
-name:"Visage",
-slug:"visage",
-roles:["support","nuker","durable"],
-counters:["Viper","Lina","Zeus"]
-},
-
-{
-id:63,
-name:"Warlock",
-slug:"warlock",
-roles:["support","disabler","nuker"],
-counters:["Silencer","Rubick","Oracle"]
-},
-
-{
-id:64,
-name:"Weaver",
-slug:"weaver",
-roles:["carry","escape"],
-counters:["Bloodseeker","Axe","Lion"]
-},
-
-{
-id:65,
-name:"Witch Doctor",
-slug:"witch_doctor",
-roles:["support","nuker","disabler"],
-counters:["Pudge","Silencer","Storm Spirit"]
-},
-
-{
-id:66,
-name:"Wraith King",
-slug:"skeleton_king",
-roles:["carry","durable"],
-counters:["Anti-Mage","Viper","Ancient Apparition"]
-}
-
-];
-
-
-/*
-====================================================
- STATE
-====================================================
-*/
-
-const state = {
-  position: "1",
-  selectedHero: null,
-  enemies: [],
-  counterHero: null
+["Abaddon","abaddon","Strength"],
+["Alchemist","alchemist","Strength"],
+["Ancient Apparition","ancient_apparition","Intelligence"],
+["Anti-Mage","antimage","Agility"],
+["Arc Warden","arc_warden","Agility"],
+["Axe","axe","Strength"],
+["Bane","bane","Intelligence"],
+["Batrider","batrider","Intelligence"],
+["Beastmaster","beastmaster","Strength"],
+["Bloodseeker","bloodseeker","Agility"],
+["Bounty Hunter","bounty_hunter","Agility"],
+["Brewmaster","brewmaster","Strength"],
+["Bristleback","bristleback","Strength"],
+["Broodmother","broodmother","Universal"],
+["Centaur Warrunner","centaur","Strength"],
+["Chaos Knight","chaos_knight","Strength"],
+["Chen","chen","Intelligence"],
+["Clinkz","clinkz","Agility"],
+["Clockwerk","rattletrap","Strength"],
+["Crystal Maiden","crystal_maiden","Intelligence"],
+["Dark Seer","dark_seer","Intelligence"],
+["Dark Willow","dark_willow","Intelligence"],
+["Dawnbreaker","dawnbreaker","Strength"],
+["Dazzle","dazzle","Intelligence"],
+["Death Prophet","death_prophet","Intelligence"],
+["Disruptor","disruptor","Intelligence"],
+["Doom","doom_bringer","Strength"],
+["Dragon Knight","dragon_knight","Strength"],
+["Drow Ranger","drow_ranger","Agility"],
+["Earth Spirit","earth_spirit","Strength"],
+["Earthshaker","earthshaker","Strength"],
+["Elder Titan","elder_titan","Strength"],
+["Ember Spirit","ember_spirit","Agility"],
+["Enchantress","enchantress","Intelligence"],
+["Enigma","enigma","Intelligence"],
+["Faceless Void","faceless_void","Agility"],
+["Grimstroke","grimstroke","Intelligence"],
+["Gyrocopter","gyrocopter","Agility"],
+["Hoodwink","hoodwink","Agility"],
+["Huskar","huskar","Strength"],
+["Invoker","invoker","Intelligence"],
+["Jakiro","jakiro","Intelligence"],
+["Juggernaut","juggernaut","Agility"],
+["Keeper of the Light","keeper_of_the_light","Intelligence"],
+["Kez","kez","Agility"],
+["Kunkka","kunkka","Strength"],
+["Largo","largo","Strength"],
+["Legion Commander","legion_commander","Strength"],
+["Leshrac","leshrac","Intelligence"],
+["Lich","lich","Intelligence"],
+["Lifestealer","life_stealer","Strength"],
+["Lina","lina","Intelligence"],
+["Lion","lion","Intelligence"],
+["Lone Druid","lone_druid","Agility"],
+["Luna","luna","Agility"],
+["Lycan","lycan","Strength"],
+["Magnus","magnataur","Strength"],
+["Marci","marci","Strength"],
+["Mars","mars","Strength"],
+["Medusa","medusa","Agility"],
+["Meepo","meepo","Agility"],
+["Mirana","mirana","Agility"],
+["Monkey King","monkey_king","Agility"],
+["Morphling","morphling","Agility"],
+["Muerta","muerta","Intelligence"],
+["Naga Siren","naga_siren","Agility"],
+["Nature's Prophet","furion","Intelligence"],
+["Necrophos","necrolyte","Intelligence"],
+["Night Stalker","night_stalker","Strength"],
+["Nyx Assassin","nyx_assassin","Agility"],
+["Ogre Magi","ogre_magi","Strength"],
+["Omniknight","omniknight","Strength"],
+["Oracle","oracle","Intelligence"],
+["Outworld Destroyer","obsidian_destroyer","Intelligence"],
+["Pangolier","pangolier","Agility"],
+["Phantom Assassin","phantom_assassin","Agility"],
+["Phantom Lancer","phantom_lancer","Agility"],
+["Phoenix","phoenix","Universal"],
+["Primal Beast","primal_beast","Strength"],
+["Puck","puck","Intelligence"],
+["Pudge","pudge","Strength"],
+["Pugna","pugna","Intelligence"],
+["Queen of Pain","queenofpain","Intelligence"],
+["Razor","razor","Agility"],
+["Riki","riki","Agility"],
+["Ringmaster","ringmaster","Intelligence"],
+["Rubick","rubick","Intelligence"],
+["Sand King","sand_king","Strength"],
+["Shadow Demon","shadow_demon","Intelligence"],
+["Shadow Fiend","nevermore","Agility"],
+["Shadow Shaman","shadow_shaman","Intelligence"],
+["Silencer","silencer","Intelligence"],
+["Skywrath Mage","skywrath_mage","Intelligence"],
+["Slardar","slardar","Strength"],
+["Slark","slark","Agility"],
+["Snapfire","snapfire","Strength"],
+["Sniper","sniper","Agility"],
+["Spectre","spectre","Agility"],
+["Spirit Breaker","spirit_breaker","Strength"],
+["Storm Spirit","storm_spirit","Intelligence"],
+["Sven","sven","Strength"],
+["Techies","techies","Intelligence"],
+["Templar Assassin","templar_assassin","Agility"],
+["Terrorblade","terrorblade","Agility"],
+["Tidehunter","tidehunter","Strength"],
+["Timbersaw","shredder","Strength"],
+["Tinker","tinker","Intelligence"],
+["Tiny","tiny","Strength"],
+["Treant Protector","treant","Strength"],
+["Troll Warlord","troll_warlord","Agility"],
+["Tusk","tusk","Strength"],
+["Underlord","abyssal_underlord","Strength"],
+["Undying","undying","Strength"],
+["Ursa","ursa","Agility"],
+["Vengeful Spirit","vengefulspirit","Agility"],
+["Venomancer","venomancer","Agility"],
+["Viper","viper","Agility"],
+["Visage","visage","Intelligence"],
+["Void Spirit","void_spirit","Universal"],
+["Warlock","warlock","Intelligence"],
+["Weaver","weaver","Agility"],
+["Windranger","windrunner","Universal"],
+["Winter Wyvern","winter_wyvern","Intelligence"],
+["Witch Doctor","witch_doctor","Intelligence"],
+["Wraith King","skeleton_king","Strength"],
+["Zeus","zuus","Intelligence"]
+].map((x,i)=>({
+  id:i+1,
+  name:x[0],
+  slug:x[1],
+  attr:x[2]
+}));
+
+
+/* =====================================================
+   ROLES
+===================================================== */
+
+const ROLES={
+
+"Abaddon":["3","5","Durable","Support"],
+"Alchemist":["1","2","Carry","Nuker"],
+"Ancient Apparition":["4","5","Support","Nuker"],
+"Anti-Mage":["1","Carry","Escape"],
+"Arc Warden":["1","2","Carry","Escape"],
+"Axe":["3","Durable","Initiator"],
+"Bane":["4","5","Support","Disabler"],
+"Batrider":["3","4","Initiator","Disabler"],
+"Beastmaster":["3","Initiator","Durable"],
+"Bloodseeker":["1","2","Carry"],
+"Bounty Hunter":["4","3","Escape"],
+"Brewmaster":["3","Initiator","Durable"],
+"Bristleback":["3","Durable"],
+"Broodmother":["2","3","Push","Escape"],
+"Centaur Warrunner":["3","Durable","Initiator"],
+"Chaos Knight":["1","3","Carry","Durable"],
+"Chen":["5","Support","Push"],
+"Clinkz":["1","2","Carry","Escape"],
+"Clockwerk":["4","3","Initiator","Disabler"],
+"Crystal Maiden":["5","4","Support","Nuker"],
+"Dark Seer":["3","Initiator","Nuker"],
+"Dark Willow":["4","2","Support","Nuker"],
+"Dawnbreaker":["3","1","Durable","Initiator"],
+"Dazzle":["5","4","Support"],
+"Death Prophet":["2","3","Nuker","Push"],
+"Disruptor":["5","4","Support","Disabler"],
+"Doom":["3","1","Durable","Disabler"],
+"Dragon Knight":["2","3","Durable","Push"],
+"Drow Ranger":["1","Carry"],
+"Earth Spirit":["4","Initiator","Disabler"],
+"Earthshaker":["4","3","Initiator","Disabler"],
+"Elder Titan":["4","5","Support","Disabler"],
+"Ember Spirit":["2","1","Escape","Nuker"],
+"Enchantress":["4","5","Support"],
+"Enigma":["3","4","Initiator","Disabler"],
+"Faceless Void":["1","Carry","Initiator"],
+"Grimstroke":["4","5","Support","Disabler"],
+"Gyrocopter":["1","2","Carry","Nuker"],
+"Hoodwink":["4","2","Nuker","Escape"],
+"Huskar":["2","3","Carry","Durable"],
+"Invoker":["2","4","Nuker","Disabler"],
+"Jakiro":["4","5","Support","Nuker"],
+"Juggernaut":["1","Carry","Escape"],
+"Keeper of the Light":["5","4","Support","Nuker"],
+"Kez":["1","2","Carry","Escape"],
+"Kunkka":["2","3","Initiator","Durable"],
+"Largo":["4","5","Support","Disabler"],
+"Legion Commander":["3","2","Initiator","Durable"],
+"Leshrac":["2","3","Nuker","Push"],
+"Lich":["5","4","Support","Nuker"],
+"Lifestealer":["1","Carry","Durable"],
+"Lina":["2","1","Nuker","Carry"],
+"Lion":["4","5","Support","Disabler"],
+"Lone Druid":["1","2","Carry","Push"],
+"Luna":["1","Carry","Nuker"],
+"Lycan":["3","1","Push","Carry"],
+"Magnus":["3","4","Initiator","Disabler"],
+"Marci":["4","3","Support","Initiator"],
+"Mars":["3","2","Initiator","Durable"],
+"Medusa":["1","Carry","Durable"],
+"Meepo":["1","2","Carry","Push"],
+"Mirana":["4","5","Escape","Nuker"],
+"Monkey King":["1","2","Carry"],
+"Morphling":["1","2","Carry","Escape"],
+"Muerta":["1","2","Carry","Nuker"],
+"Naga Siren":["1","Carry","Push"],
+"Nature's Prophet":["1","2","3","Push"],
+"Necrophos":["2","3","Durable","Nuker"],
+"Night Stalker":["3","2","Initiator","Durable"],
+"Nyx Assassin":["4","3","Disabler","Escape"],
+"Ogre Magi":["5","4","Support","Durable"],
+"Omniknight":["5","3","Support","Durable"],
+"Oracle":["5","4","Support"],
+"Outworld Destroyer":["2","1","Nuker"],
+"Pangolier":["2","3","Initiator","Escape"],
+"Phantom Assassin":["1","Carry","Escape"],
+"Phantom Lancer":["1","Carry","Escape"],
+"Phoenix":["4","5","Support","Nuker"],
+"Primal Beast":["3","2","Initiator","Durable"],
+"Puck":["2","4","Escape","Disabler"],
+"Pudge":["4","3","Durable","Disabler"],
+"Pugna":["4","2","Nuker","Push"],
+"Queen of Pain":["2","1","Nuker","Escape"],
+"Razor":["1","2","Carry","Durable"],
+"Riki":["1","4","Carry","Escape"],
+"Ringmaster":["4","5","Support","Disabler"],
+"Rubick":["4","5","Support","Nuker"],
+"Sand King":["3","4","Initiator","Nuker"],
+"Shadow Demon":["4","5","Support","Disabler"],
+"Shadow Fiend":["1","2","Carry","Nuker"],
+"Shadow Shaman":["4","5","Support","Push"],
+"Silencer":["5","4","Support","Disabler"],
+"Skywrath Mage":["4","5","Nuker"],
+"Slardar":["3","Durable","Initiator"],
+"Slark":["1","Carry","Escape"],
+"Snapfire":["4","5","Support","Nuker"],
+"Sniper":["1","2","Carry","Nuker"],
+"Spectre":["1","Carry","Durable"],
+"Spirit Breaker":["4","3","Initiator","Durable"],
+"Storm Spirit":["2","Carry","Escape","Nuker"],
+"Sven":["1","3","Carry","Durable"],
+"Techies":["4","5","Nuker","Disabler"],
+"Templar Assassin":["1","2","Carry","Escape"],
+"Terrorblade":["1","Carry","Push"],
+"Tidehunter":["3","Durable","Initiator"],
+"Timbersaw":["3","2","Durable","Escape"],
+"Tinker":["2","4","Nuker"],
+"Tiny":["1","2","4","Initiator"],
+"Treant Protector":["5","4","Support","Durable"],
+"Troll Warlord":["1","Carry","Durable"],
+"Tusk":["4","3","Initiator"],
+"Underlord":["3","Durable","Push"],
+"Undying":["5","3","Support","Durable"],
+"Ursa":["1","Carry","Durable"],
+"Vengeful Spirit":["4","5","Support","Disabler"],
+"Venomancer":["3","4","Nuker","Push"],
+"Viper":["2","3","Nuker","Durable"],
+"Visage":["3","4","Push","Durable"],
+"Void Spirit":["2","4","Escape","Nuker"],
+"Warlock":["5","4","Support","Disabler"],
+"Weaver":["1","4","Carry","Escape"],
+"Windranger":["1","2","4","Carry","Escape"],
+"Winter Wyvern":["5","4","Support","Disabler"],
+"Witch Doctor":["5","4","Support","Nuker"],
+"Wraith King":["1","3","Carry","Durable"],
+"Zeus":["2","4","Nuker"]
 };
 
 
-/*
-====================================================
- IMAGE
-====================================================
-*/
+/* =====================================================
+   STATE
+===================================================== */
 
-function image(hero) {
+let position=1;
+let filter="ALL";
 
-  if (!hero) {
-    return "";
-  }
+const team={
+  1:null,
+  2:null,
+  3:null,
+  4:null,
+  5:null
+};
 
-  return
-    "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/"
-    + hero.slug
-    + ".png";
+let enemies=[];
+let counterTarget=null;
+
+
+/* =====================================================
+   PORTRAIT SYSTEM
+===================================================== */
+
+function portrait(hero){
+
+  return [
+    `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${hero.slug}.png`,
+    `https://cdn.dota2.com/apps/dota2/images/heroes/${hero.slug}_full.png`
+  ];
 }
 
 
-/*
-====================================================
- HELPERS
-====================================================
-*/
+function imgHTML(hero,className=""){
 
-function getHeroByName(name) {
-
-  return HEROES.find(
-    h =>
-      h.name.toLowerCase() ===
-      name.toLowerCase()
-  );
-}
-
-
-function getHero(id) {
-
-  return HEROES.find(
-    h => h.id === id
-  );
-}
-
-
-function escapeHTML(text) {
-
-  return String(text)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-
-/*
-====================================================
- TABS
-====================================================
-*/
-
-document
-  .getElementById("draftTab")
-  .onclick = () => {
-
-    document
-      .getElementById("draftPage")
-      .classList.remove("hidden");
-
-    document
-      .getElementById("counterPage")
-      .classList.add("hidden");
-
-    document
-      .getElementById("draftTab")
-      .classList.add("active");
-
-    document
-      .getElementById("counterTab")
-      .classList.remove("active");
-  };
-
-
-document
-  .getElementById("counterTab")
-  .onclick = () => {
-
-    document
-      .getElementById("draftPage")
-      .classList.add("hidden");
-
-    document
-      .getElementById("counterPage")
-      .classList.remove("hidden");
-
-    document
-      .getElementById("draftTab")
-      .classList.remove("active");
-
-    document
-      .getElementById("counterTab")
-      .classList.add("active");
-  };
-
-
-/*
-====================================================
- POSITIONS
-====================================================
-*/
-
-document
-  .querySelectorAll(".position")
-  .forEach(button => {
-
-    button.onclick = () => {
-
-      document
-        .querySelectorAll(".position")
-        .forEach(b =>
-          b.classList.remove("active")
-        );
-
-      button.classList.add("active");
-
-      state.position =
-        button.dataset.position;
-    };
-
-  });
-
-
-/*
-====================================================
- HERO CARD
-====================================================
-*/
-
-function heroCard(hero, selected, callback) {
+  const urls=portrait(hero);
 
   return `
-    <button
-      class="hero ${selected ? "selected" : ""}"
-      onclick="${callback}(${hero.id})"
+    <img
+      class="${className}"
+      src="${urls[0]}"
+      data-fallback="${urls[1]}"
+      onerror="
+        if(this.dataset.fallback && this.src!==this.dataset.fallback){
+          this.src=this.dataset.fallback;
+        }else{
+          this.style.display='none';
+        }
+      "
+      alt="${hero.name}"
     >
-
-      <img
-        src="${image(hero)}"
-        alt=""
-        onerror="
-          this.style.visibility='hidden'
-        "
-      >
-
-      <div class="hero-name">
-        ${escapeHTML(hero.name)}
-      </div>
-
-    </button>
   `;
 }
 
 
-/*
-====================================================
- MY HERO
-====================================================
-*/
+/* =====================================================
+   TABS
+===================================================== */
 
-function renderMyHeroes() {
+function openTab(id,btn){
 
-  const search =
-    document
-      .getElementById("myHeroSearch")
+  document.querySelectorAll(".page")
+    .forEach(x=>x.classList.remove("active"));
+
+  document.querySelectorAll(".tab")
+    .forEach(x=>x.classList.remove("active"));
+
+  document.getElementById(id)
+    .classList.add("active");
+
+  btn.classList.add("active");
+
+  if(id==="counter"){
+    renderCounterHeroes();
+  }
+}
+
+
+/* =====================================================
+   POSITION
+===================================================== */
+
+function setPos(pos,btn){
+
+  position=pos;
+
+  document.querySelectorAll(".pos")
+    .forEach(x=>x.classList.remove("active"));
+
+  btn.classList.add("active");
+
+  renderHeroes();
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function setFilter(value,btn){
+
+  filter=value;
+
+  document.querySelectorAll(".filter")
+    .forEach(x=>x.classList.remove("active"));
+
+  btn.classList.add("active");
+
+  renderHeroes();
+}
+
+
+/* =====================================================
+   TAKEN
+===================================================== */
+
+function taken(id){
+
+  return Object.values(team)
+    .filter(Boolean)
+    .some(h=>h.id===id);
+}
+
+
+/* =====================================================
+   HEROES
+===================================================== */
+
+function renderHeroes(){
+
+  const query=
+    document.getElementById("heroSearch")
       .value
       .toLowerCase()
       .trim();
 
-  const heroes =
-    HEROES
-      .filter(hero =>
-        hero.name
-          .toLowerCase()
-          .includes(search)
-      )
-      .slice(0, 48);
+  let list=HEROES.filter(h=>{
 
-  document
-    .getElementById("myHeroGrid")
-    .innerHTML =
-      heroes
-        .map(hero =>
-          heroCard(
-            hero,
-            state.selectedHero === hero.id,
-            "selectMyHero"
-          )
-        )
-        .join("");
+    if(!h.name.toLowerCase().includes(query))
+      return false;
+
+    if(filter!=="ALL" && h.attr!==filter)
+      return false;
+
+    return true;
+  });
+
+  document.getElementById("heroCount")
+    .textContent=list.length+" heroes";
+
+  document.getElementById("heroes")
+    .innerHTML=list.map(hero=>{
+
+      const disabled=
+        taken(hero.id) &&
+        team[position]?.id!==hero.id;
+
+      const selected=
+        team[position]?.id===hero.id;
+
+      const attr={
+        Strength:"STR",
+        Agility:"AGI",
+        Intelligence:"INT",
+        Universal:"UNI"
+      }[hero.attr];
+
+      return `
+        <button
+          class="hero ${disabled?"taken":""} ${selected?"selected":""}"
+          ${disabled?"disabled":""}
+          onclick="pickHero(${hero.id})"
+        >
+
+          ${imgHTML(hero)}
+
+          <span class="hero-tag">${attr}</span>
+
+          <div class="hero-name">
+            ${hero.name}
+          </div>
+
+        </button>
+      `;
+
+    }).join("");
 }
 
 
-window.selectMyHero = function(id) {
+/* =====================================================
+   PICK HERO
+===================================================== */
 
-  state.selectedHero = id;
+function pickHero(id){
 
-  renderMyHeroes();
+  const hero=HEROES.find(h=>h.id===id);
 
-};
+  if(!hero)return;
 
+  for(let p=1;p<=5;p++){
 
-/*
-====================================================
- ENEMIES
-====================================================
-*/
+    if(
+      p!==position &&
+      team[p]?.id===hero.id
+    ){
+      return;
+    }
+  }
 
-function renderEnemyHeroes() {
+  team[position]=hero;
 
-  const search =
-    document
-      .getElementById("enemySearch")
-      .value
-      .toLowerCase()
-      .trim();
-
-  const heroes =
-    HEROES
-      .filter(hero =>
-        hero.name
-          .toLowerCase()
-          .includes(search)
-      )
-      .filter(hero =>
-        !state.enemies.includes(hero.id)
-      )
-      .slice(0, 36);
-
-  document
-    .getElementById("enemyGrid")
-    .innerHTML =
-      heroes
-        .map(hero =>
-          heroCard(
-            hero,
-            false,
-            "addEnemy"
-          )
-        )
-        .join("");
-
-  document
-    .getElementById("enemyCount")
-    .textContent =
-      `${state.enemies.length} / 5`;
+  renderTeam();
+  renderHeroes();
+  renderRecommendations();
 }
 
 
-window.addEnemy = function(id) {
+/* =====================================================
+   TEAM
+===================================================== */
 
-  if (state.enemies.length >= 5) {
+function renderTeam(){
+
+  document.getElementById("team").innerHTML=
+    [1,2,3,4,5].map(p=>{
+
+      const hero=team[p];
+
+      if(!hero){
+
+        return `
+          <div class="team-slot empty">
+            <b>POS ${p}</b>
+            <span>EMPTY</span>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="team-slot">
+
+          <span class="slot-number">
+            POS ${p}
+          </span>
+
+          ${imgHTML(hero)}
+
+          <button
+            class="remove"
+            onclick="removeTeam(${p})"
+          >
+            ×
+          </button>
+
+          <div class="slot-name">
+            ${hero.name}
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+
+function removeTeam(p){
+
+  team[p]=null;
+
+  renderTeam();
+  renderHeroes();
+  renderRecommendations();
+}
+
+
+/* =====================================================
+   ENEMIES
+===================================================== */
+
+function addEnemy(){
+
+  if(enemies.length>=5)return;
+
+  enemies.push(null);
+
+  renderEnemies();
+}
+
+
+function renderEnemies(){
+
+  document.getElementById("enemyCounter")
+    .textContent=enemies.filter(Boolean).length+" / 5";
+
+  document.getElementById("enemies").innerHTML=
+    [0,1,2,3,4].map(i=>{
+
+      const hero=enemies[i];
+
+      if(!hero){
+
+        return `
+          <button
+            class="enemy"
+            onclick="chooseEnemyFromList(${i})"
+          >
+            <div>
+              ＋<br>
+              ENEMY ${i+1}
+            </div>
+          </button>
+        `;
+      }
+
+      return `
+        <div class="enemy">
+
+          ${imgHTML(hero)}
+
+          <div class="enemy-label">
+            ${i+1}
+          </div>
+
+          <button
+            class="remove"
+            onclick="removeEnemy(${i})"
+          >
+            ×
+          </button>
+
+          <div class="enemy-name">
+            ${hero.name}
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+
+function chooseEnemyFromList(index){
+
+  const name=prompt(
+    "Напиши имя героя противника:"
+  );
+
+  if(!name)return;
+
+  const hero=HEROES.find(
+    h=>h.name.toLowerCase()===
+       name.toLowerCase().trim()
+  );
+
+  if(hero){
+
+    enemies[index]=hero;
+    renderEnemies();
+    renderRecommendations();
+
+  }else{
+
+    alert("Герой не найден. Используй точное имя.");
+
+  }
+}
+
+
+function removeEnemy(index){
+
+  enemies.splice(index,1);
+
+  renderEnemies();
+  renderRecommendations();
+}
+
+
+/* =====================================================
+   COUNTER SCORE
+===================================================== */
+
+function scoreAgainst(candidate,enemy){
+
+  const c=ROLES[candidate.name]||[];
+  const e=ROLES[enemy.name]||[];
+
+  let score=0;
+
+  if(e.includes("Carry") && c.includes("Disabler"))
+    score+=9;
+
+  if(e.includes("Carry") && c.includes("Nuker"))
+    score+=5;
+
+  if(e.includes("Nuker") && c.includes("Durable"))
+    score+=7;
+
+  if(e.includes("Nuker") && c.includes("Escape"))
+    score+=4;
+
+  if(e.includes("Carry") && c.includes("Initiator"))
+    score+=4;
+
+  if(c.includes("Push"))
+    score+=2;
+
+  if(c.includes("Durable") && e.includes("Carry"))
+    score+=2;
+
+  return score;
+}
+
+
+/* =====================================================
+   RECOMMENDATIONS
+===================================================== */
+
+function renderRecommendations(){
+
+  const box=
+    document.getElementById("recommendations");
+
+  const enemyList=
+    enemies.filter(Boolean);
+
+  if(!enemyList.length){
+
+    box.innerHTML=`
+      <div class="empty">
+        Добавь врагов выше —<br>
+        и здесь появятся лучшие варианты пика.
+      </div>
+    `;
+
     return;
   }
 
-  if (!state.enemies.includes(id)) {
-    state.enemies.push(id);
-  }
+  let candidates=
+    HEROES.filter(hero=>{
 
-  renderEnemyHeroes();
-  renderEnemyList();
+      if(taken(hero.id))return false;
 
-  document
-    .getElementById("analyzeButton")
-    .disabled =
-      state.enemies.length === 0;
-};
+      if(enemyList.some(e=>e.id===hero.id))
+        return false;
 
+      const roles=ROLES[hero.name]||[];
 
-window.removeEnemy = function(id) {
-
-  state.enemies =
-    state.enemies.filter(
-      x => x !== id
-    );
-
-  renderEnemyHeroes();
-  renderEnemyList();
-
-  document
-    .getElementById("analyzeButton")
-    .disabled =
-      state.enemies.length === 0;
-};
-
-
-function renderEnemyList() {
-
-  document
-    .getElementById("enemyList")
-    .innerHTML =
-      state.enemies
-        .map(id => {
-
-          const hero =
-            getHero(id);
-
-          if (!hero) return "";
-
-          return `
-            <button
-              class="enemy"
-              onclick="removeEnemy(${id})"
-            >
-
-              <img
-                src="${image(hero)}"
-                alt=""
-              >
-
-              ${escapeHTML(hero.name)}
-              ×
-
-            </button>
-          `;
-
-        })
-        .join("");
-}
-
-
-/*
-====================================================
- DRAFT ANALYSIS
-====================================================
-*/
-
-function calculateDraft() {
-
-  const enemies =
-    state.enemies
-      .map(getHero)
-      .filter(Boolean);
-
-  const candidates =
-    HEROES.filter(hero =>
-      !state.enemies.includes(hero.id)
-    );
-
-  const results =
-    candidates.map(candidate => {
-
-      let score = 0;
-      let reasons = [];
-
-      enemies.forEach(enemy => {
-
-        const isCounter =
-          enemy.counters
-            .some(
-              name =>
-                name.toLowerCase() ===
-                candidate.name.toLowerCase()
-            );
-
-        if (isCounter) {
-
-          score += 18;
-
-          reasons.push(
-            `хорош против ${enemy.name}`
-          );
-
-        }
-
-        /*
-        Role-based bonuses
-        */
-
-        if (
-          enemy.roles.includes("carry") &&
-          candidate.roles.includes("disabler")
-        ) {
-
-          score += 3;
-
-        }
-
-        if (
-          enemy.roles.includes("nuker") &&
-          candidate.roles.includes("durable")
-        ) {
-
-          score += 3;
-
-        }
-
-        if (
-          enemy.roles.includes("escape") &&
-          candidate.roles.includes("disabler")
-        ) {
-
-          score += 3;
-
-        }
-
-      });
-
-      /*
-      Position bonuses
-      */
-
-      const position =
-        state.position;
-
-      if (
-        position === "1" &&
-        candidate.roles.includes("carry")
-      ) {
-        score += 4;
-      }
-
-      if (
-        position === "2" &&
-        candidate.roles.includes("nuker")
-      ) {
-        score += 3;
-      }
-
-      if (
-        position === "3" &&
-        candidate.roles.includes("durable")
-      ) {
-        score += 4;
-      }
-
-      if (
-        (position === "4" ||
-         position === "5") &&
-        candidate.roles.includes("support")
-      ) {
-        score += 4;
-      }
-
-      /*
-      Slight general role bonus
-      */
-
-      if (
-        candidate.roles.includes("disabler")
-      ) {
-        score += 1;
-      }
-
-      return {
-        hero: candidate,
-        score,
-        reasons
-      };
+      return roles.includes(String(position));
 
     });
 
 
-  return results
-    .sort(
-      (a,b) =>
-        b.score - a.score
-    )
-    .slice(0, 15);
+  candidates=candidates.map(hero=>{
+
+    let score=0;
+
+    enemyList.forEach(enemy=>{
+      score+=scoreAgainst(hero,enemy);
+    });
+
+    const roles=ROLES[hero.name]||[];
+
+    if(position===1 && roles.includes("Carry"))
+      score+=5;
+
+    if(position===2 && roles.includes("Nuker"))
+      score+=4;
+
+    if(position===3 && roles.includes("Durable"))
+      score+=5;
+
+    if((position===4||position===5)&&roles.includes("Support"))
+      score+=5;
+
+    if(roles.includes("Disabler"))
+      score+=1;
+
+    return {hero,score};
+
+  })
+  .sort((a,b)=>b.score-a.score)
+  .slice(0,8);
+
+
+  box.innerHTML=candidates.map((item,i)=>{
+
+    const roles=
+      (ROLES[item.hero.name]||[])
+        .filter(x=>!["1","2","3","4","5"].includes(x))
+        .slice(0,3)
+        .join(" • ");
+
+    return `
+      <div class="recommendation">
+
+        <div class="rank">
+          #${i+1}
+        </div>
+
+        ${imgHTML(item.hero,"rec-img")}
+
+        <div class="rec-info">
+
+          <div class="rec-name">
+            ${item.hero.name}
+          </div>
+
+          <div class="rec-reason">
+            ${roles||"Flexible pick"} • strong draft fit
+          </div>
+
+        </div>
+
+        <div class="score">
+          ${item.score}
+          <small>SCORE</small>
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
 }
 
 
-function analyzeDraft() {
+/* =====================================================
+   COUNTER FINDER
+===================================================== */
 
-  const status =
-    document.getElementById(
-      "draftStatus"
-    );
+function renderCounterHeroes(){
 
-  const results =
-    document.getElementById(
-      "draftResults"
-    );
-
-  status.textContent =
-    "Анализирую состав...";
-
-  status.classList.add("loading");
-
-  setTimeout(() => {
-
-    const data =
-      calculateDraft();
-
-    status.classList.remove(
-      "loading"
-    );
-
-    if (!data.length) {
-
-      status.textContent =
-        "Не удалось найти пики.";
-
-      return;
-    }
-
-    status.textContent =
-      "Лучшие варианты:";
-
-    results.innerHTML =
-      data
-        .map((item,index) => {
-
-          const reason =
-            item.reasons.length
-              ? item.reasons
-                  .slice(0,2)
-                  .join(" · ")
-              : "хороший универсальный пик";
-
-          return `
-
-            <div class="result">
-
-              <img
-                src="${image(item.hero)}"
-                alt=""
-              >
-
-              <div class="result-main">
-
-                <div class="result-name">
-                  #${index + 1}
-                  ${escapeHTML(
-                    item.hero.name
-                  )}
-                </div>
-
-                <div class="result-meta">
-                  ${escapeHTML(reason)}
-                </div>
-
-              </div>
-
-              <div class="result-right">
-
-                ${item.score}
-
-                <small>
-                  score
-                </small>
-
-              </div>
-
-            </div>
-
-          `;
-
-        })
-        .join("");
-
-  }, 250);
-
-}
-
-
-document
-  .getElementById("analyzeButton")
-  .onclick =
-    analyzeDraft;
-
-
-/*
-====================================================
- COUNTER FINDER
-====================================================
-*/
-
-function renderCounterHeroes() {
-
-  const search =
-    document
-      .getElementById("counterSearch")
+  const query=
+    document.getElementById("counterSearch")
       .value
       .toLowerCase()
       .trim();
 
-  const heroes =
-    HEROES
-      .filter(hero =>
-        hero.name
-          .toLowerCase()
-          .includes(search)
-      )
-      .slice(0,48);
+  const list=
+    HEROES.filter(h=>
+      h.name.toLowerCase().includes(query)
+    );
 
-  document
-    .getElementById("counterGrid")
-    .innerHTML =
-      heroes
-        .map(hero =>
-          heroCard(
-            hero,
-            state.counterHero === hero.id,
-            "selectCounterHero"
-          )
-        )
-        .join("");
+  document.getElementById("counterHeroes")
+    .innerHTML=list.map(hero=>{
+
+      return `
+        <button
+          class="hero ${counterTarget?.id===hero.id?"selected":""}"
+          onclick="selectCounter(${hero.id})"
+        >
+
+          ${imgHTML(hero)}
+
+          <div class="hero-name">
+            ${hero.name}
+          </div>
+
+        </button>
+      `;
+
+    }).join("");
 }
 
 
-window.selectCounterHero =
-  function(id) {
+function selectCounter(id){
 
-    state.counterHero = id;
+  counterTarget=
+    HEROES.find(h=>h.id===id);
 
-    renderCounterHeroes();
+  renderCounterHeroes();
+  renderCounterResult();
+}
 
-    const hero =
-      getHero(id);
 
-    if (!hero) return;
+/* =====================================================
+   COUNTER RESULT
+===================================================== */
 
-    const status =
-      document.getElementById(
-        "counterStatus"
-      );
+function renderCounterResult(){
 
-    status.textContent =
-      `Контрпики против ${hero.name}:`;
+  const box=
+    document.getElementById("counterResult");
 
-    const results =
-      document.getElementById(
-        "counterResults"
-      );
+  if(!counterTarget){
 
-    const counters =
-      hero.counters
-        .map(name =>
-          getHeroByName(name)
-        )
-        .filter(Boolean);
+    box.innerHTML="";
+    return;
+  }
 
-    results.innerHTML =
-      counters
-        .map((counter,index) => {
 
-          let reason =
-            "имеет favourable matchup";
+  let counters=
+    HEROES
+      .filter(h=>h.id!==counterTarget.id)
+      .map(hero=>({
+        hero,
+        score:scoreAgainst(hero,counterTarget)
+      }))
+      .sort((a,b)=>b.score-a.score)
+      .slice(0,8);
 
-          if (
-            counter.roles.includes(
-              "disabler"
-            )
-          ) {
-            reason =
-              "может надёжно контролировать цель";
-          }
 
-          else if (
-            counter.roles.includes(
-              "nuker"
-            )
-          ) {
-            reason =
-              "может быстро наносить burst-урон";
-          }
+  const roles=
+    ROLES[counterTarget.name]||[];
 
-          else if (
-            counter.roles.includes(
-              "durable"
-            )
-          ) {
-            reason =
-              "лучше переживает длительный бой";
-          }
+
+  box.innerHTML=`
+
+    <div class="card">
+
+      <div class="counter-hero">
+
+        ${imgHTML(counterTarget)}
+
+        <div>
+
+          <div class="counter-hero-name">
+            ${counterTarget.name}
+          </div>
+
+          <div class="counter-hero-role">
+            ${roles.join(" • ")}
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-head">
+
+        <div class="title">
+          🎯 BEST COUNTERS
+        </div>
+
+        <div class="hint">
+          Top 8
+        </div>
+
+      </div>
+
+      <div class="counter-result">
+
+        ${counters.map((item,i)=>{
+
+          const r=
+            ROLES[item.hero.name]||[];
+
+          let reason=
+            "полезный набор инструментов против этого героя.";
+
+          if(r.includes("Disabler"))
+            reason=
+              "контроль позволяет ограничить действия противника.";
+
+          if(r.includes("Nuker"))
+            reason=
+              "burst-урон помогает быстро наказывать уязвимые окна.";
+
+          if(r.includes("Durable"))
+            reason=
+              "высокая выживаемость позволяет пережить основной урон.";
+
+          if(r.includes("Escape"))
+            reason=
+              "мобильность помогает избегать опасных ситуаций.";
 
           return `
 
-            <div class="result">
+            <div class="recommendation">
 
-              <img
-                src="${image(counter)}"
-                alt=""
-              >
+              <div class="rank">
+                #${i+1}
+              </div>
 
-              <div class="result-main">
+              ${imgHTML(item.hero,"rec-img")}
 
-                <div class="result-name">
-                  #${index + 1}
-                  ${escapeHTML(
-                    counter.name
-                  )}
+              <div class="rec-info">
+
+                <div class="rec-name">
+                  ${item.hero.name}
                 </div>
 
-                <div class="result-meta">
+                <div class="reason-box">
                   ${reason}
                 </div>
 
               </div>
 
-              <div class="result-right">
-
-                ${counter.roles
-                  .slice(0,2)
-                  .join(" · ")}
-
+              <div class="score">
+                ${item.score}
+                <small>SCORE</small>
               </div>
 
             </div>
 
           `;
 
-        })
-        .join("");
+        }).join("")}
 
-  };
+      </div>
 
+    </div>
 
-/*
-====================================================
- SEARCH
-====================================================
-*/
-
-document
-  .getElementById("myHeroSearch")
-  .oninput =
-    renderMyHeroes;
+  `;
+}
 
 
-document
-  .getElementById("enemySearch")
-  .oninput =
-    renderEnemyHeroes;
+/* =====================================================
+   START
+===================================================== */
 
-
-document
-  .getElementById("counterSearch")
-  .oninput =
-    renderCounterHeroes;
-
-
-/*
-====================================================
- START
-====================================================
-*/
-
-renderMyHeroes();
-
-renderEnemyHeroes();
-
+renderHeroes();
+renderTeam();
+renderEnemies();
+renderRecommendations();
 renderCounterHeroes();
 
 </script>
