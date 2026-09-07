@@ -1,37 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#08090d">
-<title>D2 Counter Picker</title>
+<meta charset="utf-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#090b10">
+<title>Dota Draft AI — Counter & Meta</title>
 
 <style>
 :root{
-  --bg:#08090d;
-  --panel:#10131a;
-  --panel2:#151923;
-  --border:#252b36;
-  --text:#f5f7fa;
-  --muted:#8993a4;
-  --accent:#795cff;
-  --green:#35d997;
-  --red:#ff5e73;
-  --yellow:#f3c95b;
-  --blue:#55a9ff;
+  --bg:#090b10;
+  --panel:#11151d;
+  --panel2:#171c26;
+  --panel3:#1d2430;
+  --border:#2a3342;
+  --text:#f2f5f9;
+  --muted:#8f9aaa;
+  --green:#42d392;
+  --red:#ff6677;
+  --yellow:#f2c94c;
+  --blue:#61a8ff;
+  --purple:#a78bfa;
+  --shadow:0 12px 35px rgba(0,0,0,.35);
 }
 
 *{box-sizing:border-box}
 
 html,body{
   margin:0;
+  padding:0;
   background:var(--bg);
   color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+    "SF Pro Text",Inter,Arial,sans-serif;
+  min-height:100%;
 }
 
 body{
-  padding-bottom:88px;
+  padding-bottom:calc(78px + env(safe-area-inset-bottom));
 }
 
 button,input{
@@ -39,353 +45,313 @@ button,input{
 }
 
 button{
-  -webkit-tap-highlight-color:transparent;
+  border:0;
+  color:inherit;
 }
 
-.header{
-  position:sticky;
-  top:0;
-  z-index:50;
-  background:rgba(8,9,13,.94);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--border);
+a{
+  color:inherit;
+  text-decoration:none;
 }
 
-.header-inner{
-  max-width:1100px;
-  margin:auto;
-  min-height:58px;
-  padding:9px 14px;
+.app{
+  width:100%;
+  max-width:900px;
+  margin:0 auto;
+  padding:14px 12px 30px;
+}
+
+header{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
 }
 
 .logo{
-  font-size:14px;
-  font-weight:950;
-  letter-spacing:.08em;
+  font-weight:900;
+  font-size:20px;
+  letter-spacing:-.5px;
 }
 
-.logo span{
-  color:var(--accent);
+.status{
+  font-size:11px;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
 
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:16px 13px 30px;
+.dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--yellow);
 }
 
-.page{
-  display:none;
+.dot.ok{
+  background:var(--green);
 }
 
-.page.active{
-  display:block;
+.dot.bad{
+  background:var(--red);
 }
 
-h1{
-  margin:3px 0 3px;
-  font-size:28px;
+.tabs{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom:12px;
 }
 
-h2{
-  margin:0;
-  font-size:19px;
-}
-
-.subtitle{
+.tab{
+  min-height:42px;
+  border-radius:12px;
+  background:var(--panel);
+  border:1px solid var(--border);
   color:var(--muted);
   font-size:12px;
-  line-height:1.45;
-  margin-bottom:18px;
+  font-weight:800;
 }
 
-.section{
-  margin-top:20px;
-}
-
-.section-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:9px;
+.tab.active{
+  color:var(--text);
+  background:var(--panel2);
+  border-color:#3a4658;
 }
 
 .card{
   background:var(--panel);
   border:1px solid var(--border);
-  border-radius:15px;
-  padding:13px;
+  border-radius:17px;
+  box-shadow:var(--shadow);
+  padding:12px;
+  margin-bottom:10px;
+}
+
+.section-title{
+  font-size:15px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.sub{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.source-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:8px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  padding:0 8px;
+  border-radius:8px;
+  background:var(--panel3);
+  color:#b7c1cf;
+  font-size:10px;
+  font-weight:800;
+}
+
+.badge.green{
+  color:#7ff0b9;
+}
+
+.badge.yellow{
+  color:#f5d66c;
+}
+
+.badge.red{
+  color:#ff8794;
 }
 
 .team-grid{
   display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.team-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+
+.team-title strong{
+  font-size:13px;
+}
+
+.role-list{
+  display:grid;
   gap:7px;
 }
 
-.slot{
-  min-width:0;
-  min-height:106px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:var(--panel);
+.role-slot{
   position:relative;
-  padding:7px 5px;
-}
-
-.slot.filled{
-  border-color:#46378d;
-  background:#121226;
-}
-
-.slot-main{
-  width:100%;
-  border:0;
-  background:none;
-  color:inherit;
-  padding:0;
-}
-
-.slot-role{
-  color:var(--muted);
-  font-size:10px;
-  font-weight:800;
-  margin-bottom:5px;
-}
-
-.slot-img,
-.rec-img{
-  width:54px;
-  height:54px;
-  object-fit:cover;
-  border-radius:9px;
-  background:#1b2028;
-}
-
-.slot-empty{
-  width:54px;
-  height:54px;
-  margin:auto;
+  min-height:61px;
+  border-radius:13px;
+  border:1px dashed #354153;
+  background:#0e1219;
   display:flex;
   align-items:center;
-  justify-content:center;
-  border:1px dashed #3b4351;
-  border-radius:9px;
-  color:var(--muted);
-  font-size:22px;
+  gap:8px;
+  padding:7px;
+  cursor:pointer;
 }
 
-.slot-name{
-  margin-top:4px;
+.role-slot.filled{
+  border-style:solid;
+  border-color:#3a4658;
+  background:#151a23;
+}
+
+.role-slot img{
+  width:48px;
+  height:48px;
+  border-radius:9px;
+  object-fit:cover;
+  background:#202734;
+  flex:none;
+}
+
+.role-empty{
+  color:#697486;
+  font-size:11px;
+  line-height:1.25;
+}
+
+.role-name{
   font-size:10px;
-  font-weight:800;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+
+.hero-name{
+  font-size:12px;
+  font-weight:900;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
-.remove-btn{
+.remove{
   position:absolute;
-  top:4px;
-  right:4px;
-  width:23px;
-  height:23px;
-  border:0;
-  border-radius:50%;
-  background:#252b36;
-  color:#fff;
-  font-size:15px;
-  line-height:23px;
-  padding:0;
-  z-index:2;
-}
-
-.enemy-grid{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:7px;
-}
-
-@media(max-width:620px){
-  .team-grid,
-  .enemy-grid{
-    grid-template-columns:repeat(5,70px);
-    overflow-x:auto;
-    padding-bottom:3px;
-  }
+  right:5px;
+  top:5px;
+  width:27px;
+  height:27px;
+  border-radius:9px;
+  background:rgba(255,255,255,.08);
+  color:#c5ced9;
+  font-weight:900;
 }
 
 .actions{
-  display:flex;
-  flex-wrap:wrap;
+  display:grid;
+  grid-template-columns:1fr 1fr;
   gap:8px;
-  margin-top:15px;
+  margin-top:10px;
 }
 
-.primary,
-.secondary{
+.btn{
+  min-height:44px;
   border-radius:12px;
-  padding:11px 14px;
-  font-weight:850;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  font-size:12px;
+  font-weight:900;
 }
 
-.primary{
-  border:0;
-  background:var(--accent);
-  color:#fff;
+.btn.primary{
+  background:var(--green);
+  color:#07140d;
+  border-color:transparent;
 }
 
-.primary:disabled{
+.btn:disabled{
   opacity:.35;
 }
 
-.secondary{
-  border:1px solid var(--border);
-  background:var(--panel2);
-  color:#fff;
-}
-
-.recommendations{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:9px;
-}
-
-@media(max-width:720px){
-  .recommendations{
-    grid-template-columns:1fr;
-  }
-}
-
-.rec{
-  width:100%;
+.search-box{
   display:flex;
-  align-items:center;
-  gap:10px;
-  text-align:left;
-  color:#fff;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:10px;
+  gap:8px;
+  margin-bottom:10px;
 }
 
-.rec:active{
-  background:#181d28;
-}
-
-.rec-info{
-  min-width:0;
-  flex:1;
-}
-
-.rec-name{
-  font-weight:900;
-  font-size:13px;
-}
-
-.rec-score{
-  font-size:20px;
-  font-weight:950;
-  margin-top:2px;
-}
-
-.badges{
-  display:flex;
-  flex-wrap:wrap;
-  gap:4px;
-  margin-top:5px;
-}
-
-.badge{
-  border-radius:6px;
-  background:#1c222d;
-  color:#adb7c6;
-  font-size:9px;
-  padding:3px 6px;
-}
-
-.badge.green{color:var(--green)}
-.badge.red{color:var(--red)}
-.badge.blue{color:var(--blue)}
-.badge.yellow{color:var(--yellow)}
-
-.reason{
-  color:#b9c1ce;
-  font-size:10px;
-  line-height:1.35;
-  margin-top:5px;
-}
-
-.search{
+.search-box input{
   width:100%;
-  border:1px solid var(--border);
-  background:var(--panel);
-  color:#fff;
+  min-height:44px;
   border-radius:12px;
-  padding:12px;
-  outline:none;
+  border:1px solid var(--border);
+  outline:0;
+  background:#0c1017;
+  color:var(--text);
+  padding:0 13px;
 }
 
 .hero-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(76px,1fr));
+  grid-template-columns:repeat(4,1fr);
   gap:7px;
-  max-height:68vh;
+  max-height:62vh;
   overflow:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
-.hero-btn{
-  border:1px solid var(--border);
-  background:var(--panel);
-  color:#fff;
-  border-radius:10px;
-  padding:6px 4px;
+.hero-pick{
   min-width:0;
+  border:1px solid #293342;
+  background:#121721;
+  border-radius:11px;
+  padding:5px;
+  text-align:left;
 }
 
-.hero-btn.selected{
-  opacity:.27;
-  pointer-events:none;
-}
-
-.hero-btn img{
-  width:57px;
-  height:57px;
-  border-radius:9px;
+.hero-pick img{
+  width:100%;
+  aspect-ratio:1.45;
   object-fit:cover;
+  border-radius:8px;
+  background:#202734;
 }
 
-.hero-btn-name{
+.hero-pick .pick-name{
   font-size:9px;
-  font-weight:700;
+  font-weight:800;
+  margin-top:4px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  margin-top:3px;
+}
+
+.hero-pick .pick-role{
+  font-size:8px;
+  color:var(--muted);
+  margin-top:2px;
 }
 
 .overlay{
   position:fixed;
   inset:0;
   z-index:100;
+  background:rgba(4,6,9,.94);
   display:none;
-  background:rgba(5,6,10,.97);
+  padding:
+    max(12px,env(safe-area-inset-top))
+    10px
+    max(12px,env(safe-area-inset-bottom));
 }
 
-.overlay.open{
-  display:block;
-}
-
-.overlay-inner{
-  height:100%;
-  max-width:1050px;
-  margin:auto;
-  padding:11px;
+.overlay.show{
   display:flex;
   flex-direction:column;
 }
@@ -393,166 +359,320 @@ h2{
 .overlay-head{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
   margin-bottom:10px;
+}
+
+.overlay-head strong{
+  flex:1;
+  font-size:15px;
 }
 
 .close{
   width:42px;
   height:42px;
+  border-radius:12px;
+  background:var(--panel2);
   border:1px solid var(--border);
-  background:var(--panel);
-  color:#fff;
-  border-radius:11px;
-  font-size:21px;
+  font-size:20px;
 }
 
-.overlay-title{
-  font-size:17px;
+.picker-filter{
+  display:flex;
+  gap:6px;
+  overflow:auto;
+  margin-bottom:9px;
+}
+
+.filter{
+  flex:none;
+  padding:8px 10px;
+  border-radius:9px;
+  background:var(--panel2);
+  color:var(--muted);
+  border:1px solid var(--border);
+  font-size:10px;
+  font-weight:800;
+}
+
+.filter.active{
+  color:var(--text);
+  border-color:#52627a;
+}
+
+.overlay .hero-grid{
+  flex:1;
+  max-height:none;
+}
+
+.counter-search{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+}
+
+.counter-search input{
+  min-height:46px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#0c1017;
+  color:var(--text);
+  outline:0;
+  padding:0 12px;
+}
+
+.counter-search button{
+  min-width:90px;
+  border-radius:12px;
+  background:var(--green);
+  color:#07140d;
+  font-size:11px;
   font-weight:900;
 }
 
-.counter-result{
-  margin-top:15px;
-}
-
-.counter-target{
+.target-card{
   display:flex;
-  gap:11px;
   align-items:center;
-  margin-bottom:12px;
+  gap:10px;
+  margin-top:10px;
 }
 
-.counter-target img{
-  width:62px;
-  height:62px;
-  border-radius:10px;
+.target-card img{
+  width:58px;
+  height:58px;
+  object-fit:cover;
+  border-radius:11px;
 }
 
-.counter-list{
+.results{
   display:grid;
   gap:7px;
+  margin-top:10px;
 }
 
-.counter-row{
-  display:flex;
-  align-items:center;
+.counter-item{
+  display:grid;
+  grid-template-columns:50px 1fr auto;
   gap:9px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:12px;
+  align-items:center;
   padding:8px;
+  border-radius:13px;
+  background:#121721;
+  border:1px solid #293342;
 }
 
-.counter-row img{
-  width:46px;
-  height:46px;
+.counter-item img{
+  width:50px;
+  height:42px;
   border-radius:8px;
   object-fit:cover;
 }
 
 .counter-main{
-  flex:1;
   min-width:0;
 }
 
 .counter-name{
   font-size:12px;
-  font-weight:850;
+  font-weight:900;
 }
 
-.small{
+.counter-meta{
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
+  margin-top:3px;
+}
+
+.adv{
+  font-size:13px;
+  font-weight:900;
+  color:var(--green);
+  text-align:right;
+}
+
+.win{
+  color:#aeb8c5;
+  font-size:9px;
+  margin-top:3px;
+  text-align:right;
+}
+
+.recommendations{
+  display:grid;
+  gap:8px;
+}
+
+.rec{
+  display:grid;
+  grid-template-columns:58px 1fr auto;
+  gap:9px;
+  align-items:center;
+  padding:8px;
+  background:#121721;
+  border:1px solid #293342;
+  border-radius:14px;
+}
+
+.rec img{
+  width:58px;
+  height:48px;
+  border-radius:9px;
+  object-fit:cover;
+}
+
+.rec-name{
+  font-size:13px;
+  font-weight:900;
+}
+
+.rec-role{
+  font-size:9px;
+  color:var(--muted);
   margin-top:2px;
 }
 
-.counter-value{
-  font-size:16px;
-  font-weight:950;
+.rec-reasons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:5px;
 }
 
-.good{color:var(--green)}
-.bad{color:var(--red)}
-.neutral{color:var(--muted)}
+.reason{
+  padding:3px 5px;
+  border-radius:6px;
+  background:#202835;
+  color:#aeb9c7;
+  font-size:8px;
+  font-weight:800;
+}
+
+.reason.counter{
+  color:#79e8ad;
+}
+
+.reason.bad{
+  color:#ff8593;
+}
+
+.rec-score{
+  text-align:right;
+}
+
+.rec-score strong{
+  display:block;
+  font-size:16px;
+}
+
+.rec-score span{
+  color:var(--muted);
+  font-size:8px;
+}
+
+.rec-pick{
+  margin-top:5px;
+  min-height:31px;
+  padding:0 8px;
+  border-radius:8px;
+  background:var(--green);
+  color:#07140d;
+  font-size:9px;
+  font-weight:900;
+}
 
 .matrix-wrap{
   overflow:auto;
-  border:1px solid var(--border);
-  border-radius:13px;
+  -webkit-overflow-scrolling:touch;
 }
 
 .matrix{
-  border-collapse:collapse;
-  min-width:650px;
+  border-collapse:separate;
+  border-spacing:3px;
+  min-width:620px;
   width:100%;
 }
 
 .matrix th,
 .matrix td{
-  border:1px solid var(--border);
-  padding:8px 6px;
+  min-width:70px;
+  height:52px;
+  border-radius:8px;
+  background:#121721;
   text-align:center;
-  font-size:10px;
+  font-size:9px;
 }
 
 .matrix th{
-  background:#151a22;
-  font-weight:800;
+  background:#1a202b;
+  font-weight:900;
 }
 
-.matrix th:first-child,
-.matrix td:first-child{
-  position:sticky;
-  left:0;
-  z-index:2;
-  background:#151a22;
+.matrix .hero-head{
+  min-width:100px;
 }
 
-.cell-good{
+.matrix img{
+  width:35px;
+  height:27px;
+  border-radius:5px;
+  object-fit:cover;
+  display:block;
+  margin:0 auto 3px;
+}
+
+.plus{
   color:var(--green);
-  background:rgba(53,217,151,.11);
   font-weight:900;
 }
 
-.cell-bad{
+.minus{
   color:var(--red);
-  background:rgba(255,94,115,.11);
   font-weight:900;
 }
 
-.cell-mid{
-  color:var(--muted);
+.neutral{
+  color:#687486;
 }
 
-.analysis-summary{
+.synergy{
+  color:var(--blue);
+  font-weight:900;
+}
+
+.analysis-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:1fr 1fr;
   gap:8px;
 }
 
-@media(max-width:600px){
-  .analysis-summary{
-    grid-template-columns:1fr;
-  }
+.stat-box{
+  background:#121721;
+  border:1px solid #293342;
+  border-radius:13px;
+  padding:10px;
 }
 
-.summary{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px;
-}
-
-.summary-label{
+.stat-label{
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
 }
 
-.summary-value{
-  font-size:23px;
-  font-weight:950;
-  margin-top:3px;
+.stat-value{
+  margin-top:4px;
+  font-size:18px;
+  font-weight:900;
+}
+
+.danger{
+  border-left:3px solid var(--red);
+  padding-left:9px;
+  margin:8px 0;
+}
+
+.good{
+  border-left:3px solid var(--green);
+  padding-left:9px;
+  margin:8px 0;
 }
 
 .meta-tabs{
@@ -563,100 +683,102 @@ h2{
 }
 
 .meta-tab{
-  white-space:nowrap;
-  border:1px solid var(--border);
-  background:var(--panel);
-  color:var(--muted);
-  border-radius:9px;
+  flex:none;
   padding:8px 11px;
+  border-radius:9px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:10px;
+  font-weight:900;
 }
 
 .meta-tab.active{
-  color:#fff;
-  border-color:#4f40a0;
-  background:#211c3b;
+  color:var(--text);
+  border-color:#53637b;
 }
 
-.meta-row{
-  display:flex;
+.meta-list{
+  display:grid;
+  gap:7px;
+}
+
+.meta-item{
+  display:grid;
+  grid-template-columns:45px 1fr auto;
+  gap:8px;
   align-items:center;
-  gap:9px;
-  padding:8px 0;
-  border-bottom:1px solid var(--border);
+  background:#121721;
+  border:1px solid #293342;
+  border-radius:12px;
+  padding:7px;
 }
 
-.meta-row:last-child{
-  border-bottom:0;
-}
-
-.meta-rank{
-  width:24px;
-  color:var(--muted);
-}
-
-.meta-row img{
+.meta-item img{
   width:45px;
-  height:45px;
-  border-radius:8px;
-}
-
-.meta-info{
-  flex:1;
+  height:37px;
+  object-fit:cover;
+  border-radius:7px;
 }
 
 .meta-name{
-  font-size:12px;
-  font-weight:850;
+  font-size:11px;
+  font-weight:900;
 }
 
-.source{
+.meta-sub{
+  font-size:8px;
   color:var(--muted);
-  font-size:9px;
-  line-height:1.45;
+  margin-top:3px;
 }
 
-.loading{
-  padding:15px;
+.meta-rating{
+  text-align:right;
+  font-size:14px;
+  font-weight:900;
+}
+
+.meta-rating small{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:700;
+}
+
+.footer{
   text-align:center;
-  color:var(--muted);
+  padding:18px 5px 8px;
+  color:#697486;
+  font-size:10px;
 }
 
-.spinner{
-  display:inline-block;
-  width:14px;
-  height:14px;
-  border:2px solid #303744;
-  border-top-color:var(--accent);
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-  vertical-align:-3px;
-  margin-right:5px;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
+.footer a{
+  color:#8fb9ff;
+  font-weight:900;
 }
 
 .toast{
   position:fixed;
   left:50%;
-  bottom:88px;
-  z-index:200;
-  transform:translate(-50%,20px);
+  bottom:calc(84px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(20px);
   opacity:0;
-  background:#1b202a;
-  border:1px solid var(--border);
-  color:#fff;
-  border-radius:11px;
-  padding:10px 13px;
-  font-size:11px;
-  transition:.2s;
   pointer-events:none;
+  z-index:300;
+  max-width:90%;
+  padding:10px 14px;
+  border-radius:11px;
+  background:#202733;
+  border:1px solid #394557;
+  box-shadow:var(--shadow);
+  font-size:11px;
+  font-weight:800;
+  transition:.2s;
 }
 
 .toast.show{
   opacity:1;
-  transform:translate(-50%,0);
+  transform:translateX(-50%) translateY(0);
 }
 
 .bottom-nav{
@@ -664,325 +786,145 @@ h2{
   left:0;
   right:0;
   bottom:0;
-  z-index:60;
+  z-index:80;
+  background:rgba(10,13,18,.94);
+  backdrop-filter:blur(16px);
+  border-top:1px solid #252e3a;
+  padding:7px 8px max(7px,env(safe-area-inset-bottom));
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  background:rgba(10,12,17,.97);
-  border-top:1px solid var(--border);
-  padding:6px 7px calc(6px + env(safe-area-inset-bottom));
+  gap:5px;
 }
 
-.nav-btn{
-  border:0;
-  background:none;
-  color:var(--muted);
-  padding:5px 2px;
+.bottom-nav button{
+  min-height:46px;
+  border-radius:10px;
+  background:transparent;
+  color:#778293;
   font-size:9px;
-  font-weight:800;
+  font-weight:900;
 }
 
-.nav-btn.active{
-  color:#fff;
+.bottom-nav button.active{
+  color:var(--text);
+  background:#181e28;
 }
 
-.nav-icon{
-  display:block;
-  font-size:17px;
-  margin-bottom:1px;
+.loading{
+  padding:16px;
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
 }
 
-.d2pt{
-  display:block;
-  text-decoration:none;
-  color:#fff;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:12px;
-  margin-bottom:10px;
+.empty{
+  padding:16px;
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+}
+
+@media(min-width:650px){
+  .hero-grid{
+    grid-template-columns:repeat(6,1fr);
+  }
+}
+
+@media(max-width:420px){
+  .team-grid{
+    grid-template-columns:1fr;
+  }
+
+  .hero-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header class="header">
-  <div class="header-inner">
-    <div class="logo">D2 <span>COUNTER PICKER</span></div>
-    <button class="secondary" onclick="resetDraft()">Сбросить</button>
+<div class="app">
+
+<header>
+  <div>
+    <div class="logo">DOTA DRAFT AI</div>
+    <div class="sub">7.41e · Counter / Synergy / Meta</div>
+  </div>
+
+  <div class="status">
+    <span class="dot" id="statusDot"></span>
+    <span id="statusText">загрузка героев…</span>
   </div>
 </header>
 
+<div class="tabs">
+  <button class="tab active" data-tab="draft">Драфт</button>
+  <button class="tab" data-tab="counters">Контрпики</button>
+  <button class="tab" data-tab="meta">Мета</button>
+  <button class="tab" data-tab="analysis">Разбор</button>
+</div>
 
-<main class="container">
+<main id="content"></main>
 
-<!-- =====================================================
-     DRAFT
-===================================================== -->
-
-<section id="page-draft" class="page active">
-
-  <h1>Драфт</h1>
-
-  <div class="subtitle">
-    Выбирай любых героев. Рекомендации учитывают позицию,
-    текущую мету, синергию и контрпики уже выбранных врагов.
+<div class="footer">
+  <div>Источники: D2PT 7k+ · Dotabuff · OpenDota fallback</div>
+  <div style="margin-top:7px">
+    <a href="https://t.me/painiso" target="_blank" rel="noopener">
+      Telegram @painiso
+    </a>
   </div>
-
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2>Твоя команда</h2>
-      <span id="draft-status" class="badge">готово</span>
-    </div>
-
-    <div id="my-team" class="team-grid"></div>
-
-  </div>
-
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2>Команда врага</h2>
-    </div>
-
-    <div id="enemy-team" class="enemy-grid"></div>
-
-  </div>
-
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2 id="recommend-title">Рекомендации</h2>
-      <span class="badge blue">LIVE ENGINE</span>
-    </div>
-
-    <div id="recommendations" class="recommendations"></div>
-
-  </div>
-
-
-  <div class="actions">
-
-    <button
-      id="finish-btn"
-      class="primary"
-      onclick="finishDraft()"
-      disabled>
-      Завершить драфт
-    </button>
-
-    <button
-      class="secondary"
-      onclick="openPicker('enemy',findEmptyEnemy())">
-      + Враг
-    </button>
-
-  </div>
-
-
-  <div class="source">
-    Контрпики пересчитываются после каждого выбора.
-    Сетевые данные кэшируются и не блокируют интерфейс.
-  </div>
-
-</section>
-
-
-<!-- =====================================================
-     COUNTERS
-===================================================== -->
-
-<section id="page-counters" class="page">
-
-  <h1>Контрпики</h1>
-
-  <div class="subtitle">
-    Полный список героев. Данные из кэша показываются мгновенно,
-    обновление статистики идёт отдельно.
-  </div>
-
-  <input
-    id="counter-search"
-    class="search"
-    placeholder="Найти героя..."
-    oninput="renderCounterHeroes()">
-
-  <div class="section">
-    <div id="counter-heroes" class="hero-grid"></div>
-  </div>
-
-  <div id="counter-result"></div>
-
-</section>
-
-
-<!-- =====================================================
-     META
-===================================================== -->
-
-<section id="page-meta" class="page">
-
-  <h1>Meta</h1>
-
-  <div class="subtitle">
-    Role-specific D2PT meta. Никакого общего popularity score
-    вместо позиции.
-  </div>
-
-  <a
-    class="d2pt"
-    href="https://dota2protracker.com/"
-    target="_blank"
-    rel="noopener">
-    <b>Dota2ProTracker ↗</b>
-    <div class="source">
-      7000+ MMR / pro data / draft analysis
-    </div>
-  </a>
-
-  <div id="meta-tabs" class="meta-tabs"></div>
-
-  <div id="meta-list" class="card"></div>
-
-</section>
-
-
-<!-- =====================================================
-     ANALYSIS
-===================================================== -->
-
-<section id="page-analysis" class="page">
-
-  <h1>Разбор</h1>
-
-  <div class="subtitle">
-    Матрицы работают из уже загруженных данных.
-    Никаких 25 последовательных запросов.
-  </div>
-
-  <div id="analysis-summary" class="analysis-summary"></div>
-
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2>Синергия</h2>
-    </div>
-
-    <div id="synergy-matrix" class="matrix-wrap"></div>
-
-  </div>
-
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2>Контрматрица</h2>
-    </div>
-
-    <div id="counter-matrix" class="matrix-wrap"></div>
-
-  </div>
-
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2>Опасные матчапы</h2>
-    </div>
-
-    <div id="threats" class="card"></div>
-
-  </div>
-
-</section>
-
-</main>
-
-
-<!-- =====================================================
-     HERO PICKER
-===================================================== -->
-
-<div id="picker" class="overlay">
-
-  <div class="overlay-inner">
-
-    <div class="overlay-head">
-
-      <button class="close" onclick="closePicker()">×</button>
-
-      <div>
-        <div id="picker-title" class="overlay-title">
-          Выбор героя
-        </div>
-
-        <div id="picker-subtitle" class="source"></div>
-      </div>
-
-    </div>
-
-
-    <input
-      id="hero-search"
-      class="search"
-      placeholder="Поиск по полному списку..."
-      oninput="renderPicker()">
-
-
-    <div style="height:9px"></div>
-
-    <div id="picker-grid" class="hero-grid"></div>
-
-  </div>
+</div>
 
 </div>
 
+<div class="bottom-nav">
+  <button data-tab="draft" class="active">⚔️<br>Драфт</button>
+  <button data-tab="counters">🎯<br>Контры</button>
+  <button data-tab="meta">📊<br>Мета</button>
+  <button data-tab="analysis">🧠<br>Разбор</button>
+</div>
 
-<div id="toast" class="toast"></div>
+<div class="overlay" id="picker">
+  <div class="overlay-head">
+    <strong id="pickerTitle">Выбрать героя</strong>
+    <button class="close" id="closePicker">×</button>
+  </div>
 
+  <div class="search-box">
+    <input id="heroSearch" autocomplete="off" placeholder="Поиск героя…">
+  </div>
 
-<nav class="bottom-nav">
+  <div class="picker-filter">
+    <button class="filter active" data-filter="all">Все</button>
+    <button class="filter" data-filter="carry">Carry</button>
+    <button class="filter" data-filter="mid">Mid</button>
+    <button class="filter" data-filter="offlane">Offlane</button>
+    <button class="filter" data-filter="support">Support</button>
+    <button class="filter" data-filter="hard">Hard support</button>
+  </div>
 
-  <button
-    class="nav-btn active"
-    onclick="showPage('draft',this)">
-    <span class="nav-icon">⚔</span>
-    Драфт
-  </button>
+  <div class="hero-grid" id="pickerGrid"></div>
+</div>
 
-  <button
-    class="nav-btn"
-    onclick="showPage('counters',this)">
-    <span class="nav-icon">✕</span>
-    Контры
-  </button>
-
-  <button
-    class="nav-btn"
-    onclick="showPage('meta',this)">
-    <span class="nav-icon">◆</span>
-    Мета
-  </button>
-
-  <button
-    class="nav-btn"
-    onclick="showPage('analysis',this)">
-    <span class="nav-icon">▦</span>
-    Разбор
-  </button>
-
-</nav>
-
+<div class="toast" id="toast"></div>
 
 <script>
 /* =========================================================
-   CONFIG
+   DOTA DRAFT AI
+   Полная логика:
+   - полный пул героев
+   - быстрый picker
+   - свежий Dotabuff Counter Finder
+   - counter-aware draft recommendations
+   - role-aware recommendations
+   - synergy matrix
+   - progressive matchup matrix
+   - localStorage cache
 ========================================================= */
+
+const APP_VERSION = "4.0.0-counter-first";
+const PATCH = "7.41e";
 
 const HERO_SOURCE =
   "https://raw.githubusercontent.com/odota/dotaconstants/master/build/heroes.json";
@@ -990,2980 +932,3062 @@ const HERO_SOURCE =
 const OPENDOTA_HEROES =
   "https://api.opendota.com/api/heroStats";
 
-const DOTABUFF =
+const DOTABUFF_BASE =
   "https://www.dotabuff.com/heroes/";
 
-const CACHE_TIME =
-  1000 * 60 * 60;
+const CACHE_TTL = 15 * 60 * 1000;
+const META_TTL = 60 * 60 * 1000;
 
-const MATCHUP_CACHE_PREFIX =
-  "d2cp_matchup_";
+const state = {
+  heroes: [],
+  heroesById: {},
+  heroesByName: {},
+  own: [null,null,null,null,null],
+  enemy: [null,null,null,null,null],
 
-const STATE_KEY =
-  "d2cp_state_v4";
+  currentTab: "draft",
 
+  pickerSide: null,
+  pickerIndex: null,
+  pickerFilter: "all",
 
-/* =========================================================
-   STATE
-========================================================= */
+  counters: {},
+  counterLoading: {},
+  counterUpdated: {},
 
-let heroes = [];
-let heroById = {};
-let heroByName = {};
+  meta: {},
+  metaLoaded: false,
 
-let myTeam = [null,null,null,null,null];
-let enemyTeam = [null,null,null,null,null];
-
-let pickerSide = "my";
-let pickerSlot = -1;
-
-let selectedCounterHero = null;
-
-let matchupLoading = {};
-let currentMetaRole = 1;
-
-
-/* =========================================================
-   ROLE META
-========================================================= */
-
-const ROLE_META = {
-
-1:[
-["Phantom Lancer",93,52.7],
-["Lifestealer",85,51.6],
-["Necrophos",73,54.3],
-["Spectre",67,52.5],
-["Windranger",65,54.0],
-["Slark",59,52.1],
-["Juggernaut",59,51.6],
-["Shadow Fiend",57,52.8],
-["Luna",55,51.7],
-["Sven",54,51.9]
-],
-
-2:[
-["Invoker",80,53.2],
-["Keeper of the Light",74,56.4],
-["Earth Spirit",72,53.3],
-["Outworld Destroyer",57,52.4],
-["Arc Warden",56,53.4],
-["Ember Spirit",54,50.1],
-["Tinker",53,50.4],
-["Puck",52,51.7],
-["Storm Spirit",51,51.5],
-["Queen of Pain",50,51.4]
-],
-
-3:[
-["Enigma",82,58.9],
-["Dark Seer",69,52.9],
-["Pudge",68,52.7],
-["Night Stalker",66,51.4],
-["Axe",58,48.5],
-["Doom",57,49.7],
-["Magnus",55,51.8],
-["Dawnbreaker",55,52.0],
-["Mars",53,50.9],
-["Centaur Warrunner",50,51.4]
-],
-
-4:[
-["Bounty Hunter",100,56.8],
-["Spirit Breaker",71,53.2],
-["Rubick",68,49.6],
-["Mirana",53,49.3],
-["Nyx Assassin",51,52.9],
-["Pudge",47,48.7],
-["Tusk",46,51.8],
-["Techies",45,51.9],
-["Lion",44,50.8],
-["Earth Spirit",43,52.1]
-],
-
-5:[
-["Treant Protector",92,52.4],
-["Oracle",74,55.5],
-["Winter Wyvern",68,52.2],
-["Bane",63,52.2],
-["Bounty Hunter",59,54.9],
-["Lich",54,51.8],
-["Warlock",53,52.0],
-["Vengeful Spirit",51,51.4],
-["Disruptor",50,51.6],
-["Shadow Demon",49,51.2]
-]
-
+  analysis: null
 };
 
+const ROLE_NAMES = [
+  "pos1",
+  "pos2",
+  "pos3",
+  "pos4",
+  "pos5"
+];
 
-/* =========================================================
-   FAST LOCAL COUNTER DATABASE
-   =========================================================
-
-   Это не заменяет статистику Dotabuff.
-   Это мгновенный signal до прихода сети.
-
-   Формат:
-   target: [counter1,counter2,...]
-
-========================================================= */
-
-const LOCAL_COUNTERS = {
-
-"Anti-Mage":[
-["Huskar",6.16],
-["Meepo",5.66],
-["Axe",5.25],
-["Slardar",3.98],
-["Troll Warlord",3.90]
-],
-
-"Broodmother":[
-["Earthshaker",8.93],
-["Spirit Breaker",4.89],
-["Necrophos",4.80],
-["Meepo",4.53],
-["Sand King",4.34]
-],
-
-"Phantom Assassin":[
-["Axe",3.65],
-["Bristleback",3.13],
-["Pudge",2.82],
-["Templar Assassin",2.73],
-["Pangolier",2.30]
-],
-
-"Juggernaut":[
-["Omniknight",3.44],
-["Morphling",2.78],
-["Death Prophet",2.73],
-["Riki",2.69],
-["Huskar",2.69]
-],
-
-"Spirit Breaker":[
-["Underlord",4.32],
-["Tiny",3.08],
-["Clockwerk",2.49],
-["Timbersaw",2.44],
-["Mars",2.43]
-],
-
-"Shadow Fiend":[
-["Medusa",2.27],
-["Terrorblade",1.97],
-["Shadow Demon",1.91],
-["Mars",1.89],
-["Dark Seer",1.68]
-],
-
-"Outworld Destroyer":[
-["Nyx Assassin",5.51],
-["Phantom Lancer",4.20],
-["Chaos Knight",3.88],
-["Naga Siren",3.59],
-["Beastmaster",3.51]
-],
-
-"Queen of Pain":[
-["Medusa",3.69],
-["Puck",3.11],
-["Huskar",2.98],
-["Ember Spirit",2.57],
-["Riki",1.80]
-],
-
-"Bounty Hunter":[
-["Naga Siren",3.98],
-["Meepo",3.54],
-["Beastmaster",3.46],
-["Abaddon",2.55],
-["Slark",2.54]
-],
-
-"Mirana":[
-["Chen",2.69],
-["Puck",2.68],
-["Meepo",2.56],
-["Naga Siren",1.97],
-["Bounty Hunter",1.83]
-],
-
-"Silencer":[
-["Lycan",3.86],
-["Phantom Lancer",3.35],
-["Broodmother",3.11],
-["Arc Warden",3.02],
-["Chen",2.74]
-],
-
-"Abaddon":[
-["Anti-Mage",3.20],
-["Elder Titan",2.97],
-["Outworld Destroyer",2.76],
-["Undying",2.49],
-["Lycan",2.09]
-],
-
-"Kunkka":[
-["Lifestealer",3.16],
-["Timbersaw",2.98],
-["Alchemist",2.17],
-["Ember Spirit",1.99],
-["Juggernaut",1.89]
-],
-
-"Puck":[
-["Night Stalker",5.39],
-["Broodmother",5.13],
-["Dragon Knight",3.73],
-["Huskar",3.36],
-["Riki",3.29]
-],
-
-"Batrider":[
-["Weaver",2.49],
-["Slark",2.48],
-["Kez",2.41],
-["Witch Doctor",2.08],
-["Medusa",2.06]
-],
-
-"Clockwerk":[
-["Naga Siren",2.94],
-["Phantom Lancer",2.69],
-["Beastmaster",2.34],
-["Terrorblade",2.26],
-["Anti-Mage",2.21]
-],
-
-"Enigma":[
-["Bristleback",5.31],
-["Rubick",4.62],
-["Medusa",4.15],
-["Sniper",3.84],
-["Wraith King",3.17]
-],
-
-"Ancient Apparition":[
-["Arc Warden",3.51],
-["Brewmaster",3.50],
-["Phantom Lancer",3.41],
-["Lycan",3.33],
-["Spectre",3.28]
-],
-
-"Rubick":[
-["Huskar",2.33],
-["Templar Assassin",2.16],
-["Nature's Prophet",1.96],
-["Batrider",1.92],
-["Ursa",1.79]
-]
-
+const ROLE_LABELS = {
+  pos1:"Carry",
+  pos2:"Mid",
+  pos3:"Offlane",
+  pos4:"Support",
+  pos5:"Hard support"
 };
 
+/* ---------------------------------------------------------
+   D2PT snapshot / fallback role intelligence.
+   Это не единственный фактор.
+--------------------------------------------------------- */
 
-/* =========================================================
-   SYNERGY
-========================================================= */
+const META_SNAPSHOT = {
 
-const SYNERGY = {
+  pos1: [
+    ["phantom_lancer",72.8,52.0,6900],
+    ["spectre",70.8,52.9,4700],
+    ["lifestealer",69.4,50.8,9800],
+    ["windranger",68.0,54.2,2600],
+    ["necrophos",66.8,53.2,2100],
+    ["shadow_fiend",65.7,49.7,11300],
+    ["luna",64.8,51.8,5200],
+    ["sven",63.4,51.2,3900],
+    ["terrorblade",62.5,50.8,3000]
+  ],
 
-"Faceless Void":{
-"Invoker":5,
-"Snapfire":5,
-"Zeus":5,
-"Phoenix":4,
-"Jakiro":4,
-"Disruptor":4,
-"Lina":3
-},
+  pos2: [
+    ["invoker",80.0,53.2,7000],
+    ["keeper_of_the_light",74.0,56.4,2600],
+    ["earth_spirit",72.0,53.3,3400],
+    ["outworld_destroyer",57.0,52.4,5100],
+    ["arc_warden",56.0,53.4,3000],
+    ["ember_spirit",54.0,50.1,9200],
+    ["tinker",53.0,50.4,2400],
+    ["earthshaker",52.0,50.8,1800]
+  ],
 
-"Magnus":{
-"Sven":5,
-"Phantom Assassin":5,
-"Troll Warlord":5,
-"Faceless Void":4,
-"Juggernaut":4,
-"Slark":4,
-"Lifestealer":4
-},
+  pos3: [
+    ["enigma",82.0,58.9,2500],
+    ["dark_seer",69.0,52.9,4300],
+    ["pudge",68.0,52.7,12000],
+    ["night_stalker",66.0,51.4,4800],
+    ["axe",58.0,48.5,6200],
+    ["doom",57.0,49.7,5500],
+    ["dawnbreaker",65.0,52.1,4700],
+    ["magnus",58.0,50.9,2900]
+  ],
 
-"Dark Seer":{
-"Sven":5,
-"Juggernaut":5,
-"Slark":4,
-"Phantom Lancer":4,
-"Faceless Void":4,
-"Magnus":3
-},
+  pos4: [
+    ["bounty_hunter",90.3,56.0,5100],
+    ["spirit_breaker",71.0,53.2,7200],
+    ["rubick",68.0,49.6,9200],
+    ["mirana",53.0,49.3,8100],
+    ["nyx_assassin",51.0,52.9,4100],
+    ["pudge",47.0,48.7,12000],
+    ["lion",49.0,50.4,9000],
+    ["techies",48.0,51.7,3900]
+  ],
 
-"Enigma":{
-"Lina":4,
-"Invoker":4,
-"Snapfire":5,
-"Phoenix":5,
-"Jakiro":4,
-"Tidehunter":4,
-"Faceless Void":4
-},
+  pos5: [
+    ["treant_protector",92.0,52.4,6200],
+    ["oracle",74.0,55.5,3100],
+    ["winter_wyvern",68.0,52.2,3700],
+    ["bane",63.0,52.2,4200],
+    ["bounty_hunter",59.0,54.9,5100],
+    ["lich",54.0,51.8,8500],
+    ["clockwerk",53.0,51.4,4300],
+    ["hoodwink",52.0,51.3,5200]
+  ]
+};
 
-"Tidehunter":{
-"Lina":4,
-"Invoker":4,
-"Snapfire":5,
-"Phoenix":4,
-"Faceless Void":5
-},
+/* ---------------------------------------------------------
+   Текущие известные matchup hints.
+   Это ТОЛЬКО быстрый fallback, пока Dotabuff загружается.
+   Основной источник — свежий Dotabuff.
+--------------------------------------------------------- */
 
-"Disruptor":{
-"Faceless Void":4,
-"Tidehunter":4,
-"Magnus":4,
-"Mars":4,
-"Enigma":4
-},
+const KNOWN_COUNTERS = {
 
-"Tusk":{
-"Ursa":4,
-"Slark":4,
-"Juggernaut":4,
-"Lifestealer":4,
-"Phantom Assassin":4
-},
+  puck: [
+    ["night_stalker",5.39],
+    ["broodmother",5.13],
+    ["dragon_knight",3.73],
+    ["huskar",3.36],
+    ["riki",3.29]
+  ],
 
-"Treant Protector":{
-"Drow Ranger":4,
-"Juggernaut":3,
-"Phantom Lancer":3,
-"Slark":3,
-"Spectre":3
-},
+  clockwerk: [
+    ["broodmother",4.85],
+    ["anti_mage",3.18],
+    ["io",2.95],
+    ["beastmaster",2.81],
+    ["batrider",2.54]
+  ],
 
-"Oracle":{
-"Juggernaut":4,
-"Lifestealer":4,
-"Sven":4,
-"Phantom Assassin":4,
-"Troll Warlord":4
-},
+  pudge: [
+    ["timbersaw",3.96],
+    ["ursa",3.37],
+    ["pangolier",3.16],
+    ["chen",2.98],
+    ["kez",2.82]
+  ],
 
-"Io":{
-"Tiny":5,
-"Gyrocopter":5,
-"Lifestealer":4,
-"Sven":4,
-"Ursa":4
-},
+  juggernaut: [
+    ["omniknight",3.74],
+    ["huskar",3.29],
+    ["riki",3.12],
+    ["morphling",3.03],
+    ["lone_druid",2.82]
+  ],
 
-"Winter Wyvern":{
-"Faceless Void":5,
-"Tidehunter":4,
-"Magnus":4,
-"Enigma":4
-},
+  phantom_assassin: [
+    ["axe",3.65],
+    ["bristleback",3.13],
+    ["pudge",2.82],
+    ["templar_assassin",2.73],
+    ["pangolier",2.30]
+  ],
 
-"Phoenix":{
-"Faceless Void":4,
-"Mars":4,
-"Tidehunter":4,
-"Enigma":5
-},
+  shadow_fiend: [
+    ["medusa",2.27],
+    ["terrorblade",1.97],
+    ["shadow_demon",1.91],
+    ["mars",1.89],
+    ["dark_seer",1.68]
+  ],
 
-"Snapfire":{
-"Mars":5,
-"Void Spirit":4,
-"Faceless Void":5,
-"Tidehunter":5,
-"Enigma":5
+  outworld_destroyer: [
+    ["nyx_assassin",5.51],
+    ["phantom_lancer",4.20],
+    ["chaos_knight",3.88],
+    ["naga_siren",3.59],
+    ["beastmaster",3.51]
+  ],
+
+  queen_of_pain: [
+    ["medusa",3.69],
+    ["puck",3.11],
+    ["huskar",2.98],
+    ["ember_spirit",2.57],
+    ["riki",1.80]
+  ],
+
+  bounty_hunter: [
+    ["naga_siren",3.98],
+    ["meepo",3.54],
+    ["beastmaster",3.46],
+    ["abaddon",2.55],
+    ["slark",2.54]
+  ],
+
+  mirana: [
+    ["chen",2.69],
+    ["puck",2.68],
+    ["meepo",2.56],
+    ["naga_siren",1.97],
+    ["bounty_hunter",1.83]
+  ],
+
+  silencer: [
+    ["lycan",3.86],
+    ["phantom_lancer",3.35],
+    ["broodmother",3.11],
+    ["arc_warden",3.02],
+    ["chen",2.74]
+  ],
+
+  abaddon: [
+    ["anti_mage",3.20],
+    ["elder_titan",2.97],
+    ["outworld_destroyer",2.76],
+    ["undying",2.49],
+    ["lycan",2.09]
+  ],
+
+  kunkka: [
+    ["lifestealer",3.16],
+    ["timbersaw",2.98],
+    ["alchemist",2.17],
+    ["ember_spirit",1.99],
+    ["juggernaut",1.89]
+  ],
+
+  batrider: [
+    ["weaver",2.49],
+    ["slark",2.48],
+    ["kez",2.41],
+    ["witch_doctor",2.08],
+    ["medusa",2.06]
+  ],
+
+  enigma: [
+    ["bristleback",5.31],
+    ["rubick",4.62],
+    ["medusa",4.15],
+    ["sniper",3.84],
+    ["wraith_king",3.17]
+  ],
+
+  anti_mage: [
+    ["huskar",6.16],
+    ["meepo",5.66],
+    ["axe",5.25],
+    ["slardar",3.98],
+    ["troll_warlord",3.90]
+  ],
+
+  ancient_apparition: [
+    ["arc_warden",3.51],
+    ["brewmaster",3.50],
+    ["phantom_lancer",3.41],
+    ["lycan",3.33],
+    ["spectre",3.28]
+  ],
+
+  rubick: [
+    ["huskar",2.33],
+    ["templar_assassin",2.16],
+    ["nature_prophet",1.96],
+    ["batrider",1.92],
+    ["ursa",1.79]
+  ],
+
+  broodmother: [
+    ["earthshaker",8.93],
+    ["spirit_breaker",4.89],
+    ["necrophos",4.80],
+    ["meepo",4.53],
+    ["sand_king",4.34]
+  ]
+};
+
+/* ---------------------------------------------------------
+   Synergy rules.
+--------------------------------------------------------- */
+
+const SYNERGY_RULES = {
+  "faceless_void|invoker":4,
+  "faceless_void|zeus":4,
+  "faceless_void|snapfire":4,
+  "faceless_void|phoenix":3,
+  "faceless_void|jakiro":3,
+
+  "magnus|sven":4,
+  "magnus|phantom_assassin":4,
+  "magnus|troll_warlord":4,
+  "magnus|ursa":4,
+  "magnus|phantom_lancer":3,
+  "magnus|juggernaut":3,
+
+  "enigma|phoenix":4,
+  "enigma|snapfire":4,
+  "enigma|jakiro":3,
+  "enigma|zeus":3,
+
+  "dark_seer|phantom_lancer":4,
+  "dark_seer|spectre":3,
+  "dark_seer|faceless_void":3,
+  "dark_seer|troll_warlord":3,
+  "dark_seer|slark":3,
+
+  "tusk|juggernaut":4,
+  "tusk|ursa":4,
+  "tusk|slark":3,
+  "tusk|phantom_lancer":3,
+
+  "disruptor|faceless_void":4,
+  "disruptor|enigma":3,
+  "disruptor|mars":3,
+  "disruptor|axe":3,
+
+  "treant_protector|phantom_lancer":3,
+  "treant_protector|spectre":3,
+  "treant_protector|faceless_void":3,
+
+  "oracle|phantom_assassin":3,
+  "oracle|juggernaut":3,
+  "oracle|sven":3,
+  "oracle|ursa":3,
+
+  "winter_wyvern|phantom_lancer":3,
+  "winter_wyvern|faceless_void":3,
+
+  "bounty_hunter|invoker":3,
+  "bounty_hunter|spectre":2,
+  "bounty_hunter|phantom_lancer":2,
+
+  "spirit_breaker|drow_ranger":3,
+  "spirit_breaker|sniper":3,
+  "spirit_breaker|invoker":3
+};
+
+/* ---------------------------------------------------------
+   Utility
+--------------------------------------------------------- */
+
+function slugify(value){
+  return String(value || "")
+    .toLowerCase()
+    .replace(/['’]/g,"")
+    .replace(/[^a-z0-9]+/g,"_")
+    .replace(/^_+|_+$/g,"");
 }
 
-};
-
-
-/* =========================================================
-   INIT
-========================================================= */
-
-async function init(){
-
-  loadState();
-
-  renderTeams();
-  renderRecommendations();
-  renderCounterHeroes();
-  renderMetaTabs();
-  renderMeta();
-  renderAnalysis();
-
-  await loadHeroes();
-
-  restoreState();
-
-  renderTeams();
-  renderRecommendations();
-  renderCounterHeroes();
-  renderMeta();
-  renderAnalysis();
-
+function displayName(hero){
+  return hero?.localized_name ||
+         hero?.name?.replace("npc_dota_hero_","") ||
+         "Unknown";
 }
 
-init();
+function heroKey(hero){
+  return hero?.key || slugify(displayName(hero));
+}
 
+function normalizeText(value){
+  return slugify(
+    String(value || "")
+      .replace(/&nbsp;/g," ")
+      .replace(/<[^>]+>/g," ")
+  );
+}
 
-/* =========================================================
-   HERO DATA
-========================================================= */
+function clamp(v,min,max){
+  return Math.max(min,Math.min(max,v));
+}
 
-async function loadHeroes(){
+function sleep(ms){
+  return new Promise(r=>setTimeout(r,ms));
+}
+
+function toast(text){
+  const el=document.getElementById("toast");
+  el.textContent=text;
+  el.classList.add("show");
+  clearTimeout(window.__toast);
+  window.__toast=setTimeout(()=>el.classList.remove("show"),2300);
+}
+
+function setStatus(text,type=""){
+  document.getElementById("statusText").textContent=text;
+  const dot=document.getElementById("statusDot");
+  dot.className="dot "+(type || "");
+}
+
+function cacheKey(key){
+  return `${APP_VERSION}:${key}`;
+}
+
+function readCache(key,ttl){
+  try{
+    const raw=localStorage.getItem(cacheKey(key));
+    if(!raw) return null;
+
+    const data=JSON.parse(raw);
+
+    if(Date.now()-data.time > ttl){
+      return null;
+    }
+
+    return data.value;
+  }catch{
+    return null;
+  }
+}
+
+function writeCache(key,value){
+  try{
+    localStorage.setItem(
+      cacheKey(key),
+      JSON.stringify({
+        time:Date.now(),
+        value
+      })
+    );
+  }catch{}
+}
+
+/* ---------------------------------------------------------
+   Fetch with timeout
+--------------------------------------------------------- */
+
+async function fetchText(url,timeout=3500){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeout);
 
   try{
+    const res=await fetch(url,{
+      signal:controller.signal,
+      cache:"no-store",
+      headers:{
+        "Accept":"text/html,text/plain,application/json,*/*"
+      }
+    });
 
-    const response =
-      await fetchTimeout(HERO_SOURCE,5000);
+    if(!res.ok){
+      throw new Error("HTTP "+res.status);
+    }
 
-    const json =
-      await response.json();
+    return await res.text();
+  }finally{
+    clearTimeout(timer);
+  }
+}
 
-    heroes =
-      Object.values(json)
-      .filter(x=>x && x.localized_name)
-      .map(x=>({
-        id:Number(x.id),
-        name:x.localized_name,
-        slug:slug(x.localized_name),
-        roles:x.roles || [],
-        primary_attr:x.primary_attr || ""
+async function fetchJSON(url,timeout=4000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeout);
+
+  try{
+    const res=await fetch(url,{
+      signal:controller.signal,
+      cache:"no-store",
+      headers:{
+        "Accept":"application/json"
+      }
+    });
+
+    if(!res.ok){
+      throw new Error("HTTP "+res.status);
+    }
+
+    return await res.json();
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
+/* ---------------------------------------------------------
+   Hero image
+--------------------------------------------------------- */
+
+const IMAGE_OVERRIDES = {
+  nature_prophet:"nature-prophet",
+  queen_of_pain:"queen-of-pain",
+  anti_mage:"anti-mage",
+  keeper_of_the_light:"keeper-of-the-light",
+  outworld_destroyer:"outworld-destroyer",
+  shadow_fiend:"shadow-fiend",
+  earth_spirit:"earth-spirit",
+  spirit_breaker:"spirit-breaker",
+  night_stalker:"night-stalker",
+  ancient_apparition:"ancient-apparition",
+  centaur_warrunner:"centaur-warrunner",
+  dark_seer:"dark-seer",
+  death_prophet:"death-prophet",
+  lone_druid:"lone-druid",
+  templar_assassin:"templar-assassin",
+  treant_protector:"treant-protector",
+  windranger:"windranger",
+  wraith_king:"wraith-king",
+  dragon_knight:"dragon-knight",
+  witch_doctor:"witch-doctor",
+  elder_titan:"elder-titan",
+  shadow_demon:"shadow-demon",
+  winter_wyvern:"winter-wyvern"
+};
+
+function heroImage(hero){
+  if(hero?.img){
+    if(hero.img.startsWith("http")){
+      return hero.img;
+    }
+
+    return "https://cdn.cloudflare.steamstatic.com" + hero.img;
+  }
+
+  const slug =
+    IMAGE_OVERRIDES[heroKey(hero)] ||
+    heroKey(hero).replace(/_/g,"-");
+
+  return `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${slug}.png`;
+}
+
+/* ---------------------------------------------------------
+   Hero loading
+--------------------------------------------------------- */
+
+async function loadHeroes(){
+  setStatus("загрузка героев…");
+
+  let raw = readCache("heroes",24*60*60*1000);
+
+  if(raw){
+    state.heroes=raw;
+    indexHeroes();
+    setStatus(`${state.heroes.length} героев`,"ok");
+    return;
+  }
+
+  try{
+    const data=await fetchJSON(HERO_SOURCE,6000);
+
+    state.heroes=Object.values(data)
+      .filter(h=>h && h.id && h.localized_name)
+      .map(h=>({
+        id:Number(h.id),
+        key:slugify(h.localized_name),
+        localized_name:h.localized_name,
+        name:h.name,
+        roles:Array.isArray(h.roles)?h.roles:[],
+        primary_attr:h.primary_attr,
+        img:h.img,
+        icon:h.icon
       }));
 
-    if(!heroes.length)
-      throw new Error("empty");
+    writeCache("heroes",state.heroes);
+    indexHeroes();
+
+    setStatus(`${state.heroes.length} героев`,"ok");
+    return;
 
   }catch(e){
+    console.warn("GitHub hero source failed",e);
+  }
 
-    console.warn("hero source failed",e);
+  try{
+    const data=await fetchJSON(OPENDOTA_HEROES,6000);
 
-    try{
+    state.heroes=data
+      .filter(h=>h && h.id && h.localized_name)
+      .map(h=>({
+        id:Number(h.id),
+        key:slugify(h.localized_name),
+        localized_name:h.localized_name,
+        name:h.name,
+        roles:Array.isArray(h.roles)?h.roles:[],
+        primary_attr:h.primary_attr,
+        img:h.img,
+        icon:h.icon
+      }));
 
-      const response =
-        await fetchTimeout(OPENDOTA_HEROES,5000);
+    writeCache("heroes",state.heroes);
+    indexHeroes();
 
-      const json =
-        await response.json();
+    setStatus(`${state.heroes.length} героев`,"ok");
+    return;
 
-      heroes =
-        json.map(x=>({
-          id:Number(x.id),
-          name:x.localized_name,
-          slug:slug(x.localized_name),
-          roles:x.roles || [],
-          primary_attr:x.primary_attr || ""
-        }));
+  }catch(e){
+    console.warn("OpenDota hero source failed",e);
+  }
 
-    }catch(e2){
+  setStatus("ошибка списка героев","bad");
+  toast("Не удалось загрузить список героев");
+}
 
-      toast("Не удалось загрузить список героев");
+function indexHeroes(){
+  state.heroesById={};
+  state.heroesByName={};
 
-      heroes = [];
+  for(const hero of state.heroes){
+    state.heroesById[hero.id]=hero;
+    state.heroesByName[heroKey(hero)]=hero;
+    state.heroesByName[slugify(hero.localized_name)]=hero;
+  }
+}
+
+/* ---------------------------------------------------------
+   Role intelligence
+--------------------------------------------------------- */
+
+function getMetaEntry(hero,role){
+  const key=heroKey(hero);
+
+  const list=META_SNAPSHOT[role] || [];
+  const found=list.find(x=>x[0]===key);
+
+  if(found){
+    return {
+      rating:found[1],
+      winRate:found[2],
+      matches:found[3],
+      source:"D2PT snapshot"
+    };
+  }
+
+  if(state.meta[role]?.[key]){
+    return state.meta[role][key];
+  }
+
+  return null;
+}
+
+function roleFit(hero,role){
+  const entry=getMetaEntry(hero,role);
+
+  if(entry){
+    return clamp(
+      45 + (entry.rating-45)*1.1,
+      25,
+      100
+    );
+  }
+
+  const roles=hero.roles || [];
+
+  const wanted={
+    pos1:["Carry"],
+    pos2:["Nuker","Escape"],
+    pos3:["Durable","Initiator","Disabler"],
+    pos4:["Support","Disabler","Nuker"],
+    pos5:["Support","Disabler"]
+  }[role] || [];
+
+  let score=22;
+
+  for(const r of wanted){
+    if(roles.includes(r)){
+      score+=10;
     }
   }
 
-  rebuildIndexes();
+  return clamp(score,15,65);
 }
 
-function rebuildIndexes(){
+/* ---------------------------------------------------------
+   Known counter lookup
+--------------------------------------------------------- */
 
-  heroById={};
-  heroByName={};
+function knownCountersFor(targetHero){
+  const key=heroKey(targetHero);
+  return (KNOWN_COUNTERS[key] || [])
+    .map(([heroKeyValue,adv])=>{
+      const hero=state.heroesByName[heroKeyValue];
+      if(!hero) return null;
 
-  for(const hero of heroes){
-
-    heroById[hero.id]=hero;
-    heroByName[norm(hero.name)]=hero;
-
-  }
+      return {
+        heroId:hero.id,
+        advantage:Number(adv),
+        heroWinRate:null,
+        matches:null,
+        source:"fallback"
+      };
+    })
+    .filter(Boolean);
 }
 
-function restoreState(){
+/* ---------------------------------------------------------
+   Dotabuff parser
+--------------------------------------------------------- */
 
-  const state=window.__savedState;
+function dotabuffSlug(hero){
+  const key=heroKey(hero);
 
-  if(!state || !heroes.length)
-    return;
+  const overrides={
+    nature_prophet:"natures-prophet",
+    queen_of_pain:"queen-of-pain",
+    anti_mage:"anti-mage",
+    keeper_of_the_light:"keeper-of-the-light",
+    outworld_destroyer:"outworld-destroyer",
+    shadow_fiend:"shadow-fiend",
+    earth_spirit:"earth-spirit",
+    spirit_breaker:"spirit-breaker",
+    night_stalker:"night-stalker",
+    ancient_apparition:"ancient-apparition",
+    centaur_warrunner:"centaur-warrunner",
+    dark_seer:"dark-seer",
+    death_prophet:"death-prophet",
+    lone_druid:"lone-druid",
+    templar_assassin:"templar-assassin",
+    treant_protector:"treant-protector",
+    windranger:"windranger",
+    wraith_king:"wraith-king",
+    dragon_knight:"dragon-knight",
+    witch_doctor:"witch-doctor",
+    elder_titan:"elder-titan",
+    shadow_demon:"shadow-demon",
+    winter_wyvern:"winter-wyvern",
+    clockwerk:"clockwerk",
+    pudge:"pudge",
+    broodmother:"broodmother"
+  };
 
-  myTeam =
-    (state.my || [])
-    .map(id=>id ? heroById[id] || null : null);
-
-  enemyTeam =
-    (state.enemy || [])
-    .map(id=>id ? heroById[id] || null : null);
-
+  return overrides[key] || key.replace(/_/g,"-");
 }
 
-
-/* =========================================================
-   HERO HELPERS
-========================================================= */
-
-function norm(x){
-
-  return String(x || "")
-    .toLowerCase()
-    .replace(/’/g,"'")
+function cleanHtmlText(text){
+  return String(text || "")
+    .replace(/<script[\s\S]*?<\/script>/gi," ")
+    .replace(/<style[\s\S]*?<\/style>/gi," ")
+    .replace(/<[^>]+>/g," ")
+    .replace(/&nbsp;/gi," ")
+    .replace(/&amp;/gi,"&")
+    .replace(/&#39;|&#x27;/gi,"'")
+    .replace(/&quot;/gi,'"')
     .replace(/\s+/g," ")
     .trim();
-
 }
 
-function slug(name){
-
-  return String(name)
-    .toLowerCase()
-    .replace(/['’]/g,"")
-    .replace(/[^a-z0-9]+/g,"-")
-    .replace(/^-|-$/g,"");
-
+function parsePercent(text){
+  const m=String(text).match(/-?\d+(?:\.\d+)?\s*%/);
+  return m ? Number(m[0].replace("%","")) : null;
 }
 
-function image(hero){
-
-  if(!hero) return "";
-
-  return "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/"
-    + hero.slug + ".png";
-
+function parseNumber(text){
+  const m=String(text).replace(/,/g,"").match(/\b\d{2,}\b/);
+  return m ? Number(m[0]) : null;
 }
 
-function getHero(name){
+function findHeroByText(text){
+  const normalized=normalizeText(text);
 
-  return heroByName[norm(name)] || null;
-
-}
-
-function picked(hero){
-
-  return [...myTeam,...enemyTeam]
-    .filter(Boolean)
-    .some(x=>x.id===hero.id);
-
-}
-
-
-/* =========================================================
-   DRAFT SLOTS
-========================================================= */
-
-function renderTeams(){
-
-  document.getElementById("my-team").innerHTML =
-    myTeam.map((hero,i)=>
-      slotHtml(hero,i,"my")
-    ).join("");
-
-  document.getElementById("enemy-team").innerHTML =
-    enemyTeam.map((hero,i)=>
-      slotHtml(hero,i,"enemy")
-    ).join("");
-
-  updateFinish();
-
-}
-
-function slotHtml(hero,index,side){
-
-  const role =
-    side==="my"
-      ? "POS "+(index+1)
-      : "ENEMY";
-
-  if(!hero){
-
-    return `
-      <div class="slot">
-
-        <button
-          class="slot-main"
-          onclick="openPicker('${side}',${index})">
-
-          <div class="slot-role">${role}</div>
-
-          <div class="slot-empty">+</div>
-
-          <div class="slot-name">
-            ${side==="my" ? "Выбрать" : "Enemy"}
-          </div>
-
-        </button>
-
-      </div>
-    `;
+  if(state.heroesByName[normalized]){
+    return state.heroesByName[normalized];
   }
 
+  let best=null;
+
+  for(const hero of state.heroes){
+    const names=[
+      hero.localized_name,
+      displayName(hero),
+      heroKey(hero)
+    ];
+
+    for(const name of names){
+      const n=normalizeText(name);
+
+      if(normalized===n){
+        return hero;
+      }
+
+      if(normalized.includes(n) && n.length>=4){
+        best=hero;
+      }
+    }
+  }
+
+  return best;
+}
+
+function parseDotabuffCounters(html,targetHero){
+
+  const result=[];
+
+  /* 
+     Dotabuff page has tables:
+     "Hero / Disadvantage / Hero Win Rate"
+     and
+     "Hero / Advantage / Hero Win Rate"
+
+     We only need the first table for:
+     "target is countered by candidate".
+  */
+
+  const tableRegex=/<table[\s\S]*?<\/table>/gi;
+  const tables=html.match(tableRegex) || [];
+
+  let targetTable=null;
+
+  for(const table of tables){
+
+    const text=cleanHtmlText(table);
+
+    const lower=text.toLowerCase();
+
+    const hasDis=
+      lower.includes("disadvantage") ||
+      lower.includes("невыгодное") ||
+      lower.includes("countered by");
+
+    const hasWin=
+      lower.includes("hero win rate") ||
+      lower.includes("доля побед");
+
+    if(hasDis && hasWin){
+      targetTable=table;
+      break;
+    }
+  }
+
+  if(!targetTable){
+
+    /*
+      Jina Reader / proxy can return flattened markdown.
+      Try markdown-like rows.
+    */
+
+    const lines=cleanHtmlText(html)
+      .split(/\n/)
+      .map(x=>x.trim())
+      .filter(Boolean);
+
+    for(let i=0;i<lines.length;i++){
+
+      const line=lines[i];
+
+      if(
+        line.toLowerCase().includes("countered by") ||
+        line.toLowerCase().includes("is countered by") ||
+        line.toLowerCase().includes("плох против")
+      ){
+
+        for(let j=i+1;j<Math.min(i+12,lines.length);j++){
+
+          const pct=parsePercent(lines[j]);
+          if(pct===null) continue;
+
+          const hero=findHeroByText(lines[j]);
+
+          if(hero && hero.id!==targetHero.id){
+            result.push({
+              heroId:hero.id,
+              advantage:pct,
+              heroWinRate:null,
+              matches:null,
+              source:"Dotabuff"
+            });
+          }
+        }
+
+        if(result.length) return result;
+      }
+    }
+
+    return result;
+  }
+
+  const rows=targetTable.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+
+  for(const row of rows){
+
+    const cells=[
+      ...(row.match(/<td[\s\S]*?<\/td>/gi)||[]),
+      ...(row.match(/<th[\s\S]*?<\/th>/gi)||[])
+    ];
+
+    if(cells.length<2) continue;
+
+    const texts=cells.map(cleanHtmlText);
+
+    const pct=parsePercent(texts.join(" "));
+
+    if(pct===null) continue;
+
+    let hero=null;
+
+    for(const txt of texts){
+      hero=findHeroByText(txt);
+      if(hero) break;
+    }
+
+    if(!hero || hero.id===targetHero.id) continue;
+
+    const winRateMatch=texts
+      .map(parsePercent)
+      .filter(x=>x!==null);
+
+    let heroWinRate=null;
+
+    if(winRateMatch.length>=2){
+      heroWinRate=winRateMatch[1];
+    }
+
+    let matches=null;
+
+    for(const txt of texts){
+      const n=parseNumber(txt);
+
+      if(n && n>100){
+        matches=n;
+      }
+    }
+
+    result.push({
+      heroId:hero.id,
+      advantage:pct,
+      heroWinRate,
+      matches,
+      source:"Dotabuff"
+    });
+  }
+
+  return result;
+}
+
+/* ---------------------------------------------------------
+   Dotabuff fetching
+--------------------------------------------------------- */
+
+async function fetchDotabuffCounters(hero,force=false){
+
+  const key=heroKey(hero);
+
+  if(!force){
+
+    const cached=readCache(
+      "counter:"+key,
+      CACHE_TTL
+    );
+
+    if(cached?.length){
+      state.counters[hero.id]=cached;
+      state.counterUpdated[hero.id]=cached._time || Date.now();
+
+      /*
+        ВАЖНО:
+        даже если есть cache — не ждём его.
+        background refresh запускается отдельно.
+      */
+
+      refreshDotabuffBackground(hero);
+      return cached;
+    }
+  }
+
+  if(state.counterLoading[hero.id]){
+    return state.counters[hero.id] || knownCountersFor(hero);
+  }
+
+  state.counterLoading[hero.id]=true;
+
+  const slug=dotabuffSlug(hero);
+
+  const target =
+    `${DOTABUFF_BASE}${slug}/counters?date=week`;
+
+  const urls=[
+
+    /* direct */
+    target,
+
+    /* allorigins */
+    "https://api.allorigins.win/raw?url="+
+      encodeURIComponent(target),
+
+    /* corsproxy */
+    "https://corsproxy.io/?url="+
+      encodeURIComponent(target),
+
+    /* Jina reader — очень полезный fallback для GitHub Pages */
+    "https://r.jina.ai/http://www.dotabuff.com/heroes/"+
+      encodeURIComponent(slug)+
+      "/counters?date=week"
+
+  ];
+
+  for(const url of urls){
+
+    try{
+
+      const html=await fetchText(url,5500);
+
+      const parsed=parseDotabuffCounters(
+        html,
+        hero
+      );
+
+      if(parsed.length){
+
+        writeCache(
+          "counter:"+key,
+          parsed
+        );
+
+        state.counters[hero.id]=parsed;
+        state.counterUpdated[hero.id]=Date.now();
+        state.counterLoading[hero.id]=false;
+
+        return parsed;
+      }
+
+    }catch(e){
+      console.warn("Counter source failed:",url,e);
+    }
+  }
+
+  state.counterLoading[hero.id]=false;
+
+  /*
+    Даже если интернет/proxy не работает,
+    приложение не ломается.
+  */
+
+  const fallback=knownCountersFor(hero);
+
+  if(fallback.length){
+    state.counters[hero.id]=fallback;
+    return fallback;
+  }
+
+  state.counters[hero.id]=[];
+  return [];
+}
+
+function refreshDotabuffBackground(hero){
+
+  if(state.counterLoading[hero.id]) return;
+
+  /*
+    Не ждём background refresh.
+  */
+
+  fetchDotabuffCounters(hero,true)
+    .then(()=>{
+      if(state.currentTab==="counters"){
+        renderCounters();
+      }
+
+      if(state.currentTab==="draft"){
+        renderDraft();
+      }
+
+      if(state.currentTab==="analysis"){
+        renderAnalysis();
+      }
+    })
+    .catch(()=>{});
+}
+
+/* ---------------------------------------------------------
+   Matchup direction
+--------------------------------------------------------- */
+
+/*
+  getPairAdvantage(A,B)
+
+  + = A контрит B
+  - = B контрит A
+*/
+
+function getPairAdvantage(heroA,heroB){
+
+  if(!heroA || !heroB) return null;
+
+  if(heroA.id===heroB.id) return 0;
+
+  /* 
+     Самый важный путь:
+
+     Если мы знаем counters страницы B,
+     и там A:
+       A -> B = +advantage
+  */
+
+  const bData=state.counters[heroB.id];
+
+  if(bData?.length){
+
+    const row=bData.find(x=>x.heroId===heroA.id);
+
+    if(row){
+      return Number(row.advantage);
+    }
+  }
+
+  /*
+    Если известна страница A и B находится там,
+    значит B контрит A.
+  */
+
+  const aData=state.counters[heroA.id];
+
+  if(aData?.length){
+
+    const row=aData.find(x=>x.heroId===heroB.id);
+
+    if(row){
+      return -Number(row.advantage);
+    }
+  }
+
+  /* fallback */
+
+  const knownB=knownCountersFor(heroB)
+    .find(x=>x.heroId===heroA.id);
+
+  if(knownB){
+    return Number(knownB.advantage);
+  }
+
+  const knownA=knownCountersFor(heroA)
+    .find(x=>x.heroId===heroB.id);
+
+  if(knownA){
+    return -Number(knownA.advantage);
+  }
+
+  return null;
+}
+
+/* ---------------------------------------------------------
+   Synergy
+--------------------------------------------------------- */
+
+function pairKey(a,b){
+  const aa=heroKey(a);
+  const bb=heroKey(b);
+
+  return aa<bb
+    ? `${aa}|${bb}`
+    : `${bb}|${aa}`;
+}
+
+function getSynergy(a,b){
+
+  if(!a || !b || a.id===b.id){
+    return 0;
+  }
+
+  return SYNERGY_RULES[pairKey(a,b)] || 0;
+}
+
+/* ---------------------------------------------------------
+   Selected heroes
+--------------------------------------------------------- */
+
+function selectedIds(){
+  return new Set(
+    [...state.own,...state.enemy]
+      .filter(Boolean)
+      .map(h=>h.id)
+  );
+}
+
+function isSelected(hero){
+  return selectedIds().has(hero.id);
+}
+
+function currentOpenRole(){
+
+  for(let i=0;i<5;i++){
+
+    if(!state.own[i]){
+      return {
+        index:i,
+        role:ROLE_NAMES[i]
+      };
+    }
+  }
+
+  return null;
+}
+
+/* ---------------------------------------------------------
+   Counter-aware recommendation engine
+--------------------------------------------------------- */
+
+function counterComponent(candidate){
+
+  const enemies=state.enemy.filter(Boolean);
+
+  if(!enemies.length){
+    return {
+      score:50,
+      total:0,
+      details:[]
+    };
+  }
+
+  let total=0;
+  const details=[];
+
+  for(const enemy of enemies){
+
+    const advantage=
+      getPairAdvantage(candidate,enemy);
+
+    if(advantage===null) continue;
+
+    /*
+      Контр должен реально влиять на итог.
+      5% advantage заметно сильнее 1%.
+    */
+
+    const contribution=
+      clamp(50 + advantage*10,20,100);
+
+    total+=contribution;
+
+    details.push({
+      enemy,
+      advantage
+    });
+  }
+
+  if(!details.length){
+    return {
+      score:45,
+      total:0,
+      details:[]
+    };
+  }
+
+  return {
+    score:total/details.length,
+    total,
+    details
+  };
+}
+
+function synergyComponent(candidate){
+
+  const allies=state.own.filter(Boolean);
+
+  if(!allies.length){
+    return {
+      score:50,
+      total:0,
+      details:[]
+    };
+  }
+
+  let total=0;
+  const details=[];
+
+  for(const ally of allies){
+
+    const s=getSynergy(candidate,ally);
+
+    if(s>0){
+      total+=s;
+      details.push({
+        ally,
+        value:s
+      });
+    }
+  }
+
+  const score=
+    clamp(
+      45 + total*8,
+      20,
+      100
+    );
+
+  return {
+    score,
+    total,
+    details
+  };
+}
+
+function scoreCandidate(candidate,role){
+
+  const roleScore=roleFit(candidate,role);
+
+  const meta=getMetaEntry(candidate,role);
+
+  const metaScore=meta
+    ? clamp(
+        50+(meta.rating-45)*1.1,
+        20,
+        100
+      )
+    : 40;
+
+  const counter=counterComponent(candidate);
+  const synergy=synergyComponent(candidate);
+
+  /*
+    КЛЮЧЕВОЕ ИЗМЕНЕНИЕ:
+
+    Когда есть враги, counter становится
+    самым весомым фактором.
+
+    Было условно:
+      meta > counter
+
+    Теперь:
+      counter 50%
+      role    25%
+      synergy 15%
+      meta    10%
+
+    Если врагов ещё нет:
+      role/meta/synergy работают.
+  */
+
+  const hasEnemies=state.enemy.some(Boolean);
+
+  let final;
+
+  if(hasEnemies){
+
+    final =
+      counter.score * 0.50 +
+      roleScore    * 0.25 +
+      synergy.score* 0.15 +
+      metaScore    * 0.10;
+
+  }else{
+
+    final =
+      roleScore    * 0.40 +
+      metaScore    * 0.35 +
+      synergy.score* 0.25;
+  }
+
+  /*
+    Жёсткое наказание за роль.
+
+    Это не позволит условному Mirana
+    всплыть как carry только потому,
+    что она в общем списке имеет хорошие
+    характеристики.
+  */
+
+  if(roleScore<35){
+    final*=0.45;
+  }
+
+  return {
+    hero:candidate,
+    score:Math.round(final*10)/10,
+    roleScore,
+    metaScore,
+    counter,
+    synergy,
+    meta
+  };
+}
+
+function getRecommendations(){
+
+  const open=currentOpenRole();
+
+  if(!open){
+    return [];
+  }
+
+  const selected=selectedIds();
+
+  const candidates=state.heroes
+    .filter(h=>!selected.has(h.id))
+    .map(h=>scoreCandidate(h,open.role))
+    .sort((a,b)=>b.score-a.score);
+
+  /*
+    Если есть хотя бы 5 нормальных role-fit кандидатов,
+    не позволяем off-role героям захватить список.
+  */
+
+  const goodRole=candidates.filter(x=>x.roleScore>=45);
+
+  if(goodRole.length>=5){
+    return goodRole.slice(0,8);
+  }
+
+  return candidates.slice(0,8);
+}
+
+/* ---------------------------------------------------------
+   Preload counters for enemy heroes
+--------------------------------------------------------- */
+
+async function preloadEnemyCounters(){
+
+  const enemies=state.enemy.filter(Boolean);
+
+  if(!enemies.length){
+    return;
+  }
+
+  /*
+    Максимум 5 страниц.
+
+    Именно страницы ВРАЖЕСКИХ героев дают нам:
+      "кто контрит этого врага?"
+
+    Поэтому для рекомендаций не нужно
+    скачивать страницы всех 127 героев.
+  */
+
+  const queue=enemies.slice();
+
+  const workers=Array.from(
+    {length:Math.min(3,queue.length)},
+    async()=>{
+
+      while(queue.length){
+
+        const enemy=queue.shift();
+
+        try{
+          await fetchDotabuffCounters(enemy,false);
+        }catch{}
+
+        renderDraft();
+      }
+    }
+  );
+
+  await Promise.all(workers);
+}
+
+/* ---------------------------------------------------------
+   Matrix hydration
+--------------------------------------------------------- */
+
+async function hydrateMatrix(){
+
+  const enemies=state.enemy.filter(Boolean);
+  const own=state.own.filter(Boolean);
+
+  const targets=[
+    ...enemies,
+    ...own
+  ];
+
+  const unique=[
+    ...new Map(targets.map(h=>[h.id,h])).values()
+  ];
+
+  const queue=unique.slice();
+
+  const workers=Array.from(
+    {length:Math.min(3,queue.length)},
+    async()=>{
+
+      while(queue.length){
+
+        const hero=queue.shift();
+
+        try{
+          await fetchDotabuffCounters(hero,false);
+        }catch{}
+
+        if(state.currentTab==="analysis"){
+          renderAnalysis();
+        }
+      }
+    }
+  );
+
+  await Promise.all(workers);
+}
+
+/* ---------------------------------------------------------
+   Draft UI
+--------------------------------------------------------- */
+
+function renderDraft(){
+
+  const open=currentOpenRole();
+
+  const recommendations=
+    getRecommendations();
+
+  document.getElementById("content").innerHTML=`
+
+    <div class="card">
+
+      <div class="section-title">
+        Драфт
+      </div>
+
+      <div class="sub">
+        Контрпик теперь является главным фактором.
+        Мета используется только как один из факторов,
+        а не как единственный источник рекомендаций.
+      </div>
+
+      <div class="source-row">
+        <span class="badge green">Counter-first</span>
+        <span class="badge">D2PT 7k+</span>
+        <span class="badge">Dotabuff week</span>
+        <span class="badge">Synergy</span>
+      </div>
+
+    </div>
+
+    <div class="team-grid">
+
+      ${renderTeam("own","Моя команда","pos1–pos5",state.own)}
+
+      ${renderTeam("enemy","Вражеская команда","выбирай предполагаемые позиции",state.enemy)}
+
+    </div>
+
+    <div class="card">
+
+      <div class="team-title">
+        <strong>
+          ${open
+            ? `Лучший выбор на ${ROLE_LABELS[open.role]}`
+            : "Команда заполнена"}
+        </strong>
+
+        ${
+          state.enemy.some(Boolean)
+            ? `<span class="badge green">
+                 counter-aware
+               </span>`
+            : ""
+        }
+      </div>
+
+      ${
+        state.enemy.some(Boolean)
+          ? `
+            <div class="sub" style="margin-bottom:9px">
+              Рекомендации специально ищут,
+              кто контрит выбранных врагов.
+            </div>
+          `
+          : `
+            <div class="sub" style="margin-bottom:9px">
+              Добавь хотя бы одного врага —
+              тогда counter score начнёт доминировать
+              над метой.
+            </div>
+          `
+      }
+
+      <div class="recommendations">
+
+        ${
+          recommendations.length
+            ? recommendations.map(renderRecommendation).join("")
+            : `<div class="empty">
+                 Заполни свободные позиции.
+               </div>`
+        }
+
+      </div>
+
+    </div>
+
+    <div class="actions">
+
+      <button class="btn" onclick="resetDraft()">
+        Сбросить
+      </button>
+
+      <button
+        class="btn primary"
+        onclick="finishDraft()"
+        ${state.own.every(Boolean)&&state.enemy.every(Boolean)?"":"disabled"}
+      >
+        Завершить драфт
+      </button>
+
+    </div>
+  `;
+
+  /*
+    После отображения запускаем network refresh,
+    но UI НЕ ждёт его.
+  */
+
+  if(state.enemy.some(Boolean)){
+    setTimeout(()=>{
+      preloadEnemyCounters();
+    },40);
+  }
+}
+
+function renderTeam(side,title,subtitle,list){
+
   return `
-    <div class="slot filled">
+    <div class="card">
 
-      <button
-        class="remove-btn"
-        onclick="removeSlot('${side}',${index})">
-        ×
-      </button>
+      <div class="team-title">
+        <strong>${title}</strong>
+        <span class="badge">${subtitle}</span>
+      </div>
 
-      <button
-        class="slot-main"
-        onclick="openPicker('${side}',${index})">
+      <div class="role-list">
 
-        <div class="slot-role">${role}</div>
+        ${list.map((hero,i)=>{
 
-        <img
-          class="slot-img"
-          src="${image(hero)}"
-          loading="lazy"
-          onerror="this.style.opacity=.25">
+          const role=ROLE_NAMES[i];
 
-        <div class="slot-name">
-          ${escapeHtml(hero.name)}
-        </div>
+          if(!hero){
 
-      </button>
+            return `
+              <div
+                class="role-slot"
+                onclick="openPicker('${side}',${i})"
+              >
+                <div class="role-empty">
+                  <strong>${ROLE_LABELS[role]}</strong><br>
+                  Нажми, чтобы выбрать
+                </div>
+              </div>
+            `;
+          }
+
+          return `
+            <div
+              class="role-slot filled"
+              onclick="openPicker('${side}',${i})"
+            >
+
+              <img
+                src="${heroImage(hero)}"
+                alt=""
+                onerror="this.style.opacity=.35"
+              >
+
+              <div style="min-width:0">
+                <div class="role-name">
+                  ${ROLE_LABELS[role]}
+                </div>
+
+                <div class="hero-name">
+                  ${displayName(hero)}
+                </div>
+              </div>
+
+              <button
+                class="remove"
+                onclick="event.stopPropagation();removeHero('${side}',${i})"
+              >
+                ×
+              </button>
+
+            </div>
+          `;
+
+        }).join("")}
+
+      </div>
 
     </div>
   `;
 }
 
-function removeSlot(side,index){
+function renderRecommendation(item){
 
-  if(side==="my")
-    myTeam[index]=null;
-  else
-    enemyTeam[index]=null;
+  const h=item.hero;
 
-  saveState();
+  const counterReasons=
+    item.counter.details
+      .sort((a,b)=>b.advantage-a.advantage)
+      .slice(0,3)
+      .map(x=>`
+        <span class="reason counter">
+          vs ${displayName(x.enemy)} +${x.advantage.toFixed(1)}%
+        </span>
+      `)
+      .join("");
 
-  renderTeams();
-  renderRecommendations();
-  renderAnalysis();
+  const synergyReasons=
+    item.synergy.details
+      .slice(0,2)
+      .map(x=>`
+        <span class="reason">
+          +${x.value} synergy ${displayName(x.ally)}
+        </span>
+      `)
+      .join("");
 
-  toast("Герой убран");
+  let reason="Хороший общий выбор.";
 
+  if(item.counter.details.length){
+
+    const best=item.counter.details
+      .slice()
+      .sort((a,b)=>b.advantage-a.advantage)[0];
+
+    reason=
+      `Контрит ${displayName(best.enemy)} на +${best.advantage.toFixed(1)}%.`;
+
+  }else if(item.synergy.details.length){
+
+    reason=
+      `Хорошо сочетается с ${displayName(item.synergy.details[0].ally)}.`;
+
+  }else if(item.meta){
+
+    reason=
+      `Сильный ${ROLE_LABELS[currentOpenRole().role]} по текущей мета-выборке.`;
+  }
+
+  return `
+    <div class="rec">
+
+      <img
+        src="${heroImage(h)}"
+        alt=""
+        onerror="this.style.opacity=.35"
+      >
+
+      <div style="min-width:0">
+
+        <div class="rec-name">
+          ${displayName(h)}
+        </div>
+
+        <div class="rec-role">
+          ${ROLE_LABELS[currentOpenRole().role]}
+          · role ${Math.round(item.roleScore)}
+          · meta ${Math.round(item.metaScore)}
+        </div>
+
+        <div class="rec-reasons">
+
+          ${
+            counterReasons ||
+            `<span class="reason">
+              counter data загружается…
+            </span>`
+          }
+
+          ${synergyReasons}
+
+          <span class="reason">
+            ${reason}
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="rec-score">
+
+        <strong>
+          ${item.score}
+        </strong>
+
+        <span>score</span>
+
+        <button
+          class="rec-pick"
+          onclick="pickRecommendation(${h.id})"
+        >
+          PICK
+        </button>
+
+      </div>
+
+    </div>
+  `;
 }
 
+/* ---------------------------------------------------------
+   Picker
+--------------------------------------------------------- */
 
-/* =========================================================
-   PICKER
-========================================================= */
+function openPicker(side,index){
 
-function openPicker(side,slot){
+  state.pickerSide=side;
+  state.pickerIndex=index;
 
-  pickerSide=side;
-  pickerSlot=slot;
+  const hero=state[side][index];
 
-  document.getElementById("picker-title").textContent =
-    side==="my"
-      ? "Выбор героя · позиция "+(slot+1)
-      : "Выбор героя · враг";
+  document.getElementById("pickerTitle").textContent=
+    `${side==="own"?"Моя команда":"Враг"} · ${ROLE_LABELS[ROLE_NAMES[index]]}`;
 
-  document.getElementById("picker-subtitle").textContent =
-    "Полный список героев";
+  document.getElementById("heroSearch").value="";
 
-  document.getElementById("hero-search").value="";
-
-  document.getElementById("picker").classList.add("open");
+  document.getElementById("picker").classList.add("show");
 
   renderPicker();
 
+  setTimeout(()=>{
+    document.getElementById("heroSearch").focus();
+  },80);
 }
 
 function closePicker(){
-
-  document.getElementById("picker").classList.remove("open");
-
+  document.getElementById("picker").classList.remove("show");
 }
 
 function renderPicker(){
 
-  const query =
-    norm(document.getElementById("hero-search").value);
+  const query=
+    document.getElementById("heroSearch").value
+      .trim()
+      .toLowerCase();
 
-  const list =
-    heroes
-      .filter(hero=>
-        !query ||
-        norm(hero.name).includes(query)
-      )
-      .sort((a,b)=>
-        a.name.localeCompare(b.name)
-      );
+  const current=
+    state.pickerSide &&
+    state.pickerIndex!==null
+      ? state[state.pickerSide][state.pickerIndex]
+      : null;
 
-  document.getElementById("picker-grid").innerHTML =
-    list.map(hero=>{
+  const selected=selectedIds();
 
-      const disabled=picked(hero);
+  let heroes=state.heroes.filter(hero=>{
 
-      return `
-        <button
-          class="hero-btn ${disabled?"selected":""}"
-          onclick="chooseHero(${hero.id})">
-
-          <img
-            src="${image(hero)}"
-            loading="lazy"
-            onerror="this.style.opacity=.25">
-
-          <div class="hero-btn-name">
-            ${escapeHtml(hero.name)}
-          </div>
-
-        </button>
-      `;
-
-    }).join("");
-
-}
-
-function chooseHero(id){
-
-  const hero=heroById[id];
-
-  if(!hero)
-    return;
-
-  if(picked(hero)){
-
-    toast("Герой уже выбран");
-    return;
-
-  }
-
-  if(pickerSide==="my"){
-
-    myTeam[pickerSlot]=hero;
-
-  }else{
-
-    const slot =
-      pickerSlot >= 0
-        ? pickerSlot
-        : findEmptyEnemy();
-
-    if(slot<0){
-
-      toast("У врага уже 5 героев");
-      return;
-
+    if(selected.has(hero.id) && hero.id!==current?.id){
+      return false;
     }
 
-    enemyTeam[slot]=hero;
+    if(query){
 
-  }
+      const n=displayName(hero).toLowerCase();
 
-  saveState();
-  closePicker();
+      const key=heroKey(hero).replace(/_/g," ");
 
-  renderTeams();
-  renderRecommendations();
-  renderAnalysis();
+      if(!n.includes(query) && !key.includes(query)){
+        return false;
+      }
+    }
 
-  /*
-    После изменения enemy:
-    прогреваем matchup именно для
-    лучших role candidates.
-  */
+    const filter=state.pickerFilter;
 
-  warmDraftMatchups();
+    if(filter==="all"){
+      return true;
+    }
 
-}
+    const roles=hero.roles || [];
 
+    if(filter==="carry"){
+      return roles.includes("Carry");
+    }
 
-/* =========================================================
-   COUNTER PAGE
-========================================================= */
+    if(filter==="mid"){
+      const key=heroKey(hero);
+      return !!META_SNAPSHOT.pos2.find(x=>x[0]===key);
+    }
 
-function renderCounterHeroes(){
+    if(filter==="offlane"){
+      return roles.includes("Durable") ||
+             roles.includes("Initiator") ||
+             roles.includes("Disabler");
+    }
 
-  const input=
-    document.getElementById("counter-search");
+    if(filter==="support"){
+      return roles.includes("Support") &&
+             !META_SNAPSHOT.pos5.find(x=>x[0]===heroKey(hero));
+    }
 
-  if(!input) return;
+    if(filter==="hard"){
+      return !!META_SNAPSHOT.pos5.find(x=>x[0]===heroKey(hero));
+    }
 
-  const query=norm(input.value);
+    return true;
+  });
 
-  const list =
-    heroes
-      .filter(h=>
-        !query ||
-        norm(h.name).includes(query)
-      )
-      .sort((a,b)=>
-        a.name.localeCompare(b.name)
-      );
+  heroes.sort((a,b)=>
+    displayName(a).localeCompare(
+      displayName(b),
+      "en"
+    )
+  );
 
-  document.getElementById("counter-heroes").innerHTML =
-    list.map(hero=>`
+  document.getElementById("pickerGrid").innerHTML=
+    heroes.map(hero=>`
 
       <button
-        class="hero-btn"
-        onclick="openCounters(${hero.id})">
+        class="hero-pick"
+        onclick="selectHero(${hero.id})"
+      >
 
         <img
-          src="${image(hero)}"
+          src="${heroImage(hero)}"
+          alt=""
           loading="lazy"
-          onerror="this.style.opacity=.25">
+          onerror="this.style.opacity=.3"
+        >
 
-        <div class="hero-btn-name">
-          ${escapeHtml(hero.name)}
+        <div class="pick-name">
+          ${displayName(hero)}
+        </div>
+
+        <div class="pick-role">
+          ${hero.primary_attr || ""}
         </div>
 
       </button>
 
-    `).join("");
-
+    `).join("") ||
+    `<div class="empty">Герой не найден.</div>`;
 }
 
-async function openCounters(id){
+function selectHero(id){
 
-  const hero=heroById[id];
+  const hero=state.heroesById[id];
 
   if(!hero) return;
 
-  selectedCounterHero=hero;
+  const side=state.pickerSide;
+  const index=state.pickerIndex;
 
-  const cached=
-    getMatchupCache(hero.id);
+  if(!side || index===null) return;
 
   /*
-    CACHE FIRST.
-    UI never waits.
+    Проверяем дубликаты.
   */
 
-  if(cached){
+  const selected=selectedIds();
 
-    renderCounterResult(hero,cached,true);
+  const current=state[side][index];
 
-    refreshMatchup(hero);
+  if(
+    selected.has(hero.id) &&
+    hero.id!==current?.id
+  ){
+
+    toast("Этот герой уже выбран");
+    return;
+  }
+
+  state[side][index]=hero;
+
+  closePicker();
+
+  invalidateAnalysis();
+
+  renderCurrent();
+
+  /*
+    Если выбран враг — немедленно
+    запускаем загрузку именно его counter page.
+
+    Не ждём.
+  */
+
+  if(side==="enemy"){
+
+    fetchDotabuffCounters(hero,false)
+      .then(()=>{
+        if(state.currentTab==="draft"){
+          renderDraft();
+        }
+      });
+
+  }
+
+  if(side==="own"){
+
+    /*
+      При добавлении своего героя
+      также полезно подтянуть его matchup
+      для отрицательных ячеек матрицы.
+    */
+
+    fetchDotabuffCounters(hero,false)
+      .then(()=>{
+        if(state.currentTab==="draft"){
+          renderDraft();
+        }
+      });
+  }
+}
+
+function removeHero(side,index){
+
+  state[side][index]=null;
+
+  invalidateAnalysis();
+
+  renderCurrent();
+}
+
+function pickRecommendation(id){
+
+  const open=currentOpenRole();
+
+  if(!open){
+    toast("Все позиции уже заполнены");
+    return;
+  }
+
+  selectHero(id);
+}
+
+function resetDraft(){
+
+  state.own=[null,null,null,null,null];
+  state.enemy=[null,null,null,null,null];
+  state.analysis=null;
+
+  renderCurrent();
+
+  toast("Драфт сброшен");
+}
+
+function invalidateAnalysis(){
+  state.analysis=null;
+}
+
+/* ---------------------------------------------------------
+   Finish / Analysis
+--------------------------------------------------------- */
+
+function finishDraft(){
+
+  if(
+    !state.own.every(Boolean) ||
+    !state.enemy.every(Boolean)
+  ){
+
+    toast("Нужно выбрать 5 своих и 5 вражеских героев");
+    return;
+  }
+
+  state.analysis=buildAnalysis();
+
+  switchTab("analysis");
+
+  /*
+    Фоном обновляем matchup данные.
+  */
+
+  hydrateMatrix();
+}
+
+function buildAnalysis(){
+
+  const own=state.own;
+  const enemy=state.enemy;
+
+  let counterTotal=0;
+  let counterCount=0;
+
+  const threats=[];
+  const ownCounters=[];
+
+  for(const my of own){
+
+    let rowScore=0;
+
+    for(const foe of enemy){
+
+      const adv=getPairAdvantage(my,foe);
+
+      if(adv!==null){
+
+        rowScore+=adv;
+        counterTotal+=adv;
+        counterCount++;
+      }
+    }
+
+    if(rowScore<0){
+
+      threats.push({
+        hero:my,
+        score:rowScore
+      });
+
+    }else if(rowScore>0){
+
+      ownCounters.push({
+        hero:my,
+        score:rowScore
+      });
+    }
+  }
+
+  let synergyTotal=0;
+
+  for(let i=0;i<own.length;i++){
+
+    for(let j=i+1;j<own.length;j++){
+
+      synergyTotal+=getSynergy(
+        own[i],
+        own[j]
+      );
+    }
+  }
+
+  const avgCounter=
+    counterCount
+      ? counterTotal/counterCount
+      : 0;
+
+  const counterScore=
+    clamp(
+      50 + avgCounter*7,
+      0,
+      100
+    );
+
+  const synergyScore=
+    clamp(
+      50 + synergyTotal*4,
+      0,
+      100
+    );
+
+  const overall=
+    Math.round(
+      counterScore*.60 +
+      synergyScore*.25 +
+      50*.15
+    );
+
+  let grade="C";
+
+  if(overall>=82) grade="S";
+  else if(overall>=72) grade="A";
+  else if(overall>=60) grade="B";
+
+  return {
+    counterScore,
+    synergyScore,
+    overall,
+    grade,
+    threats,
+    ownCounters
+  };
+}
+
+function renderAnalysis(){
+
+  if(
+    !state.own.every(Boolean) ||
+    !state.enemy.every(Boolean)
+  ){
+
+    document.getElementById("content").innerHTML=`
+      <div class="card">
+        <div class="section-title">
+          Разбор драфта
+        </div>
+        <div class="empty">
+          Заполни обе команды и нажми
+          «Завершить драфт».
+        </div>
+      </div>
+    `;
 
     return;
   }
 
-  /*
-    Local instant fallback.
-  */
+  const a=state.analysis || buildAnalysis();
 
-  const local=
-    getLocalCountersForTarget(hero);
+  state.analysis=a;
 
-  if(local.length){
+  document.getElementById("content").innerHTML=`
 
-    renderCounterResult(hero,local,false,true);
+    <div class="card">
 
-  }else{
-
-    document.getElementById("counter-result").innerHTML=`
-      <div class="card loading">
-        <span class="spinner"></span>
-        Загружаю counters...
+      <div class="section-title">
+        Итог драфта
       </div>
-    `;
 
-  }
+      <div class="analysis-grid">
 
-  refreshMatchup(hero);
-
-}
-
-
-/* =========================================================
-   LOCAL COUNTERS
-========================================================= */
-
-function getLocalCountersForTarget(target){
-
-  const rows =
-    LOCAL_COUNTERS[target.name] || [];
-
-  return rows.map(x=>({
-
-    hero:getHero(x[0]),
-
-    disadvantage:Number(x[1]),
-
-    winRate:null,
-
-    matches:0,
-
-    local:true
-
-  })).filter(x=>x.hero);
-
-}
-
-
-/* =========================================================
-   COUNTER RENDER
-========================================================= */
-
-function renderCounterResult(
-  target,
-  data,
-  cached=false,
-  local=false
-){
-
-  const sorted =
-    [...data]
-    .filter(x=>x && x.hero)
-    .sort((a,b)=>
-      Number(b.disadvantage||0) -
-      Number(a.disadvantage||0)
-    )
-    .slice(0,10);
-
-  document.getElementById("counter-result").innerHTML=`
-
-    <div class="card counter-result">
-
-      <div class="counter-target">
-
-        <img
-          src="${image(target)}"
-          onerror="this.style.opacity=.25">
-
-        <div>
-
-          <h2>${escapeHtml(target.name)}</h2>
-
-          <div class="source">
-            ${
-              cached
-              ? "Кэш · обновляется в фоне"
-              : local
-                ? "Быстрый локальный fallback"
-                : "Статистика"
-            }
+        <div class="stat-box">
+          <div class="stat-label">
+            Draft grade
           </div>
+          <div class="stat-value">
+            ${a.grade}
+          </div>
+        </div>
 
+        <div class="stat-box">
+          <div class="stat-label">
+            Общий score
+          </div>
+          <div class="stat-value">
+            ${a.overall}
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-label">
+            Counter
+          </div>
+          <div class="stat-value">
+            ${Math.round(a.counterScore)}
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-label">
+            Synergy
+          </div>
+          <div class="stat-value">
+            ${Math.round(a.synergyScore)}
+          </div>
         </div>
 
       </div>
 
+      <div class="source-row">
+        <span class="badge green">
+          Counter data обновляется background
+        </span>
+      </div>
 
-      <div class="counter-list">
+    </div>
+
+    ${renderDangerSection(a)}
+
+    <div class="card">
+
+      <div class="section-title">
+        Counter Matrix
+      </div>
+
+      <div class="sub" style="margin-bottom:8px">
+        + = ваш герой контрит врага ·
+        − = враг контрит вашего героя ·
+        ? = статистика ещё загружается
+      </div>
+
+      <div class="matrix-wrap">
+        ${renderCounterMatrix()}
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="section-title">
+        Synergy Matrix
+      </div>
+
+      <div class="matrix-wrap">
+        ${renderSynergyMatrix()}
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="section-title">
+        Винкондишн
+      </div>
+
+      ${renderWinCondition()}
+
+    </div>
+  `;
+}
+
+function renderDangerSection(a){
+
+  if(!a.threats.length){
+
+    return `
+      <div class="card">
+        <div class="good">
+          <strong>Нет явных matchup-угроз.</strong><br>
+          <span class="sub">
+            По доступной статистике ваши герои
+            не имеют большого отрицательного
+            суммарного matchup.
+          </span>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="card">
+
+      <div class="section-title">
+        Опасные матчапы
+      </div>
+
+      ${
+        a.threats
+          .sort((x,y)=>x.score-y.score)
+          .map(x=>`
+
+            <div class="danger">
+
+              <strong>
+                ${displayName(x.hero)}
+              </strong>
+
+              <div class="sub">
+                Суммарный matchup:
+                ${x.score.toFixed(1)}%
+              </div>
+
+            </div>
+
+          `)
+          .join("")
+      }
+
+    </div>
+  `;
+}
+
+function renderCounterMatrix(){
+
+  const own=state.own;
+  const enemy=state.enemy;
+
+  return `
+    <table class="matrix">
+
+      <thead>
+        <tr>
+
+          <th class="hero-head">
+            YOUR ↓ / ENEMY →
+          </th>
+
+          ${enemy.map(h=>`
+
+            <th>
+              <img src="${heroImage(h)}">
+              ${displayName(h)}
+            </th>
+
+          `).join("")}
+
+        </tr>
+      </thead>
+
+      <tbody>
+
+        ${own.map(my=>`
+
+          <tr>
+
+            <th>
+              <img src="${heroImage(my)}">
+              ${displayName(my)}
+            </th>
+
+            ${enemy.map(foe=>{
+
+              const adv=
+                getPairAdvantage(my,foe);
+
+              if(adv===null){
+
+                const loading=
+                  state.counterLoading[foe.id] ||
+                  state.counterLoading[my.id];
+
+                return `
+                  <td class="neutral">
+                    ${loading?"…":"?"}
+                  </td>
+                `;
+              }
+
+              if(adv>0){
+
+                return `
+                  <td class="plus">
+                    +${adv.toFixed(1)}%
+                  </td>
+                `;
+              }
+
+              if(adv<0){
+
+                return `
+                  <td class="minus">
+                    ${adv.toFixed(1)}%
+                  </td>
+                `;
+              }
+
+              return `
+                <td class="neutral">
+                  0
+                </td>
+              `;
+
+            }).join("")}
+
+          </tr>
+
+        `).join("")}
+
+      </tbody>
+
+    </table>
+  `;
+}
+
+function renderSynergyMatrix(){
+
+  const own=state.own;
+
+  return `
+    <table class="matrix">
+
+      <thead>
+        <tr>
+
+          <th class="hero-head">
+            HERO ↓ / HERO →
+          </th>
+
+          ${own.map(h=>`
+
+            <th>
+              <img src="${heroImage(h)}">
+              ${displayName(h)}
+            </th>
+
+          `).join("")}
+
+        </tr>
+      </thead>
+
+      <tbody>
+
+        ${own.map(my=>`
+
+          <tr>
+
+            <th>
+              <img src="${heroImage(my)}">
+              ${displayName(my)}
+            </th>
+
+            ${own.map(other=>{
+
+              if(my.id===other.id){
+
+                return `
+                  <td class="neutral">
+                    —
+                  </td>
+                `;
+              }
+
+              const s=getSynergy(my,other);
+
+              return `
+                <td class="${s>0?"synergy":"neutral"}">
+                  ${s>0?"+"+s:"0"}
+                </td>
+              `;
+
+            }).join("")}
+
+          </tr>
+
+        `).join("")}
+
+      </tbody>
+
+    </table>
+  `;
+}
+
+function renderWinCondition(){
+
+  const carry=state.own[0];
+  const mid=state.own[1];
+  const off=state.own[2];
+  const sup=state.own[3];
+  const hard=state.own[4];
+
+  const strongest=[
+    carry,
+    mid,
+    off
+  ].filter(Boolean);
+
+  const best=
+    strongest
+      .map(h=>({
+        hero:h,
+        synergy:
+          state.own
+            .filter(x=>x && x.id!==h.id)
+            .reduce((s,x)=>s+getSynergy(h,x),0)
+      }))
+      .sort((a,b)=>b.synergy-a.synergy)[0];
+
+  return `
+    <div class="good">
+
+      <strong>
+        ${
+          best
+            ? `Основной win condition: ${displayName(best.hero)}`
+            : "Нужно выбрать ядро команды"
+        }
+      </strong>
+
+      <div class="sub" style="margin-top:5px">
+        ${
+          best
+            ? `Лучший локальный synergy score: ${best.synergy}.
+               Используй сильные командные связки,
+               а не только индивидуальный meta rating.`
+            : ""
+        }
+      </div>
+
+    </div>
+
+    <div class="sub" style="margin-top:10px">
+      Carry:
+      <strong>${carry?displayName(carry):"—"}</strong><br>
+
+      Mid:
+      <strong>${mid?displayName(mid):"—"}</strong><br>
+
+      Offlane:
+      <strong>${off?displayName(off):"—"}</strong><br>
+
+      Support:
+      <strong>${sup?displayName(sup):"—"}</strong><br>
+
+      Hard support:
+      <strong>${hard?displayName(hard):"—"}</strong>
+    </div>
+  `;
+}
+
+/* ---------------------------------------------------------
+   Counter Finder
+--------------------------------------------------------- */
+
+function renderCounters(){
+
+  document.getElementById("content").innerHTML=`
+
+    <div class="card">
+
+      <div class="section-title">
+        Counter Finder
+      </div>
+
+      <div class="sub">
+        Введи героя. Сначала покажем сохранённые
+        данные/быстрый fallback, затем автоматически
+        обновим их свежей статистикой Dotabuff.
+      </div>
+
+      <div class="counter-search" style="margin-top:10px">
+
+        <input
+          id="counterInput"
+          placeholder="Например: Puck"
+          autocomplete="off"
+        >
+
+        <button onclick="searchCounter()">
+          FIND
+        </button>
+
+      </div>
+
+      <div
+        id="counterResults"
+        class="results"
+      >
+        <div class="empty">
+          Введи героя для поиска контрпиков.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="section-title">
+        Как считаем
+      </div>
+
+      <div class="sub">
+        Counter score — это не просто winrate героя.
+        Мы берём именно matchup disadvantage/advantage,
+        чтобы рекомендация отвечала на вопрос:
+        «Кого поставить против конкретного врага?»
+      </div>
+
+      <div class="source-row">
+        <span class="badge green">Dotabuff week</span>
+        <span class="badge">D2PT role/meta</span>
+        <span class="badge">OpenDota fallback</span>
+      </div>
+
+    </div>
+  `;
+
+  const input=document.getElementById("counterInput");
+
+  input.addEventListener("keydown",e=>{
+    if(e.key==="Enter"){
+      searchCounter();
+    }
+  });
+}
+
+async function searchCounter(){
+
+  const input=document.getElementById("counterInput");
+
+  const query=input.value.trim();
+
+  if(!query){
+    toast("Введи имя героя");
+    return;
+  }
+
+  let hero=
+    state.heroes.find(h=>
+      displayName(h).toLowerCase()===query.toLowerCase()
+    );
+
+  if(!hero){
+
+    const q=slugify(query);
+
+    hero=
+      state.heroesByName[q] ||
+      state.heroes.find(h=>
+        displayName(h)
+          .toLowerCase()
+          .includes(query.toLowerCase())
+      );
+  }
+
+  if(!hero){
+
+    toast("Герой не найден");
+    return;
+  }
+
+  const target=document.getElementById("counterResults");
+
+  /*
+    Мгновенно показываем cache/fallback.
+  */
+
+  const instant=
+    state.counters[hero.id] ||
+    readCache("counter:"+heroKey(hero),CACHE_TTL) ||
+    knownCountersFor(hero);
+
+  target.innerHTML=renderCounterResults(
+    hero,
+    instant,
+    true
+  );
+
+  /*
+    Потом свежий Dotabuff.
+  */
+
+  try{
+
+    const fresh=
+      await fetchDotabuffCounters(hero,true);
+
+    target.innerHTML=
+      renderCounterResults(
+        hero,
+        fresh,
+        false
+      );
+
+  }catch{
+
+    target.innerHTML=
+      renderCounterResults(
+        hero,
+        instant,
+        true
+      );
+  }
+}
+
+function renderCounterResults(
+  targetHero,
+  data,
+  fallback
+){
+
+  const rows=(data||[])
+    .slice()
+    .sort((a,b)=>
+      Number(b.advantage)-Number(a.advantage)
+    )
+    .slice(0,12);
+
+  const updated=
+    state.counterUpdated[targetHero.id];
+
+  return `
+
+    <div class="target-card">
+
+      <img src="${heroImage(targetHero)}">
+
+      <div>
+
+        <strong>
+          ${displayName(targetHero)}
+        </strong>
+
+        <div class="sub">
+          ${fallback
+            ? "Показываем cache/fallback · обновляем…"
+            : "Свежая Dotabuff week статистика"}
+        </div>
 
         ${
-          sorted.length
-          ?
-          sorted.map((x,i)=>`
+          updated
+            ? `<div class="sub">
+                 Обновлено:
+                 ${new Date(updated).toLocaleTimeString(
+                   "ru-RU",
+                   {hour:"2-digit",minute:"2-digit"}
+                 )}
+               </div>`
+            : ""
+        }
 
-            <div class="counter-row">
+      </div>
 
-              <img
-                src="${image(x.hero)}"
-                loading="lazy"
-                onerror="this.style.opacity=.25">
+    </div>
 
-              <div class="counter-main">
+    ${
+      rows.length
+        ? rows.map(row=>{
 
-                <div class="counter-name">
-                  ${i+1}. ${escapeHtml(x.hero.name)}
+            const hero=
+              state.heroesById[row.heroId];
+
+            if(!hero) return "";
+
+            return `
+
+              <div class="counter-item">
+
+                <img src="${heroImage(hero)}">
+
+                <div class="counter-main">
+
+                  <div class="counter-name">
+                    ${displayName(hero)}
+                  </div>
+
+                  <div class="counter-meta">
+
+                    ${
+                      row.source==="Dotabuff"
+                        ? "Dotabuff"
+                        : "быстрый fallback"
+                    }
+
+                    ${
+                      row.matches
+                        ? ` · ${row.matches.toLocaleString()} матчей`
+                        : ""
+                    }
+
+                  </div>
+
                 </div>
 
-                <div class="small">
+                <div>
+
+                  <div class="adv">
+                    +${Number(row.advantage).toFixed(2)}%
+                  </div>
 
                   ${
-                    x.local
-                    ? "локальный counter signal"
-                    :
-                    `WR ${fmt(x.winRate)}%
-                     · ${int(x.matches)} матчей`
+                    row.heroWinRate
+                      ? `<div class="win">
+                           WR ${Number(row.heroWinRate).toFixed(2)}%
+                         </div>`
+                      : ""
                   }
 
                 </div>
 
               </div>
+            `;
 
-              <div
-                class="counter-value ${
-                  x.disadvantage>1
-                    ? "good"
-                    : x.disadvantage<0
-                      ? "bad"
-                      : "neutral"
-                }">
+          }).join("")
+        : `
+          <div class="empty">
+            Для этого героя пока нет данных.
+          </div>
+        `
+    }
+  `;
+}
 
-                +${Number(x.disadvantage||0).toFixed(2)}%
+/* ---------------------------------------------------------
+   Meta
+--------------------------------------------------------- */
 
+function renderMeta(){
+
+  const active=
+    window.__metaRole || "pos1";
+
+  const rows=
+    META_SNAPSHOT[active]
+      .map(row=>{
+
+        const hero=
+          state.heroesByName[row[0]];
+
+        if(!hero) return "";
+
+        return `
+
+          <div class="meta-item">
+
+            <img src="${heroImage(hero)}">
+
+            <div>
+
+              <div class="meta-name">
+                ${displayName(hero)}
+              </div>
+
+              <div class="meta-sub">
+                ${ROLE_LABELS[active]}
+                · ${row[3].toLocaleString()} matches
               </div>
 
             </div>
 
-          `).join("")
-          :
-          `<div class="loading">Нет данных</div>`
-        }
+            <div class="meta-rating">
 
+              ${row[1].toFixed(1)}
+
+              <small>
+                WR ${row[2].toFixed(1)}%
+              </small>
+
+            </div>
+
+          </div>
+        `;
+      })
+      .join("");
+
+  document.getElementById("content").innerHTML=`
+
+    <div class="card">
+
+      <div class="section-title">
+        Meta 7.41e
       </div>
 
+      <div class="sub">
+        Meta используется для оценки роли и качества
+        кандидата. Во время драфта она НЕ заменяет
+        matchup против конкретных врагов.
+      </div>
 
-      <div class="source" style="margin-top:10px">
-        Положительное значение означает статистическое
-        преимущество контрпика против выбранного героя.
+      <div class="source-row">
+        <span class="badge green">D2PT</span>
+        <span class="badge">7000+ MMR / pro</span>
       </div>
 
     </div>
 
+    <div class="card">
+
+      <div class="meta-tabs">
+
+        ${ROLE_NAMES.map(role=>`
+
+          <button
+            class="meta-tab ${role===active?"active":""}"
+            onclick="changeMetaRole('${role}')"
+          >
+            ${ROLE_LABELS[role]}
+          </button>
+
+        `).join("")}
+
+      </div>
+
+      <div class="meta-list">
+        ${rows || `
+          <div class="empty">
+            Нет meta snapshot.
+          </div>
+        `}
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="sub">
+        Важно: D2PT использует высокорейтинговые
+        и профессиональные данные. Snapshot нужен,
+        чтобы приложение не зависело от сети при
+        каждом открытии страницы.
+      </div>
+
+      <div class="source-row">
+        <a
+          class="badge green"
+          href="https://dota2protracker.com/"
+          target="_blank"
+          rel="noopener"
+        >
+          Открыть Dota2ProTracker
+        </a>
+      </div>
+
+    </div>
   `;
-
 }
 
-
-/* =========================================================
-   MATCHUP NETWORK
-========================================================= */
-
-async function refreshMatchup(hero){
-
-  if(matchupLoading[hero.id])
-    return matchupLoading[hero.id];
-
-  matchupLoading[hero.id]=
-    (async()=>{
-
-      let data=null;
-
-      /*
-        1. Dotabuff
-      */
-
-      try{
-
-        data=
-          await fetchDotabuff(hero);
-
-      }catch(e){
-
-        console.log(
-          "Dotabuff unavailable:",
-          hero.name
-        );
-
-      }
-
-
-      /*
-        2. OpenDota fallback
-      */
-
-      if(!data || !data.length){
-
-        try{
-
-          data=
-            await fetchOpenDota(hero);
-
-        }catch(e){
-
-          console.log(
-            "OpenDota unavailable:",
-            hero.name
-          );
-
-        }
-
-      }
-
-
-      if(data && data.length){
-
-        setMatchupCache(hero.id,data);
-
-        if(
-          selectedCounterHero &&
-          selectedCounterHero.id===hero.id
-        ){
-
-          renderCounterResult(
-            hero,
-            data,
-            true,
-            false
-          );
-
-        }
-
-        renderRecommendations();
-        renderAnalysis();
-
-      }
-
-
-      delete matchupLoading[hero.id];
-
-    })();
-
-  return matchupLoading[hero.id];
-
+function changeMetaRole(role){
+  window.__metaRole=role;
+  renderMeta();
 }
 
+/* ---------------------------------------------------------
+   Tabs
+--------------------------------------------------------- */
 
-/* =========================================================
-   DOTABUFF
-========================================================= */
+function switchTab(tab){
 
-async function fetchDotabuff(hero){
+  state.currentTab=tab;
 
-  const url=
-    DOTABUFF+
-    hero.slug+
-    "/counters";
-
-  let html=null;
-
-  /*
-    First direct.
-  */
-
-  try{
-
-    html=
-      await fetchText(url,3500);
-
-  }catch(e){}
-
-
-  /*
-    Then one proxy at a time.
-  */
-
-  if(!html){
-
-    const proxies=[
-
-      u=>
-        "https://api.allorigins.win/raw?url="+
-        encodeURIComponent(u),
-
-      u=>
-        "https://corsproxy.io/?"+
-        encodeURIComponent(u)
-
-    ];
-
-    for(const proxy of proxies){
-
-      try{
-
-        html=
-          await fetchText(proxy(url),4500);
-
-        if(html)
-          break;
-
-      }catch(e){}
-
-    }
-
-  }
-
-  if(!html)
-    throw new Error("Dotabuff unavailable");
-
-  return parseDotabuff(html);
-
-}
-
-
-/* =========================================================
-   DOTABUFF PARSER
-========================================================= */
-
-function parseDotabuff(html){
-
-  const doc=
-    new DOMParser()
-      .parseFromString(html,"text/html");
-
-  const tables=
-    [...doc.querySelectorAll("table")];
-
-  if(!tables.length)
-    return [];
-
-  /*
-    Ищем таблицу, в которой присутствуют
-    matchup headers.
-  */
-
-  let table=
-    tables.find(t=>
-      /Disadvantage/i.test(t.innerText) &&
-      /Matches Played/i.test(t.innerText)
+  document.querySelectorAll(".tab").forEach(el=>{
+    el.classList.toggle(
+      "active",
+      el.dataset.tab===tab
     );
-
-  if(!table)
-    table=tables[0];
-
-  const result=[];
-
-  for(const tr of table.querySelectorAll("tr")){
-
-    const cells=
-      [...tr.querySelectorAll("td,th")]
-      .map(x=>x.innerText.trim())
-      .filter(Boolean);
-
-    if(cells.length<2)
-      continue;
-
-    const hero=
-      findHeroInCells(cells);
-
-    if(!hero)
-      continue;
-
-    const percentValues=
-      cells
-      .map(x=>{
-        const m=
-          x.replace(",",".")
-           .match(/[+-]?\d+(?:\.\d+)?%/);
-
-        return m
-          ? Number(m[0].replace("%",""))
-          : null;
-      })
-      .filter(x=>x!==null);
-
-    if(!percentValues.length)
-      continue;
-
-    const disadvantage=
-      percentValues[0];
-
-    const winRate=
-      percentValues.length>1
-        ? percentValues[1]
-        : null;
-
-    let matches=0;
-
-    for(const cell of cells){
-
-      const compact=
-        cell.replace(/[^\d]/g,"");
-
-      if(
-        compact &&
-        /^\d+$/.test(compact) &&
-        Number(compact)>20
-      ){
-
-        matches=
-          Math.max(matches,Number(compact));
-
-      }
-
-    }
-
-    result.push({
-
-      hero,
-
-      disadvantage,
-
-      winRate,
-
-      matches
-
-    });
-
-  }
-
-
-  const unique=
-    new Map();
-
-  for(const row of result){
-
-    if(
-      row.hero &&
-      !unique.has(row.hero.id)
-    ){
-
-      unique.set(row.hero.id,row);
-
-    }
-
-  }
-
-  return [...unique.values()]
-    .sort((a,b)=>
-      b.disadvantage-a.disadvantage
-    );
-
-}
-
-
-/* =========================================================
-   OPENDOTA FALLBACK
-========================================================= */
-
-async function fetchOpenDota(hero){
-
-  const url=
-    "https://api.opendota.com/api/heroes/"+
-    hero.id+
-    "/matchups";
-
-  const response=
-    await fetchTimeout(url,4500);
-
-  const rows=
-    await response.json();
-
-  return rows.map(row=>{
-
-    const enemy=
-      heroById[Number(row.hero_id)];
-
-    if(!enemy)
-      return null;
-
-    const games=
-      Number(row.games_played||0);
-
-    if(!games)
-      return null;
-
-    const wins=
-      Number(row.wins||0);
-
-    const wr=
-      wins/games*100;
-
-    return {
-
-      hero:enemy,
-
-      disadvantage:
-        50-wr,
-
-      winRate:wr,
-
-      matches:games
-
-    };
-
-  }).filter(Boolean);
-
-}
-
-
-/* =========================================================
-   CACHE
-========================================================= */
-
-function getMatchupCache(id){
-
-  try{
-
-    const raw=
-      localStorage.getItem(
-        MATCHUP_CACHE_PREFIX+id
-      );
-
-    if(!raw)
-      return null;
-
-    const obj=
-      JSON.parse(raw);
-
-    if(
-      !obj ||
-      Date.now()-obj.time>CACHE_TIME
-    ){
-
-      localStorage.removeItem(
-        MATCHUP_CACHE_PREFIX+id
-      );
-
-      return null;
-
-    }
-
-    return obj.data
-      .map(x=>({
-
-        hero:heroById[x.heroId],
-
-        disadvantage:Number(x.disadvantage)||0,
-
-        winRate:
-          x.winRate===null
-            ? null
-            : Number(x.winRate),
-
-        matches:Number(x.matches)||0
-
-      }))
-      .filter(x=>x.hero);
-
-  }catch(e){
-
-    return null;
-
-  }
-
-}
-
-function setMatchupCache(id,data){
-
-  try{
-
-    localStorage.setItem(
-
-      MATCHUP_CACHE_PREFIX+id,
-
-      JSON.stringify({
-
-        time:Date.now(),
-
-        data:data.map(x=>({
-
-          heroId:x.hero.id,
-
-          disadvantage:x.disadvantage,
-
-          winRate:x.winRate,
-
-          matches:x.matches
-
-        }))
-
-      })
-
-    );
-
-  }catch(e){}
-
-}
-
-
-/* =========================================================
-   PAIR LOOKUP
-========================================================= */
-
-function getPair(myHero,enemyHero){
-
-  if(!myHero || !enemyHero)
-    return null;
-
-  /*
-    Данные хранятся по нашему герою:
-    our hero -> counters against enemies.
-  */
-
-  const cache=
-    getMatchupCache(myHero.id);
-
-  if(cache){
-
-    const exact=
-      cache.find(x=>
-        x.hero.id===enemyHero.id
-      );
-
-    if(exact)
-      return exact;
-
-  }
-
-
-  /*
-    Local fallback:
-    enemy target -> local counter list.
-  */
-
-  const local=
-    LOCAL_COUNTERS[enemyHero.name] || [];
-
-  const found=
-    local.find(x=>
-      norm(x[0])===norm(myHero.name)
-    );
-
-  if(found){
-
-    return {
-
-      hero:enemyHero,
-
-      disadvantage:Number(found[1]),
-
-      winRate:null,
-
-      matches:0,
-
-      local:true
-
-    };
-
-  }
-
-  return null;
-
-}
-
-
-/* =========================================================
-   FAST COUNTER SCORE
-========================================================= */
-
-function counterScore(hero,enemies){
-
-  let total=0;
-  let count=0;
-
-  for(const enemy of enemies){
-
-    const pair=
-      getPair(hero,enemy);
-
-    if(pair){
-
-      total+=Number(pair.disadvantage||0);
-      count++;
-
-    }
-
-  }
-
-  /*
-    Небольшой бонус за каждый известный matchup,
-    но не позволяем одному extreme matchup
-    полностью разрушить role fit.
-  */
-
-  if(!count)
-    return 0;
-
-  return Math.max(
-    -15,
-    Math.min(
-      15,
-      total
-    )
-  );
-
-}
-
-
-/* =========================================================
-   DRAFT RECOMMENDATIONS
-========================================================= */
-
-function renderRecommendations(){
-
-  const box=
-    document.getElementById("recommendations");
-
-  if(!heroes.length){
-
-    box.innerHTML=`
-      <div class="card loading">
-        <span class="spinner"></span>
-        Загружаю полный список героев...
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const role=
-    myTeam.findIndex(x=>!x);
-
-  if(role<0){
-
-    box.innerHTML=`
-      <div class="card">
-        Все позиции заполнены.
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const position=
-    role+1;
-
-  document.getElementById("recommend-title").textContent=
-    "Лучшие варианты · POS "+position;
-
-  const enemies=
-    enemyTeam.filter(Boolean);
-
-  const candidates=
-    heroes
-      .filter(hero=>!picked(hero))
-      .map(hero=>
-        scoreCandidate(
-          hero,
-          position,
-          enemies
-        )
-      )
-      .sort((a,b)=>b.score-a.score)
-      .slice(0,10);
-
-  box.innerHTML=
-    candidates
-      .map(recommendationHtml)
-      .join("");
-
-}
-
-
-/* =========================================================
-   CANDIDATE SCORE
-========================================================= */
-
-function scoreCandidate(hero,position,enemies){
-
-  const meta=
-    getRoleMeta(hero,position);
-
-  let roleScore=
-    meta
-      ? meta.rating
-      : 8;
-
-
-  /*
-    Жёсткий anti-bad-role слой.
-  */
-
-  if(
-    position===1 &&
-    (
-      hero.name==="Mirana" ||
-      hero.name==="Spirit Breaker" ||
-      hero.name==="Bounty Hunter" ||
-      hero.name==="Treant Protector"
-    )
-  ){
-
-    roleScore=0;
-
-  }
-
-
-  /*
-    Synergy.
-  */
-
-  let synergy=0;
-
-  for(const ally of myTeam){
-
-    if(!ally)
-      continue;
-
-    synergy+=
-      getSynergy(hero,ally);
-
-  }
-
-  /*
-    Counter against actual enemy draft.
-  */
-
-  const counter=
-    counterScore(
-      hero,
-      enemies
-    );
-
-
-  /*
-    Winrate meta bonus.
-  */
-
-  const wr=
-    meta
-      ? (meta.winRate-50)*2
-      : 0;
-
-
-  /*
-    Главная разница с прошлой версией:
-    
-    counter теперь реально влияет на score.
-
-    Если враг уже выбрал героя, который
-    конкретно контрится данным candidate,
-    candidate получает заметный bonus.
-
-  */
-
-  const score=
-      roleScore*.46
-    + synergy*2.2
-    + counter*1.8
-    + wr*.8;
-
-
-  return {
-
-    hero,
-    position,
-    meta,
-    roleScore,
-    synergy,
-    counter,
-    score
-
-  };
-
-}
-
-
-function recommendationHtml(x){
-
-  const reasons=[];
-
-  if(x.meta)
-    reasons.push(
-      `D2PT ${x.meta.rating}`
-    );
-
-  if(x.counter>1)
-    reasons.push(
-      `counter +${x.counter.toFixed(1)}`
-    );
-
-  if(x.counter<-2)
-    reasons.push(
-      `опасный matchup ${x.counter.toFixed(1)}`
-    );
-
-  if(x.synergy>1)
-    reasons.push(
-      `synergy +${x.synergy}`
-    );
-
-  if(!reasons.length)
-    reasons.push(
-      "роль + доступная статистика"
-    );
-
-
-  return `
-
-    <button
-      class="rec"
-      onclick="pickRecommendation(${x.hero.id},${x.position-1})">
-
-      <img
-        class="rec-img"
-        src="${image(x.hero)}"
-        loading="lazy"
-        onerror="this.style.opacity=.25">
-
-      <div class="rec-info">
-
-        <div class="rec-name">
-          ${escapeHtml(x.hero.name)}
-        </div>
-
-        <div class="rec-score">
-          ${Math.round(x.score)}
-        </div>
-
-        <div class="badges">
-
-          <span class="badge blue">
-            POS ${x.position}
-          </span>
-
-          ${
-            x.meta
-            ? `
-              <span class="badge">
-                WR ${x.meta.winRate}%
-              </span>
-            `
-            : ""
-          }
-
-          ${
-            x.counter>1
-            ? `
-              <span class="badge green">
-                COUNTER +${x.counter.toFixed(1)}
-              </span>
-            `
-            : ""
-          }
-
-          ${
-            x.counter<-2
-            ? `
-              <span class="badge red">
-                BAD MATCHUP
-              </span>
-            `
-            : ""
-          }
-
-        </div>
-
-        <div class="reason">
-          ${reasons.join(" · ")}
-        </div>
-
-      </div>
-
-    </button>
-
-  `;
-
-}
-
-
-function pickRecommendation(id,position){
-
-  if(myTeam[position]){
-
-    toast("Эта позиция уже занята");
-    return;
-
-  }
-
-  const hero=
-    heroById[id];
-
-  if(!hero || picked(hero))
-    return;
-
-  myTeam[position]=hero;
-
-  saveState();
-
-  renderTeams();
-  renderRecommendations();
-  renderAnalysis();
-
-  warmDraftMatchups();
-
-  toast(
-    hero.name+
-    " выбран на POS "+
-    (position+1)
-  );
-
-}
-
-
-/* =========================================================
-   ROLE META
-========================================================= */
-
-function getRoleMeta(hero,position){
-
-  const list=
-    ROLE_META[position] || [];
-
-  const row=
-    list.find(x=>
-      norm(x[0])===norm(hero.name)
-    );
-
-  if(!row)
-    return null;
-
-  return {
-
-    rating:Number(row[1]),
-
-    winRate:Number(row[2])
-
-  };
-
-}
-
-
-/* =========================================================
-   SYNERGY
-========================================================= */
-
-function getSynergy(a,b){
-
-  if(
-    !a ||
-    !b ||
-    a.id===b.id
-  )
-    return 0;
-
-  return (
-
-    SYNERGY[a.name]?.[b.name] ||
-
-    SYNERGY[b.name]?.[a.name] ||
-
-    0
-
-  );
-
-}
-
-
-/* =========================================================
-   WARM DRAFT MATCHUPS
-========================================================= */
-
-function warmDraftMatchups(){
-
-  const enemies=
-    enemyTeam.filter(Boolean);
-
-  if(!enemies.length)
-    return;
-
-
-  /*
-    Только кандидаты, которые реально
-    могут попасть в текущую позицию.
-
-    Не грузим 127 героев.
-  */
-
-  const position=
-    myTeam.findIndex(x=>!x)+1;
-
-  if(!position)
-    return;
-
-
-  const candidates=
-    heroes
-      .filter(h=>!picked(h))
-      .map(h=>{
-
-        const meta=
-          getRoleMeta(h,position);
-
-        return {
-
-          hero:h,
-
-          rating:
-            meta
-              ? meta.rating
-              : 0
-
-        };
-
-      })
-      .sort((a,b)=>
-        b.rating-a.rating
-      )
-      .slice(0,8);
-
-
-  /*
-    Максимум 3 одновременных сетевых запроса.
-  */
-
-  runPool(
-    candidates.map(x=>x.hero),
-    3,
-    async hero=>{
-
-      if(!getMatchupCache(hero.id)){
-
-        await refreshMatchup(hero);
-
-      }
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   ANALYSIS
-========================================================= */
-
-function finishDraft(){
-
-  if(
-    !myTeam.every(Boolean) ||
-    !enemyTeam.every(Boolean)
-  ){
-
-    toast("Нужен полный драфт 5×5");
-    return;
-
-  }
-
-  showPageByName("analysis");
-
-  renderAnalysis();
-
-  /*
-    Не ждём сеть.
-    Загружаем необходимые 5 таблиц
-    в фоне.
-  */
-
-  runPool(
-    myTeam,
-    3,
-    hero=>refreshMatchup(hero)
-  ).then(()=>{
-    renderAnalysis();
   });
 
+  document.querySelectorAll(".bottom-nav button").forEach(el=>{
+    el.classList.toggle(
+      "active",
+      el.dataset.tab===tab
+    );
+  });
+
+  renderCurrent();
 }
 
+function renderCurrent(){
 
-/* =========================================================
-   ANALYSIS SUMMARY
-========================================================= */
-
-function renderAnalysis(){
-
-  const my=
-    myTeam.filter(Boolean);
-
-  const enemy=
-    enemyTeam.filter(Boolean);
-
-
-  if(!my.length){
-
-    document.getElementById("analysis-summary").innerHTML=
-      `<div class="summary">
-        Добавь героев.
-      </div>`;
-
+  if(state.currentTab==="draft"){
+    renderDraft();
     return;
-
   }
 
+  if(state.currentTab==="counters"){
+    renderCounters();
+    return;
+  }
 
-  let synergy=0;
+  if(state.currentTab==="meta"){
+    renderMeta();
+    return;
+  }
 
-  for(let i=0;i<my.length;i++){
+  if(state.currentTab==="analysis"){
+    renderAnalysis();
+  }
+}
 
-    for(let j=i+1;j<my.length;j++){
+/* ---------------------------------------------------------
+   Events
+--------------------------------------------------------- */
 
-      synergy+=
-        getSynergy(
-          my[i],
-          my[j]
+document.querySelectorAll(".tab").forEach(button=>{
+  button.addEventListener("click",()=>{
+    switchTab(button.dataset.tab);
+  });
+});
+
+document.querySelectorAll(".bottom-nav button").forEach(button=>{
+  button.addEventListener("click",()=>{
+    switchTab(button.dataset.tab);
+  });
+});
+
+document.getElementById("closePicker")
+  .addEventListener("click",closePicker);
+
+document.getElementById("heroSearch")
+  .addEventListener("input",renderPicker);
+
+document.querySelectorAll(".filter")
+  .forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+      state.pickerFilter=button.dataset.filter;
+
+      document.querySelectorAll(".filter")
+        .forEach(x=>
+          x.classList.toggle(
+            "active",
+            x===button
+          )
         );
 
+      renderPicker();
+    });
+
+  });
+
+/* закрытие picker по тапу вне окна */
+
+document.getElementById("picker")
+  .addEventListener("click",e=>{
+
+    if(e.target.id==="picker"){
+      closePicker();
     }
 
-  }
+  });
 
+/* ---------------------------------------------------------
+   Boot
+--------------------------------------------------------- */
 
-  let matchup=0;
-  let known=0;
+async function boot(){
 
-  for(const a of my){
+  await loadHeroes();
 
-    for(const e of enemy){
+  renderDraft();
 
-      const p=
-        getPair(a,e);
+  /*
+    Если в localStorage есть старые counters —
+    они используются сразу.
+  */
 
-      if(p){
-
-        matchup+=
-          Number(p.disadvantage||0);
-
-        known++;
-
-      }
-
-    }
-
-  }
-
-
-  const value=
-    synergy*2+
-    matchup;
-
-
-  const grade=
-    value>=30
-      ? "S"
-      : value>=20
-        ? "A"
-        : value>=10
-          ? "B"
-          : "C";
-
-
-  document.getElementById("analysis-summary").innerHTML=`
-
-    <div class="summary">
-
-      <div class="summary-label">
-        DRAFT GRADE
-      </div>
-
-      <div class="summary-value">
-        ${grade}
-      </div>
-
-    </div>
-
-
-    <div class="summary">
-
-      <div class="summary-label">
-        SYNERGY
-      </div>
-
-      <div class="summary-value">
-        +${synergy}
-      </div>
-
-    </div>
-
-
-    <div class="summary">
-
-      <div class="summary-label">
-        MATCHUPS
-      </div>
-
-      <div class="summary-value">
-        ${known}/${my.length*enemy.length}
-      </div>
-
-    </div>
-
-  `;
-
-
-  renderSynergyMatrix(my);
-  renderCounterMatrix(my,enemy);
-  renderThreats(my,enemy);
-
-}
-
-
-/* =========================================================
-   SYNERGY MATRIX
-========================================================= */
-
-function renderSynergyMatrix(team){
-
-  if(team.length<2){
-
-    document.getElementById("synergy-matrix").innerHTML=
-      `<div class="card">
-        Нужно минимум 2 героя.
-      </div>`;
-
-    return;
-
-  }
-
-
-  let html=
-    `<table class="matrix">
-      <thead>
-        <tr>
-          <th></th>`;
-
-
-  for(const hero of team){
-
-    html+=`
-      <th>
-        ${shortName(hero.name)}
-      </th>
-    `;
-
-  }
-
-  html+=`
-      </tr>
-      </thead>
-      <tbody>
-  `;
-
-
-  for(const row of team){
-
-    html+=`
-      <tr>
-        <th>${shortName(row.name)}</th>
-    `;
-
-
-    for(const col of team){
-
-      if(row.id===col.id){
-
-        html+=`
-          <td class="cell-mid">—</td>
-        `;
-
-        continue;
-
-      }
-
-
-      const value=
-        getSynergy(row,col);
-
-
-      const cls=
-        value>=3
-          ? "cell-good"
-          : "cell-mid";
-
-
-      html+=`
-        <td class="${cls}">
-          ${value>0?"+":""}${value}
-        </td>
-      `;
-
-    }
-
-    html+=`</tr>`;
-
-  }
-
-
-  html+=`
-      </tbody>
-    </table>
-  `;
-
-
-  document.getElementById("synergy-matrix").innerHTML=html;
-
-}
-
-
-/* =========================================================
-   COUNTER MATRIX
-========================================================= */
-
-function renderCounterMatrix(my,enemy){
-
-  if(
-    !my.length ||
-    !enemy.length
-  ){
-
-    document.getElementById("counter-matrix").innerHTML=
-      `<div class="card">
-        Заполни обе команды.
-      </div>`;
-
-    return;
-
-  }
-
-
-  let html=
-    `<table class="matrix">
-      <thead>
-        <tr>
-          <th>YOU ↓ / ENEMY →</th>`;
-
-
-  for(const e of enemy){
-
-    html+=`
-      <th>${shortName(e.name)}</th>
-    `;
-
-  }
-
-
-  html+=`
-      </tr>
-      </thead>
-      <tbody>
-  `;
-
-
-  for(const a of my){
-
-    html+=`
-      <tr>
-        <th>${shortName(a.name)}</th>
-    `;
-
-
-    for(const e of enemy){
-
-      const pair=
-        getPair(a,e);
-
-
-      if(!pair){
-
-        html+=`
-          <td class="cell-mid">
-            —
-          </td>
-        `;
-
-        continue;
-
-      }
-
-
-      const value=
-        Number(pair.disadvantage||0);
-
-
-      const cls=
-        value>1
-          ? "cell-good"
-          : value<-1
-            ? "cell-bad"
-            : "cell-mid";
-
-
-      html+=`
-        <td class="${cls}">
-          ${value>0?"+":""}${value.toFixed(1)}%
-        </td>
-      `;
-
-    }
-
-
-    html+=`
-      </tr>
-    `;
-
-  }
-
-
-  html+=`
-      </tbody>
-    </table>
-  `;
-
-
-  document.getElementById("counter-matrix").innerHTML=html;
-
-}
-
-
-/* =========================================================
-   THREATS
-========================================================= */
-
-function renderThreats(my,enemy){
-
-  const threats=[];
-
-
-  for(const a of my){
-
-    for(const e of enemy){
-
-      const pair=
-        getPair(a,e);
-
-      if(!pair)
-        continue;
-
-      threats.push({
-
-        own:a,
-
-        enemy:e,
-
-        value:Number(pair.disadvantage||0)
-
-      });
-
-    }
-
-  }
-
-
-  threats.sort(
-    (a,b)=>a.value-b.value
+  setStatus(
+    `${state.heroes.length} героев · готово`,
+    "ok"
   );
-
-
-  if(!threats.length){
-
-    document.getElementById("threats").innerHTML=`
-      <div class="loading">
-        Matchup statistics ещё загружаются.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  document.getElementById("threats").innerHTML=
-    threats
-      .slice(0,8)
-      .map(x=>`
-
-        <div class="counter-row">
-
-          <img
-            src="${image(x.enemy)}"
-            loading="lazy">
-
-          <div class="counter-main">
-
-            <div class="counter-name">
-              ${escapeHtml(x.enemy.name)}
-            </div>
-
-            <div class="small">
-              против ${escapeHtml(x.own.name)}
-            </div>
-
-          </div>
-
-          <div class="counter-value ${
-            x.value<-1
-              ? "bad"
-              : "neutral"
-          }">
-
-            ${x.value.toFixed(1)}%
-
-          </div>
-
-        </div>
-
-      `)
-      .join("");
-
 }
 
+boot();
 
-/* =========================================================
-   META
-========================================================= */
-
-function renderMetaTabs(){
-
-  document.getElementById("meta-tabs").innerHTML=
-    [1,2,3,4,5]
-      .map(pos=>`
-
-        <button
-          class="meta-tab ${
-            pos===currentMetaRole
-              ? "active"
-              : ""
-          }"
-          onclick="selectMeta(${pos})">
-
-          POS ${pos}
-
-        </button>
-
-      `)
-      .join("");
-
-}
-
-function selectMeta(pos){
-
-  currentMetaRole=pos;
-
-  renderMetaTabs();
-  renderMeta();
-
-}
-
-function renderMeta(){
-
-  const rows=
-    ROLE_META[currentMetaRole] || [];
-
-
-  document.getElementById("meta-list").innerHTML=
-    rows.map((x,i)=>{
-
-      const hero=
-        getHero(x[0]);
-
-      if(!hero)
-        return "";
-
-      return `
-
-        <div class="meta-row">
-
-          <div class="meta-rank">
-            ${i+1}
-          </div>
-
-          <img
-            src="${image(hero)}"
-            loading="lazy">
-
-          <div class="meta-info">
-
-            <div class="meta-name">
-              ${escapeHtml(hero.name)}
-            </div>
-
-            <div class="small">
-              D2PT ${x[1]}
-              · WR ${x[2]}%
-            </div>
-
-          </div>
-
-        </div>
-
-      `;
-
-    }).join("")
-
-    +
-
-    `
-      <div class="source" style="margin-top:9px">
-        Current role-meta snapshot: 7.41e.
-      </div>
-    `;
-
-}
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-function showPage(name,button){
-
-  showPageByName(name);
-
-  document
-    .querySelectorAll(".nav-btn")
-    .forEach(x=>
-      x.classList.remove("active")
-    );
-
-  if(button){
-
-    button.classList.add("active");
-
-  }else{
-
-    const buttons=
-      [...document.querySelectorAll(".nav-btn")];
-
-    const index=
-      ["draft","counters","meta","analysis"]
-      .indexOf(name);
-
-    if(index>=0)
-      buttons[index].classList.add("active");
-
-  }
-
-}
-
-function showPageByName(name){
-
-  document
-    .querySelectorAll(".page")
-    .forEach(x=>
-      x.classList.remove("active")
-    );
-
-  document
-    .getElementById("page-"+name)
-    .classList.add("active");
-
-
-  if(name==="counters")
-    renderCounterHeroes();
-
-  if(name==="meta")
-    renderMeta();
-
-  if(name==="analysis")
-    renderAnalysis();
-
-}
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-function resetDraft(){
-
-  myTeam=
-    [null,null,null,null,null];
-
-  enemyTeam=
-    [null,null,null,null,null];
-
-  saveState();
-
-  renderTeams();
-  renderRecommendations();
-  renderAnalysis();
-
-  toast("Драфт очищен");
-
-}
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-function saveState(){
-
-  try{
-
-    localStorage.setItem(
-
-      STATE_KEY,
-
-      JSON.stringify({
-
-        my:
-          myTeam.map(x=>x?.id||null),
-
-        enemy:
-          enemyTeam.map(x=>x?.id||null)
-
-      })
-
-    );
-
-  }catch(e){}
-
-}
-
-function loadState(){
-
-  try{
-
-    const raw=
-      localStorage.getItem(STATE_KEY);
-
-    if(raw)
-      window.__savedState=
-        JSON.parse(raw);
-
-  }catch(e){}
-
-}
-
-
-/* =========================================================
-   UTILS
-========================================================= */
-
-function findEmptyEnemy(){
-
-  return enemyTeam.findIndex(x=>!x);
-
-}
-
-function updateFinish(){
-
-  document.getElementById("finish-btn").disabled=
-    !(
-      myTeam.every(Boolean) &&
-      enemyTeam.every(Boolean)
-    );
-
-}
-
-function findHeroInCells(cells){
-
-  for(const cell of cells){
-
-    const direct=
-      getHero(cell);
-
-    if(direct)
-      return direct;
-
-
-    const found=
-      heroes.find(h=>
-        norm(cell).includes(
-          norm(h.name)
-        )
-      );
-
-    if(found)
-      return found;
-
-  }
-
-  return null;
-
-}
-
-function shortName(name){
-
-  if(name.length<=13)
-    return name;
-
-  const parts=
-    name.split(" ");
-
-  if(parts.length>1){
-
-    return parts
-      .map(x=>x[0])
-      .join("");
-
-  }
-
-  return name.slice(0,11);
-
-}
-
-function fmt(x){
-
-  return Number.isFinite(Number(x))
-    ? Number(x).toFixed(1)
-    : "—";
-
-}
-
-function int(x){
-
-  return Number(x||0)
-    .toLocaleString("ru-RU");
-
-}
-
-function escapeHtml(x){
-
-  return String(x)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-
-/* =========================================================
-   FETCH
-========================================================= */
-
-async function fetchTimeout(url,ms){
-
-  const controller=
-    new AbortController();
-
-  const timer=
-    setTimeout(
-      ()=>controller.abort(),
-      ms
-    );
-
-  try{
-
-    const response=
-      await fetch(
-        url,
-        {
-          signal:controller.signal,
-          cache:"no-store"
-        }
-      );
-
-    if(!response.ok)
-      throw new Error(
-        "HTTP "+response.status
-      );
-
-    return response;
-
-  }finally{
-
-    clearTimeout(timer);
-
-  }
-
-}
-
-async function fetchText(url,ms){
-
-  const response=
-    await fetchTimeout(url,ms);
-
-  return response.text();
-
-}
-
-
-/* =========================================================
-   CONCURRENCY POOL
-========================================================= */
-
-async function runPool(items,limit,worker){
-
-  let index=0;
-
-  async function runner(){
-
-    while(true){
-
-      const i=index++;
-
-      if(i>=items.length)
-        return;
-
-      try{
-
-        await worker(items[i]);
-
-      }catch(e){
-
-        console.warn(e);
-
-      }
-
-    }
-
-  }
-
-  const workers=
-    Array.from(
-      {
-        length:
-          Math.min(
-            limit,
-            items.length
-          )
-      },
-      runner
-    );
-
-  await Promise.all(workers);
-
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-let toastTimer=null;
-
-function toast(text){
-
-  const el=
-    document.getElementById("toast");
-
-  el.textContent=text;
-
-  el.classList.add("show");
-
-  clearTimeout(toastTimer);
-
-  toastTimer=
-    setTimeout(
-      ()=>el.classList.remove("show"),
-      2100
-    );
-
-}
-
-
-/* =========================================================
-   CLEAN EXPIRED MATCHUP CACHE
-========================================================= */
-
-(function(){
-
-  try{
-
-    const now=Date.now();
-
-    const keys=[];
-
-    for(let i=0;i<localStorage.length;i++){
-
-      const key=
-        localStorage.key(i);
-
-      if(
-        key &&
-        key.startsWith(
-          MATCHUP_CACHE_PREFIX
-        )
-      ){
-
-        keys.push(key);
-
-      }
-
-    }
-
-
-    for(const key of keys){
-
-      try{
-
-        const obj=
-          JSON.parse(
-            localStorage.getItem(key)
-          );
-
-        if(
-          !obj ||
-          now-obj.time >
-          CACHE_TIME*3
-        ){
-
-          localStorage.removeItem(key);
-
-        }
-
-      }catch(e){
-
-        localStorage.removeItem(key);
-
-      }
-
-    }
-
-  }catch(e){}
-
-})();
 </script>
-
 </body>
 </html>
