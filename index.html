@@ -2,68 +2,64 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DRAFT//VOID — Dota 2 Draft Intelligence</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+
+<title>DRAFT//VOID — Dota 2 Draft Assistant</title>
 
 <style>
 :root{
   --bg:#05070d;
-  --panel:rgba(15,19,30,.78);
-  --panel2:rgba(20,25,39,.92);
+  --panel:#0b0f19;
+  --panel2:#101624;
   --line:rgba(255,255,255,.09);
-  --text:#f4f7ff;
-  --muted:#8992aa;
-  --accent:#8b5cf6;
+  --text:#f5f7fb;
+  --muted:#8993a7;
+  --purple:#8b5cf6;
   --cyan:#22d3ee;
   --green:#4ade80;
   --red:#fb7185;
   --gold:#fbbf24;
-  --shadow:0 20px 70px rgba(0,0,0,.45);
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  background:var(--bg);
+}
 
 body{
   margin:0;
   min-height:100vh;
-  color:var(--text);
   background:
-    radial-gradient(circle at 10% 0%,rgba(139,92,246,.18),transparent 28%),
-    radial-gradient(circle at 90% 10%,rgba(34,211,238,.12),transparent 26%),
-    radial-gradient(circle at 50% 100%,rgba(236,72,153,.08),transparent 32%),
+    radial-gradient(circle at 15% 0%,rgba(139,92,246,.16),transparent 30%),
+    radial-gradient(circle at 90% 20%,rgba(34,211,238,.10),transparent 25%),
     var(--bg);
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
-  overflow-x:hidden;
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  padding-bottom:90px;
 }
 
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:.16;
-  background-image:
-    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
-  background-size:42px 42px;
-  mask-image:linear-gradient(to bottom,black,transparent 85%);
+button,
+input{
+  font:inherit;
 }
-
-button,input{font:inherit}
 
 button{
-  color:inherit;
   border:0;
-  cursor:pointer;
 }
 
 .app{
-  width:min(1500px,100%);
+  max-width:1450px;
   margin:auto;
-  padding:20px 16px 50px;
+  padding:16px;
 }
 
-.topbar{
+/* HEADER */
+
+.header{
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -71,57 +67,49 @@ button{
   margin-bottom:18px;
 }
 
-.logo{
+.brand{
   display:flex;
   align-items:center;
   gap:12px;
 }
 
-.logoMark{
+.logo{
   width:44px;
   height:44px;
-  border-radius:15px;
+  border-radius:14px;
   display:grid;
   place-items:center;
-  background:
-    linear-gradient(135deg,#8b5cf6,#ec4899);
-  box-shadow:0 0 35px rgba(139,92,246,.35);
-  font-size:21px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  box-shadow:0 0 30px rgba(139,92,246,.3);
+  font-size:22px;
   font-weight:900;
 }
 
-.logoText{
-  line-height:1;
+.brandText h1{
+  margin:0;
+  font-size:17px;
+  letter-spacing:.08em;
 }
 
-.logoText b{
-  display:block;
-  letter-spacing:.13em;
-  font-size:15px;
-}
-
-.logoText span{
-  display:block;
-  margin-top:5px;
+.brandText p{
+  margin:3px 0 0;
   color:var(--muted);
-  font-size:10px;
-  letter-spacing:.18em;
-  text-transform:uppercase;
+  font-size:11px;
 }
 
-.live{
+.status{
   display:flex;
   align-items:center;
   gap:7px;
   padding:8px 11px;
   border:1px solid var(--line);
   border-radius:999px;
-  color:#aeb7ca;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
   font-size:11px;
-  background:rgba(255,255,255,.035);
 }
 
-.liveDot{
+.dot{
   width:7px;
   height:7px;
   border-radius:50%;
@@ -129,691 +117,690 @@ button{
   box-shadow:0 0 12px var(--green);
 }
 
-.tabs{
+/* NAV */
+
+.nav{
   display:flex;
-  padding:5px;
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:rgba(8,11,19,.78);
+  gap:8px;
   margin-bottom:18px;
+  padding:5px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--line);
+  border-radius:17px;
 }
 
-.tab{
+.nav button{
   flex:1;
-  padding:13px;
-  border-radius:13px;
-  color:var(--muted);
+  padding:12px;
+  border-radius:12px;
   background:transparent;
+  color:var(--muted);
   font-weight:800;
-  transition:.2s;
+  cursor:pointer;
 }
 
-.tab.active{
+.nav button.active{
   color:white;
-  background:linear-gradient(135deg,rgba(139,92,246,.32),rgba(34,211,238,.12));
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+  background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(34,211,238,.12));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
 }
 
-.command{
-  position:relative;
+/* VIEWS */
+
+.view{
+  display:none;
+}
+
+.view.active{
+  display:block;
+}
+
+/* COMMON */
+
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 18px 60px rgba(0,0,0,.18);
+}
+
+.sectionTitle{
   display:flex;
   align-items:center;
+  justify-content:space-between;
   gap:10px;
-  padding:14px 16px;
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:var(--panel);
-  box-shadow:var(--shadow);
-  margin-bottom:18px;
+  margin-bottom:12px;
 }
 
-.command span{
-  color:var(--cyan);
-  font-weight:900;
+.sectionTitle h2{
+  margin:0;
+  font-size:15px;
 }
 
-.command input{
-  width:100%;
-  border:0;
-  outline:0;
-  color:white;
-  background:transparent;
+.sectionTitle span{
+  color:var(--muted);
+  font-size:11px;
 }
 
-.command input::placeholder{
-  color:#657087;
-}
+/* DRAFT */
 
 .draftGrid{
   display:grid;
-  grid-template-columns:1fr 1.6fr 1fr;
-  gap:16px;
+  grid-template-columns:230px minmax(0,1fr) 230px;
+  gap:14px;
 }
 
-.panel{
-  border:1px solid var(--line);
-  background:var(--panel);
-  border-radius:24px;
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(20px);
-  overflow:hidden;
+.side{
+  padding:14px;
 }
 
-.panelHead{
-  padding:17px 18px 13px;
-  border-bottom:1px solid var(--line);
-}
-
-.panelHead h2{
-  margin:0;
-  font-size:14px;
-  letter-spacing:.04em;
-}
-
-.panelHead p{
-  margin:5px 0 0;
-  color:var(--muted);
-  font-size:11px;
-}
-
-.slots{
-  padding:12px;
-  display:grid;
-  gap:9px;
-}
-
-.slot{
-  min-height:73px;
-  position:relative;
+.posCard{
   display:flex;
   align-items:center;
-  gap:11px;
-  padding:9px;
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:17px;
-  background:rgba(255,255,255,.025);
-  transition:.2s;
+  gap:9px;
+  width:100%;
+  min-height:58px;
+  margin-bottom:8px;
+  padding:7px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--line);
+  border-radius:14px;
+  color:white;
+  cursor:pointer;
+  text-align:left;
 }
 
-.slot:hover{
+.posCard:hover{
   border-color:rgba(139,92,246,.5);
-  transform:translateY(-1px);
 }
 
-.slotNumber{
-  width:27px;
-  height:27px;
-  border-radius:9px;
+.posNumber{
+  width:34px;
+  height:34px;
   display:grid;
   place-items:center;
-  color:#aab2c5;
+  border-radius:10px;
   background:rgba(255,255,255,.06);
-  font-size:11px;
-  font-weight:900;
-}
-
-.slot.empty{
-  color:#606b80;
-  border-style:dashed;
-}
-
-.slot img{
-  width:48px;
-  height:48px;
-  object-fit:cover;
-  border-radius:12px;
-}
-
-.slotInfo{
-  min-width:0;
-}
-
-.slotInfo strong{
-  display:block;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  font-size:12px;
-}
-
-.slotInfo small{
   color:var(--muted);
-  font-size:9px;
+  font-weight:900;
+  font-size:12px;
+  flex:none;
 }
 
-.remove{
-  margin-left:auto;
-  width:27px;
-  height:27px;
-  border-radius:9px;
-  background:rgba(255,255,255,.06);
-  color:#8992a6;
+.posCard img{
+  width:54px;
+  height:38px;
+  object-fit:cover;
+  border-radius:8px;
 }
 
-.remove:hover{
-  color:white;
-  background:rgba(251,113,133,.18);
+.posEmpty{
+  color:var(--muted);
+  font-size:11px;
 }
 
 .center{
   min-width:0;
 }
 
-.centerHeader{
-  padding:20px;
-  position:relative;
-  min-height:185px;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  overflow:hidden;
-  border-bottom:1px solid var(--line);
-  background:
-    radial-gradient(circle at 75% 15%,rgba(139,92,246,.28),transparent 35%),
-    radial-gradient(circle at 15% 90%,rgba(34,211,238,.12),transparent 32%);
-}
-
-.centerHeader:after{
-  content:"VOID";
-  position:absolute;
-  right:-10px;
-  top:-25px;
-  color:rgba(255,255,255,.025);
-  font-size:150px;
-  font-weight:1000;
-  letter-spacing:-.08em;
-  pointer-events:none;
-}
-
-.eyebrow{
-  color:var(--cyan);
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-}
-
-.centerHeader h1{
-  margin:7px 0 5px;
-  font-size:clamp(28px,5vw,46px);
-  line-height:.95;
-  letter-spacing:-.05em;
-}
-
-.centerHeader p{
-  max-width:520px;
-  color:#8d97ac;
-  font-size:12px;
-  line-height:1.5;
-}
-
-.enemyLine{
-  padding:12px 14px;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  border-bottom:1px solid var(--line);
-}
-
-.enemyBadge{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  padding:5px 7px 5px 5px;
-  border-radius:10px;
-  background:rgba(251,113,133,.08);
-  border:1px solid rgba(251,113,133,.18);
-  font-size:10px;
-}
-
-.enemyBadge img{
-  width:23px;
-  height:23px;
-  border-radius:7px;
-}
-
-.enemyBadge button{
-  background:transparent;
-  color:#7e8799;
-}
-
 .recommend{
-  padding:15px;
+  padding:16px;
+  margin-bottom:14px;
 }
 
-.recommendTitle{
+.recommendTop{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-bottom:10px;
+  gap:10px;
+  margin-bottom:12px;
 }
 
-.recommendTitle b{
+.recommendTop h2{
+  margin:0;
+  font-size:18px;
+}
+
+.recommendTop span{
+  color:var(--cyan);
+  font-size:11px;
+}
+
+.recommendations{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.rec{
+  min-width:0;
+  padding:9px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--line);
+  border-radius:15px;
+  cursor:pointer;
+}
+
+.rec img{
+  width:100%;
+  aspect-ratio:1.7;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.rec strong{
+  display:block;
+  margin-top:7px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
   font-size:12px;
 }
 
-.recommendTitle span{
-  color:var(--green);
+.rec small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
   font-size:10px;
 }
 
-.recCard{
+.enemy{
+  padding:14px;
+}
+
+.enemyBox{
+  min-height:105px;
   display:grid;
-  grid-template-columns:62px 1fr auto;
-  gap:11px;
-  align-items:center;
-  padding:10px;
+  place-items:center;
   margin-bottom:8px;
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:16px;
-  background:rgba(255,255,255,.025);
-  transition:.2s;
+  border:1px dashed rgba(255,255,255,.13);
+  border-radius:15px;
+  color:var(--muted);
+  font-size:12px;
 }
 
-.recCard:hover{
-  transform:translateY(-2px);
-  border-color:rgba(139,92,246,.45);
-  background:rgba(139,92,246,.07);
+.enemyList{
+  display:grid;
+  gap:8px;
 }
 
-.recCard img{
-  width:62px;
-  height:62px;
-  border-radius:13px;
+.enemyItem{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px;
+  background:rgba(255,255,255,.035);
+  border-radius:12px;
+}
+
+.enemyItem img{
+  width:48px;
+  height:34px;
   object-fit:cover;
+  border-radius:7px;
 }
 
-.recMain strong{
-  font-size:13px;
-  display:block;
+.enemyItem button{
+  margin-left:auto;
+  background:transparent;
+  color:var(--red);
+  cursor:pointer;
 }
 
-.recMain small{
-  color:#8e98ac;
-  font-size:10px;
-  line-height:1.4;
+/* HERO GRID */
+
+.heroPanel{
+  padding:14px;
 }
 
-.recScore{
-  text-align:right;
+.toolbar{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
 }
 
-.recScore b{
-  display:block;
-  color:var(--green);
-  font-size:15px;
+.search{
+  flex:1;
+  min-width:0;
+  padding:12px 14px;
+  border-radius:13px;
+  border:1px solid var(--line);
+  outline:none;
+  color:white;
+  background:rgba(0,0,0,.25);
 }
 
-.recScore small{
-  color:#687388;
-  font-size:9px;
-}
-
-.pick{
-  margin-top:7px;
-  padding:6px 9px;
-  border-radius:9px;
-  background:rgba(139,92,246,.18);
-  color:#d9ceff;
-  font-size:9px;
-  font-weight:800;
-}
-
-.heroes{
-  padding:15px;
+.search:focus{
+  border-color:rgba(139,92,246,.65);
 }
 
 .filters{
   display:flex;
-  gap:7px;
+  gap:6px;
   overflow-x:auto;
-  padding-bottom:8px;
-  scrollbar-width:none;
+  padding-bottom:3px;
+  margin-bottom:12px;
 }
 
-.filters::-webkit-scrollbar{display:none}
-
-.filter{
-  flex:0 0 auto;
+.filters button{
+  flex:none;
   padding:8px 11px;
-  border-radius:11px;
+  border-radius:999px;
+  color:var(--muted);
+  background:rgba(255,255,255,.04);
   border:1px solid var(--line);
-  color:#8993a8;
-  background:rgba(255,255,255,.025);
-  font-size:10px;
-  font-weight:800;
+  cursor:pointer;
+  font-size:11px;
 }
 
-.filter.active{
+.filters button.active{
   color:white;
   border-color:rgba(139,92,246,.6);
-  background:rgba(139,92,246,.16);
+  background:rgba(139,92,246,.18);
 }
 
 .heroGrid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  max-height:650px;
+  grid-template-columns:repeat(6,1fr);
+  gap:7px;
+  max-height:520px;
   overflow:auto;
   padding-right:2px;
 }
 
-.heroGrid::-webkit-scrollbar{width:4px}
-.heroGrid::-webkit-scrollbar-thumb{
-  background:#2a3141;
-  border-radius:10px;
-}
-
-.heroCard{
+.hero{
   position:relative;
-  min-width:0;
-  aspect-ratio:1/1.08;
-  border-radius:13px;
+  cursor:pointer;
+  border-radius:10px;
   overflow:hidden;
-  border:1px solid rgba(255,255,255,.06);
-  background:#111622;
-  transition:.18s;
+  border:1px solid transparent;
+  background:#0c111b;
 }
 
-.heroCard:hover{
-  transform:scale(1.025);
-  border-color:rgba(255,255,255,.25);
-  z-index:2;
+.hero:hover{
+  border-color:var(--purple);
 }
 
-.heroCard.disabled{
-  opacity:.22;
-  filter:grayscale(1);
-}
-
-.heroCard img{
+.hero img{
   width:100%;
-  height:100%;
+  aspect-ratio:1.45;
   object-fit:cover;
   display:block;
 }
 
-.heroShade{
-  position:absolute;
-  inset:45% 0 0;
-  background:linear-gradient(transparent,rgba(0,0,0,.92));
-}
-
 .heroName{
-  position:absolute;
-  left:7px;
-  right:7px;
-  bottom:7px;
+  padding:6px;
   font-size:9px;
-  font-weight:900;
-  text-shadow:0 2px 5px #000;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .attr{
   position:absolute;
-  top:6px;
-  left:6px;
+  top:5px;
+  left:5px;
   width:7px;
   height:7px;
   border-radius:50%;
-  box-shadow:0 0 10px currentColor;
+  box-shadow:0 0 8px currentColor;
 }
 
 .attr.str{color:#ef4444;background:#ef4444}
-.attr.agi{color:#4ade80;background:#4ade80}
+.attr.agi{color:#22c55e;background:#22c55e}
 .attr.int{color:#60a5fa;background:#60a5fa}
-.attr.uni{color:#c084fc;background:#c084fc}
+.attr.all{color:#fbbf24;background:#fbbf24}
 
-.posTag{
-  position:absolute;
-  right:5px;
-  top:4px;
-  color:white;
-  font-size:8px;
-  font-weight:900;
-  opacity:.85;
-}
+/* COUNTER */
 
-.counterPage{
-  display:none;
-}
-
-.counterLayout{
-  display:grid;
-  grid-template-columns:360px 1fr;
-  gap:16px;
-}
-
-.target{
+.counterHeader{
   padding:18px;
-  min-height:440px;
+  margin-bottom:14px;
+}
+
+.counterHero{
   display:flex;
-  flex-direction:column;
+  align-items:center;
+  gap:13px;
 }
 
-.targetImage{
-  width:100%;
-  aspect-ratio:1.5;
+.counterHero img{
+  width:92px;
+  height:64px;
   object-fit:cover;
-  border-radius:20px;
-  border:1px solid var(--line);
+  border-radius:13px;
 }
 
-.targetName{
-  margin-top:15px;
-  font-size:28px;
-  font-weight:950;
-  letter-spacing:-.04em;
+.counterHero h2{
+  margin:0;
+  font-size:20px;
 }
 
-.targetMeta{
-  margin-top:5px;
+.counterHero p{
+  margin:4px 0 0;
   color:var(--muted);
   font-size:11px;
 }
 
-.counterControls{
-  display:flex;
-  gap:8px;
-  margin-top:auto;
+.changeHero{
+  margin-left:auto;
+  padding:10px 12px;
+  border-radius:11px;
+  background:rgba(139,92,246,.16);
+  color:#d9c9ff;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:800;
 }
 
-.counterSearch{
-  flex:1;
-  padding:11px;
-  color:white;
-  outline:none;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:rgba(255,255,255,.04);
+.counterLayout{
+  display:grid;
+  grid-template-columns:300px minmax(0,1fr);
+  gap:14px;
 }
 
-.counterList{
+.pickPanel{
   padding:14px;
 }
 
-.counterCard{
+.pickPanel h3{
+  margin:0 0 10px;
+  font-size:14px;
+}
+
+.counterGrid{
   display:grid;
-  grid-template-columns:70px 1fr 72px;
-  gap:12px;
-  align-items:center;
-  padding:12px;
-  margin-bottom:8px;
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:17px;
-  background:rgba(255,255,255,.025);
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+
+.counterCard{
+  position:relative;
+  padding:8px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--line);
+  border-radius:15px;
+  overflow:hidden;
 }
 
 .counterCard img{
-  width:70px;
-  height:55px;
+  width:100%;
+  aspect-ratio:1.65;
   object-fit:cover;
-  border-radius:12px;
+  border-radius:9px;
 }
 
 .counterCard strong{
+  display:block;
+  margin-top:7px;
   font-size:12px;
 }
 
-.counterCard p{
-  margin:4px 0 0;
-  color:#8993a8;
+.counterStats{
+  display:flex;
+  justify-content:space-between;
+  gap:4px;
+  margin-top:5px;
   font-size:10px;
-  line-height:1.4;
+  color:var(--muted);
 }
 
-.counterScore{
-  text-align:right;
-}
-
-.counterScore b{
+.advantage{
   color:var(--green);
-  font-size:17px;
+  font-weight:900;
 }
 
-.counterScore span{
-  display:block;
-  color:#6d778d;
-  font-size:8px;
+.bad{
+  color:var(--red);
 }
 
-.emptyState{
-  padding:35px 15px;
-  text-align:center;
-  color:#667187;
-  font-size:11px;
-  line-height:1.6;
+.explain{
+  margin-top:7px;
+  color:#b8c0cf;
+  font-size:10px;
+  line-height:1.35;
 }
 
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:20px;
-  transform:translate(-50%,20px);
-  opacity:0;
-  pointer-events:none;
-  z-index:50;
-  padding:11px 15px;
-  border-radius:13px;
-  background:#171c29;
-  border:1px solid var(--line);
-  box-shadow:var(--shadow);
-  font-size:11px;
-  transition:.25s;
+.rank{
+  position:absolute;
+  top:13px;
+  left:13px;
+  padding:4px 6px;
+  border-radius:7px;
+  background:rgba(0,0,0,.75);
+  font-size:9px;
+  font-weight:900;
 }
 
-.toast.show{
-  opacity:1;
-  transform:translate(-50%,0);
+/* COUNTER PICKER */
+
+.pickerGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  max-height:520px;
+  overflow:auto;
 }
 
-.modal{
-  position:fixed;
-  inset:0;
-  z-index:40;
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-  padding:10px;
-  background:rgba(0,0,0,.65);
-  backdrop-filter:blur(12px);
-}
-
-.modal.show{display:flex}
-
-.modalBox{
-  width:min(700px,100%);
-  max-height:90vh;
-  overflow:hidden;
-  border:1px solid var(--line);
-  border-radius:25px 25px 18px 18px;
-  background:#0c101a;
-  box-shadow:0 30px 100px #000;
-}
-
-.modalHead{
+.pickerHero{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:15px;
-  border-bottom:1px solid var(--line);
+  gap:7px;
+  padding:7px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:rgba(255,255,255,.03);
+  color:white;
+  cursor:pointer;
+  text-align:left;
 }
 
-.modalHead strong{font-size:13px}
-
-.close{
-  width:32px;
+.pickerHero img{
+  width:46px;
   height:32px;
-  border-radius:10px;
-  background:rgba(255,255,255,.06);
+  object-fit:cover;
+  border-radius:7px;
 }
 
-.modalBody{
-  padding:13px;
-  overflow:auto;
-  max-height:75vh;
+.pickerHero span{
+  font-size:10px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
-@media(max-width:1000px){
+/* MOBILE NAV */
+
+.bottomNav{
+  display:none;
+}
+
+/* LOADING */
+
+.loading{
+  padding:30px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.spinner{
+  width:26px;
+  height:26px;
+  margin:0 auto 10px;
+  border:3px solid rgba(255,255,255,.1);
+  border-top-color:var(--purple);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* EMPTY */
+
+.empty{
+  padding:30px 15px;
+  text-align:center;
+  color:var(--muted);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
   .draftGrid{
-    grid-template-columns:1fr;
+    grid-template-columns:190px minmax(0,1fr);
   }
 
-  .center{
-    order:-1;
+  .enemy{
+    grid-column:1/-1;
   }
 
   .heroGrid{
-    grid-template-columns:repeat(6,1fr);
-    max-height:none;
+    grid-template-columns:repeat(5,1fr);
   }
 
-  .counterLayout{
-    grid-template-columns:1fr;
-  }
-
-  .target{
-    min-height:auto;
+  .counterGrid{
+    grid-template-columns:repeat(4,1fr);
   }
 }
 
-@media(max-width:600px){
+@media(max-width:720px){
+  body{
+    padding-bottom:88px;
+  }
+
   .app{
-    padding:12px 10px 35px;
+    padding:10px;
   }
 
-  .logoText span{display:none}
-  .live{font-size:9px}
-
-  .centerHeader{
-    min-height:210px;
+  .header{
+    margin-bottom:10px;
   }
 
-  .centerHeader h1{
-    font-size:36px;
+  .status{
+    display:none;
+  }
+
+  .nav{
+    display:none;
+  }
+
+  .draftGrid{
+    display:block;
+  }
+
+  .side{
+    margin-bottom:10px;
+  }
+
+  .center{
+    margin-bottom:10px;
+  }
+
+  .side{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:5px;
+    padding:8px;
+  }
+
+  .side .sectionTitle{
+    grid-column:1/-1;
+  }
+
+  .posCard{
+    display:block;
+    min-height:74px;
+    padding:5px;
+    text-align:center;
+  }
+
+  .posNumber{
+    margin:auto;
+    width:26px;
+    height:22px;
+    font-size:9px;
+  }
+
+  .posCard img{
+    width:100%;
+    height:32px;
+    margin-top:3px;
+  }
+
+  .posEmpty{
+    font-size:8px;
+  }
+
+  .recommendations{
+    grid-template-columns:repeat(2,1fr);
   }
 
   .heroGrid{
     grid-template-columns:repeat(4,1fr);
+    max-height:420px;
   }
 
-  .slot{
-    min-height:65px;
+  .counterLayout{
+    display:block;
   }
 
-  .slot img{
-    width:43px;
-    height:43px;
+  .pickPanel{
+    margin-bottom:10px;
   }
 
-  .counterCard{
-    grid-template-columns:60px 1fr 60px;
+  .pickerGrid{
+    grid-template-columns:repeat(2,1fr);
+    max-height:280px;
   }
 
-  .counterCard img{
-    width:60px;
-    height:50px;
+  .counterGrid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .counterHero img{
+    width:76px;
+    height:53px;
+  }
+
+  .counterHero h2{
+    font-size:17px;
+  }
+
+  .changeHero{
+    padding:8px 9px;
+  }
+
+  .bottomNav{
+    position:fixed;
+    z-index:100;
+    display:flex;
+    left:8px;
+    right:8px;
+    bottom:8px;
+    padding:6px;
+    padding-bottom:max(6px,env(safe-area-inset-bottom));
+    background:rgba(9,12,20,.92);
+    backdrop-filter:blur(20px);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:0 15px 40px rgba(0,0,0,.5);
+  }
+
+  .bottomNav button{
+    flex:1;
+    padding:10px 5px;
+    border-radius:12px;
+    background:transparent;
+    color:var(--muted);
+    font-size:10px;
+    font-weight:800;
+  }
+
+  .bottomNav button.active{
+    color:white;
+    background:rgba(139,92,246,.2);
   }
 }
 </style>
@@ -823,135 +810,199 @@ button{
 
 <div class="app">
 
-  <div class="topbar">
-    <div class="logo">
-      <div class="logoMark">◈</div>
-      <div class="logoText">
-        <b>DRAFT//VOID</b>
-        <span>Dota 2 draft intelligence</span>
+  <header class="header">
+    <div class="brand">
+      <div class="logo">◈</div>
+      <div class="brandText">
+        <h1>DRAFT//VOID</h1>
+        <p>DOTA 2 DRAFT INTELLIGENCE</p>
       </div>
     </div>
 
-    <div class="live">
-      <i class="liveDot"></i>
-      DRAFT ENGINE ONLINE
+    <div class="status">
+      <span class="dot"></span>
+      OpenDota DATA
     </div>
-  </div>
+  </header>
 
-  <div class="tabs">
-    <button class="tab active" id="draftTab">⚡ DRAFT LAB</button>
-    <button class="tab" id="counterTab">◈ COUNTER LAB</button>
-  </div>
+  <nav class="nav">
+    <button id="tabDraft" class="active" onclick="showView('draft')">
+      ⚔ DRAFT LAB
+    </button>
+    <button id="tabCounter" onclick="showView('counter')">
+      ◈ COUNTER LAB
+    </button>
+  </nav>
 
-  <section id="draftPage">
+  <!-- ================= DRAFT ================= -->
 
-    <div class="command">
-      <span>⌘</span>
-      <input id="search" placeholder="Найти героя... например Broodmother">
-    </div>
+  <section id="draftView" class="view active">
 
     <div class="draftGrid">
 
-      <div class="panel">
-        <div class="panelHead">
+      <aside class="card side">
+
+        <div class="sectionTitle">
           <h2>YOUR SQUAD</h2>
-          <p>Позиции 1–5. Каждая позиция независима.</p>
+          <span>1 → 5</span>
         </div>
-        <div class="slots" id="teamSlots"></div>
-      </div>
 
-      <div class="panel center">
+        <button class="posCard" onclick="pickForPosition(1)">
+          <div class="posNumber">1</div>
+          <div id="posImg1"></div>
+          <div class="posEmpty" id="posName1">Choose</div>
+        </button>
 
-        <div class="centerHeader">
-          <div class="eyebrow">TACTICAL DRAFT ENGINE</div>
-          <h1>BUILD YOUR<br>WIN CONDITION.</h1>
-          <p>
-            Выбирай героев. Система смотрит на свободные позиции,
-            союзников и врагов — и пытается собрать состав, а не просто
-            показать случайный список персонажей.
+        <button class="posCard" onclick="pickForPosition(2)">
+          <div class="posNumber">2</div>
+          <div id="posImg2"></div>
+          <div class="posEmpty" id="posName2">Choose</div>
+        </button>
+
+        <button class="posCard" onclick="pickForPosition(3)">
+          <div class="posNumber">3</div>
+          <div id="posImg3"></div>
+          <div class="posEmpty" id="posName3">Choose</div>
+        </button>
+
+        <button class="posCard" onclick="pickForPosition(4)">
+          <div class="posNumber">4</div>
+          <div id="posImg4"></div>
+          <div class="posEmpty" id="posName4">Choose</div>
+        </button>
+
+        <button class="posCard" onclick="pickForPosition(5)">
+          <div class="posNumber">5</div>
+          <div id="posImg5"></div>
+          <div class="posEmpty" id="posName5">Choose</div>
+        </button>
+
+      </aside>
+
+      <main class="center">
+
+        <section class="card recommend">
+
+          <div class="recommendTop">
+            <h2>BEST NEXT PICKS</h2>
+            <span id="recommendStatus">Build your draft</span>
+          </div>
+
+          <div id="recommendations" class="recommendations">
+            <div class="empty">
+              Choose your first position
+            </div>
+          </div>
+
+        </section>
+
+        <section class="card heroPanel">
+
+          <div class="sectionTitle">
+            <h2>HERO POOL</h2>
+            <span id="heroCount">loading...</span>
+          </div>
+
+          <div class="toolbar">
+            <input
+              id="heroSearch"
+              class="search"
+              placeholder="Search hero..."
+              oninput="renderHeroGrid()"
+            >
+          </div>
+
+          <div class="filters">
+            <button class="active" onclick="setAttr('all',this)">ALL</button>
+            <button onclick="setAttr('str',this)">STRENGTH</button>
+            <button onclick="setAttr('agi',this)">AGILITY</button>
+            <button onclick="setAttr('int',this)">INTELLIGENCE</button>
+            <button onclick="setAttr('uni',this)">UNIVERSAL</button>
+          </div>
+
+          <div id="heroGrid" class="heroGrid"></div>
+
+        </section>
+
+      </main>
+
+      <aside class="card enemy">
+
+        <div class="sectionTitle">
+          <h2>ENEMY READ</h2>
+          <span id="enemyCount">0 / 5</span>
+        </div>
+
+        <div id="enemyList" class="enemyList">
+          <div class="enemyBox">
+            Tap any hero below to add enemy
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </section>
+
+  <!-- ================= COUNTER ================= -->
+
+  <section id="counterView" class="view">
+
+    <section class="card counterHeader">
+
+      <div class="counterHero">
+
+        <img id="counterTargetImg" src="" alt="">
+
+        <div>
+          <h2 id="counterTargetName">Choose a hero</h2>
+          <p id="counterTargetInfo">
+            Select any Dota 2 hero to see real matchup statistics
           </p>
         </div>
 
-        <div class="enemyLine" id="enemyLine"></div>
-
-        <div class="recommend">
-          <div class="recommendTitle">
-            <b>RECOMMENDED FOR YOU</b>
-            <span id="recommendStatus">ANALYZING</span>
-          </div>
-
-          <div id="recommendations"></div>
-        </div>
-
-        <div class="heroes">
-          <div class="filters">
-            <button class="filter active" data-filter="all">ALL</button>
-            <button class="filter" data-filter="str">STRENGTH</button>
-            <button class="filter" data-filter="agi">AGILITY</button>
-            <button class="filter" data-filter="int">INTELLIGENCE</button>
-            <button class="filter" data-filter="uni">UNIVERSAL</button>
-          </div>
-
-          <div class="filters" style="margin-top:3px">
-            <button class="filter active" data-pos="all">ALL POSITIONS</button>
-            <button class="filter" data-pos="1">POS 1</button>
-            <button class="filter" data-pos="2">POS 2</button>
-            <button class="filter" data-pos="3">POS 3</button>
-            <button class="filter" data-pos="4">POS 4</button>
-            <button class="filter" data-pos="5">POS 5</button>
-          </div>
-
-          <div class="heroGrid" id="heroGrid"></div>
-        </div>
+        <button class="changeHero" onclick="toggleCounterPicker()">
+          CHANGE
+        </button>
 
       </div>
 
-      <div class="panel">
-        <div class="panelHead">
-          <h2>ENEMY READ</h2>
-          <p>До 5 врагов. Выбирай героя → затем нажми Enemy.</p>
-        </div>
-
-        <div class="slots" id="enemySlots"></div>
-
-        <div class="emptyState">
-          Совет: сначала заполни 1–2 вражеских героя.
-          Чем больше информации — тем умнее рекомендации.
-        </div>
-      </div>
-
-    </div>
-
-  </section>
-
-  <section class="counterPage" id="counterPage">
+    </section>
 
     <div class="counterLayout">
 
-      <div class="panel target">
-        <div class="eyebrow">COUNTER LAB</div>
+      <section id="counterPicker" class="card pickPanel">
 
-        <img id="targetImage" class="targetImage" src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/broodmother.png">
+        <h3>SELECT TARGET HERO</h3>
 
-        <div class="targetName" id="targetName">Broodmother</div>
-        <div class="targetMeta" id="targetMeta">
-          AGILITY · POS 3 / 4
+        <input
+          id="counterSearch"
+          class="search"
+          placeholder="Search hero..."
+          oninput="renderCounterPicker()"
+        >
+
+        <div style="height:9px"></div>
+
+        <div id="counterPickerGrid" class="pickerGrid"></div>
+
+      </section>
+
+      <section class="card pickPanel">
+
+        <div class="sectionTitle">
+          <h2>STATISTICAL COUNTERS</h2>
+          <span id="counterDataStatus">—</span>
         </div>
 
-        <div class="counterControls">
-          <input class="counterSearch" id="counterSearch" placeholder="Выбрать героя...">
-          <button class="pick" id="changeTarget">CHANGE</button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panelHead">
-          <h2>BEST ANSWERS</h2>
-          <p>Матчап + механическое объяснение. Не выдуманный winrate.</p>
+        <div id="counterResults">
+          <div class="empty">
+            Choose a hero.
+          </div>
         </div>
 
-        <div class="counterList" id="counterList"></div>
-      </div>
+      </section>
 
     </div>
 
@@ -959,932 +1010,1171 @@ button{
 
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- MOBILE NAV -->
 
-<div class="modal" id="modal">
-  <div class="modalBox">
-    <div class="modalHead">
-      <strong id="modalTitle">SELECT HERO</strong>
-      <button class="close" id="closeModal">×</button>
-    </div>
-    <div class="modalBody" id="modalBody"></div>
-  </div>
-</div>
+<nav class="bottomNav">
+  <button id="bottomDraft" class="active" onclick="showView('draft')">
+    ⚔<br>DRAFT
+  </button>
+
+  <button id="bottomCounter" onclick="showView('counter')">
+    ◈<br>COUNTERS
+  </button>
+</nav>
+
 
 <script>
 
 /* =========================================================
-   HERO DATABASE
-   ========================================================= */
+   CONFIG
+========================================================= */
 
-const H = {
+const API = "https://api.opendota.com/api";
 
-abaddon:["Abaddon","str",[3,5],"abaddon"],
-alchemist:["Alchemist","str",[1,2,3],"alchemist"],
-ancientapparition:["Ancient Apparition","int",[4,5],"ancient_apparition"],
-antimage:["Anti-Mage","agi",[1],"antimage"],
-arcwarden:["Arc Warden","agi",[1,2],"arc_warden"],
-axe:["Axe","str",[3,4],"axe"],
-bane:["Bane","int",[4,5],"bane"],
-batrider:["Batrider","int",[3,4,5],"batrider"],
-beastmaster:["Beastmaster","str",[3],"beastmaster"],
-bloodseeker:["Bloodseeker","agi",[1,2,3],"bloodseeker"],
-bountyhunter:["Bounty Hunter","agi",[2,4],"bounty_hunter"],
-brewmaster:["Brewmaster","str",[3],"brewmaster"],
-bristleback:["Bristleback","str",[3],"bristleback"],
-broodmother:["Broodmother","agi",[2,3,4],"broodmother"],
-centaur:["Centaur Warrunner","str",[3,4],"centaur"],
-chaosknight:["Chaos Knight","str",[1,3],"chaos_knight"],
-chen:["Chen","int",[5],"chen"],
-clinkz:["Clinkz","agi",[1,2,4],"clinkz"],
-crystalmaiden:["Crystal Maiden","int",[5],"crystal_maiden"],
-darkseer:["Dark Seer","str",[3,4],"dark_seer"],
-darkwillow:["Dark Willow","int",[4,5],"dark_willow"],
-dawnbreaker:["Dawnbreaker","str",[3,4,5],"dawnbreaker"],
-dazzle:["Dazzle","int",[4,5],"dazzle"],
-deathprophet:["Death Prophet","int",[2,3],"death_prophet"],
-disruptor:["Disruptor","int",[4,5],"disruptor"],
-doom:["Doom","str",[3],"doom"],
-dragonknight:["Dragon Knight","str",[2,3],"dragon_knight"],
-drowranger:["Drow Ranger","agi",[1,2],"drow_ranger"],
-earthspirit:["Earth Spirit","str",[2,4],"earth_spirit"],
-earthshaker:["Earthshaker","str",[4,5],"earthshaker"],
-eldertitan:["Elder Titan","str",[4,5],"elder_titan"],
-emberspirit:["Ember Spirit","agi",[2],"ember_spirit"],
-enchantress:["Enchantress","int",[4,5],"enchantress"],
-enigma:["Enigma","int",[3,4,5],"enigma"],
-facelessvoid:["Faceless Void","agi",[1],"faceless_void"],
-grimstroke:["Grimstroke","int",[4,5],"grimstroke"],
-gyrocopter:["Gyrocopter","agi",[1,2,4],"gyrocopter"],
-hoodwink:["Hoodwink","agi",[4,5],"hoodwink"],
-huskar:["Huskar","str",[2,3],"huskar"],
-invoker:["Invoker","int",[2,4,5],"invoker"],
-jakiro:["Jakiro","int",[4,5],"jakiro"],
-juggernaut:["Juggernaut","agi",[1],"juggernaut"],
-keeperofthelight:["Keeper of the Light","int",[4,5],"keeper_of_the_light"],
-kunkka:["Kunkka","str",[2,3,4],"kunkka"],
-largo:["Largo","str",[3,4,5],"largo"],
-legioncommander:["Legion Commander","str",[3],"legion_commander"],
-leshrac:["Leshrac","int",[2,3,4],"leshrac"],
-lich:["Lich","int",[5],"lich"],
-lifestealer:["Lifestealer","str",[1,2],"life_stealer"],
-lina:["Lina","int",[2,4],"lina"],
-lion:["Lion","int",[4,5],"lion"],
-lone_druid:["Lone Druid","agi",[1,2,3],"lone_druid"],
-luna:["Luna","agi",[1,2],"luna"],
-lycan:["Lycan","str",[3],"lycan"],
-magnus:["Magnus","str",[3,4],"magnataur"],
-marci:["Marci","str",[3,4],"marci"],
-mars:["Mars","str",[3,4],"mars"],
-medusa:["Medusa","agi",[1],"medusa"],
-meepo:["Meepo","agi",[2,3],"meepo"],
-mirana:["Mirana","agi",[4,5],"mirana"],
-monkeyking:["Monkey King","agi",[1,2,3],"monkey_king"],
-morphling:["Morphling","agi",[1,2],"morphling"],
-muerta:["Muerta","int",[1,2,4],"muerta"],
-nagasiren:["Naga Siren","agi",[1],"naga_siren"],
-naturesprophet:["Nature's Prophet","int",[2,3,4],"furion"],
-necrophos:["Necrophos","int",[2,3],"necrolyte"],
-nightstalker:["Night Stalker","str",[2,3,4],"night_stalker"],
-nyxassassin:["Nyx Assassin","agi",[4,5],"nyx_assassin"],
-ogremagi:["Ogre Magi","int",[4,5],"ogre_magi"],
-omniknight:["Omniknight","str",[4,5],"omniknight"],
-oracle:["Oracle","int",[5],"oracle"],
-outworlddestroyer:["Outworld Destroyer","int",[2],"obsidian_destroyer"],
-pangolier:["Pangolier","agi",[2,3,4],"pangolier"],
-phantomassassin:["Phantom Assassin","agi",[1],"phantom_assassin"],
-phantomlancer:["Phantom Lancer","agi",[1],"phantom_lancer"],
-phoenix:["Phoenix","str",[4,5],"phoenix"],
-primalbeast:["Primal Beast","str",[3,4],"primal_beast"],
-puck:["Puck","int",[2],"puck"],
-pudge:["Pudge","str",[3,4,5],"pudge"],
-pugna:["Pugna","int",[2,4,5],"pugna"],
-queenofpain:["Queen of Pain","int",[2],"queenofpain"],
-razor:["Razor","agi",[1,2,3],"razor"],
-riki:["Riki","agi",[1,4],"riki"],
-ringmaster:["Ringmaster","int",[4,5],"ringmaster"],
-rubick:["Rubick","int",[4,5],"rubick"],
-sandking:["Sand King","str",[3,4],"sand_king"],
-shadowdemon:["Shadow Demon","int",[4,5],"shadow_demon"],
-shadowfiend:["Shadow Fiend","agi",[1,2],"nevermore"],
-shadowshaman:["Shadow Shaman","int",[4,5],"shadow_shaman"],
-silencer:["Silencer","int",[4,5],"silencer"],
-skywrathmage:["Skywrath Mage","int",[4,5],"skywrath_mage"],
-slardar:["Slardar","str",[3,4],"slardar"],
-slark:["Slark","agi",[1],"slark"],
-snapfire:["Snapfire","str",[4,5],"snapfire"],
-sniper:["Sniper","agi",[1,2],"sniper"],
-spectre:["Spectre","agi",[1],"spectre"],
-spiritbreaker:["Spirit Breaker","str",[3,4],"spirit_breaker"],
-stormspirit:["Storm Spirit","int",[2],"storm_spirit"],
-sven:["Sven","str",[1,3],"sven"],
-techies:["Techies","int",[4,5],"techies"],
-templarassassin:["Templar Assassin","agi",[1,2],"templar_assassin"],
-terrorblade:["Terrorblade","agi",[1],"terrorblade"],
-tidehunter:["Tidehunter","str",[3,4],"tidehunter"],
-timbersaw:["Timbersaw","str",[3,4],"shredder"],
-tinker:["Tinker","int",[2,4],"tinker"],
-tiny:["Tiny","str",[2,3,4],"tiny"],
-treantprotector:["Treant Protector","str",[3,4,5],"treant"],
-trollwarlord:["Troll Warlord","agi",[1],"troll_warlord"],
-tusk:["Tusk","str",[3,4,5],"tusk"],
-underlord:["Underlord","str",[3],"abyssal_underlord"],
-undying:["Undying","str",[4,5],"undying"],
-ursa:["Ursa","agi",[1,2],"ursa"],
-vengefulspirit:["Vengeful Spirit","agi",[4,5],"vengefulspirit"],
-venomancer:["Venomancer","agi",[3,4,5],"venomancer"],
-viper:["Viper","agi",[2,3],"viper"],
-visage:["Visage","int",[3,4],"visage"],
-voidspirit:["Void Spirit","int",[2],"void_spirit"],
-warlock:["Warlock","int",[4,5],"warlock"],
-weaver:["Weaver","agi",[1,2,4],"weaver"],
-windranger:["Windranger","int",[2,4],"windrunner"],
-winterwyvern:["Winter Wyvern","int",[4,5],"winter_wyvern"],
-witchdoctor:["Witch Doctor","int",[4,5],"witch_doctor"],
-wraithking:["Wraith King","str",[1,3],"skeleton_king"],
-zeus:["Zeus","int",[2,4],"zuus"]
+const HERO_IMG =
+  "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/";
 
+/*
+  OpenDota matchup:
+  /heroes/{hero_id}/matchups
+
+  Response:
+  hero_id
+  games_played
+  wins
+*/
+
+let heroes = [];
+let heroMap = {};
+
+let selectedAttr = "all";
+
+let team = {
+  1:null,
+  2:null,
+  3:null,
+  4:null,
+  5:null
 };
 
-
-/* =========================================================
-   COUNTER KNOWLEDGE
-   Positive = good answer against target.
-   These are intentionally conservative.
-   ========================================================= */
-
-const COUNTERS = {
-
-broodmother:{
-  earthshaker:[9.0,"Massive AoE punishes Spiderlings; Echo Slam becomes extremely valuable when Brood floods the fight."],
-  necrophos:[4.9,"Sustained AoE and Reaper's Scythe make Brood's aggressive sustain much harder to exploit."],
-  meepo:[4.6,"Multiple units can fight through Brood's lane pressure and punish isolated Spiderlings."],
-  sandking:[4.4,"Burrowstrike + Sand Storm + Epicenter give strong AoE and punish clustered spiders."],
-  kunkka:[4.0,"Tidebringer and Torrent provide reliable area damage and control against the swarm."],
-  jakiro:[3.9,"Liquid Fire and Macropyre create strong area denial and clear clustered units."],
-  axe:[3.8,"Counter Helix and Berserker's Call punish Brood's large number of attacking units."]
-},
-
-meepo:{
-  earthshaker:[8.0,"Echo Slam scales brutally with multiple Meepos."],
-  winterwyvern:[5.5,"Cold Embrace and Winter's Curse punish grouped Meepos."],
-  lion:[4.7,"Reliable control and burst can remove a Meepo before the clone army takes over."],
-  axe:[4.5,"Counter Helix and Call punish multiple Meepos attacking together."]
-},
-
-phantomlancer:{
-  earthshaker:[4.5,"Large illusion counts amplify Echo Slam."],
-  axe:[4.3,"Counter Helix and Berserker's Call punish illusion-heavy fights."],
-  leshrac:[4.0,"High-area magic damage clears illusion waves."],
-  sandking:[3.8,"Strong AoE damage and control against grouped illusions."]
-},
-
-nagasiren:{
-  earthshaker:[4.2,"Large numbers of illusions dramatically improve Echo Slam value."],
-  leshrac:[3.9,"Strong sustained AoE damages illusion waves."],
-  axe:[3.7,"Call and Counter Helix punish clustered illusions."]
-},
-
-terrorblade:{
-  axe:[3.0,"Call can force TB into bad close-range fights and Counter Helix punishes illusions."],
-  winterwyvern:[2.8,"Winter's Curse can turn illusion pressure against TB's team."]
-},
-
-illusion_generic:{
-  earthshaker:[3.0,"Area damage becomes more valuable against dense illusion counts."],
-  axe:[2.8,"Counter Helix scales naturally with many attacking units."],
-  leshrac:[2.6,"Sustained AoE pressure is effective against illusion-heavy compositions."]
-}
-
-};
-
-
-/* =========================================================
-   IMAGE SYSTEM
-   ========================================================= */
-
-function portrait(slug){
-  return `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${slug}.png`;
-}
-
-
-/* =========================================================
-   STATE
-   ========================================================= */
-
-let team = {1:null,2:null,3:null,4:null,5:null};
 let enemies = [];
-let attrFilter = "all";
-let posFilter = "all";
-let currentTarget = "broodmother";
-let modalMode = null;
+
+let currentPickPosition = null;
+let currentCounterHero = null;
+
+let matchupCache = {};
 
 
 /* =========================================================
-   HELPERS
-   ========================================================= */
+   INIT
+========================================================= */
 
-function hero(id){
-  return H[id];
+document.addEventListener("DOMContentLoaded", async () => {
+
+  setStatus("Loading OpenDota...");
+
+  await loadHeroes();
+
+  renderHeroGrid();
+  renderCounterPicker();
+
+  if(heroes.length){
+    /*
+      Default target.
+      Not special-cased: this is just the first hero.
+    */
+    setCounterHero(
+      heroes.find(h => h.localized_name === "Broodmother") ||
+      heroes[0]
+    );
+  }
+
+});
+
+
+/* =========================================================
+   API
+========================================================= */
+
+async function api(url, timeout = 12000){
+
+  const controller = new AbortController();
+
+  const timer = setTimeout(
+    () => controller.abort(),
+    timeout
+  );
+
+  try{
+
+    const response = await fetch(
+      API + url,
+      {
+        signal:controller.signal,
+        cache:"no-store"
+      }
+    );
+
+    if(!response.ok){
+      throw new Error("API " + response.status);
+    }
+
+    return await response.json();
+
+  } finally {
+
+    clearTimeout(timer);
+
+  }
+
 }
 
-function heroName(id){
-  return H[id]?.[0] || id;
+
+/* =========================================================
+   HERO DATA
+========================================================= */
+
+async function loadHeroes(){
+
+  try{
+
+    /*
+      heroStats contains all current public heroes
+      together with primary_attr, roles, etc.
+    */
+
+    const data = await api("/heroStats");
+
+    heroes = data
+      .filter(h => h.id && h.localized_name)
+      .map(h => ({
+        id:h.id,
+        name:h.name,
+        localized_name:h.localized_name,
+        primary_attr:h.primary_attr,
+        roles:h.roles || [],
+        attack_type:h.attack_type || ""
+      }));
+
+    heroMap = {};
+
+    heroes.forEach(h => {
+      heroMap[h.id] = h;
+    });
+
+    document.getElementById("heroCount").textContent =
+      heroes.length + " heroes";
+
+    document.getElementById("recommendStatus").textContent =
+      "OpenDota ready";
+
+    setStatus("OpenDota DATA");
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus("API unavailable");
+
+    document.getElementById("heroGrid").innerHTML = `
+      <div class="empty" style="grid-column:1/-1">
+        Не удалось загрузить героев из OpenDota.<br><br>
+        Проверь интернет-соединение и обнови страницу.
+      </div>
+    `;
+
+  }
+
 }
 
-function attrName(a){
-  return {
-    str:"STRENGTH",
-    agi:"AGILITY",
-    int:"INTELLIGENCE",
-    uni:"UNIVERSAL"
-  }[a] || "";
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(text){
+
+  const status = document.querySelector(".status");
+
+  if(status){
+    status.innerHTML =
+      `<span class="dot"></span>${escapeHtml(text)}`;
+  }
+
 }
 
-function usedIds(){
-  return [
-    ...Object.values(team).filter(Boolean),
-    ...enemies
-  ];
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+function heroImage(hero){
+
+  if(!hero) return "";
+
+  return HERO_IMG +
+    hero.name.replace("npc_dota_hero_","") +
+    ".png";
+
 }
 
-function occupiedPositions(){
-  return Object.entries(team)
-    .filter(([p,id])=>id)
-    .map(([p])=>Number(p));
+
+/* =========================================================
+   ATTRIBUTE
+========================================================= */
+
+function attrClass(attr){
+
+  if(attr === "str") return "str";
+  if(attr === "agi") return "agi";
+  if(attr === "int") return "int";
+  return "all";
+
 }
 
-function availablePositions(){
-  return [1,2,3,4,5].filter(p=>!team[p]);
-}
+function attrName(attr){
 
-function toast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;
-  t.classList.add("show");
-  clearTimeout(window.__toast);
-  window.__toast=setTimeout(()=>t.classList.remove("show"),1800);
+  if(attr === "str") return "Strength";
+  if(attr === "agi") return "Agility";
+  if(attr === "int") return "Intelligence";
+
+  return "Universal";
+
 }
 
 
 /* =========================================================
    HERO GRID
-   ========================================================= */
+========================================================= */
 
-function renderHeroes(){
-  const q=document.getElementById("search").value.trim().toLowerCase();
-  const grid=document.getElementById("heroGrid");
-  const used=usedIds();
+function setAttr(attr,button){
 
-  const list=Object.entries(H).filter(([id,d])=>{
-    const name=d[0].toLowerCase();
+  selectedAttr = attr;
 
-    if(q && !name.includes(q) && !id.includes(q)) return false;
-    if(attrFilter!=="all" && d[1]!==attrFilter) return false;
-    if(posFilter!=="all" && !d[2].includes(Number(posFilter))) return false;
+  document
+    .querySelectorAll(".filters button")
+    .forEach(b => b.classList.remove("active"));
 
-    return true;
-  });
+  button.classList.add("active");
 
-  grid.innerHTML=list.map(([id,d])=>{
-    const disabled=used.includes(id);
+  renderHeroGrid();
 
-    return `
-      <button class="heroCard ${disabled?"disabled":""}"
-        ${disabled?"disabled":""}
-        onclick="openHero('${id}')">
-
-        <img src="${portrait(d[3])}" loading="lazy"
-             onerror="this.style.opacity=.25">
-
-        <i class="attr ${d[1]}"></i>
-        <span class="posTag">${d[2].map(x=>"P"+x).join(" · ")}</span>
-        <div class="heroShade"></div>
-        <div class="heroName">${d[0]}</div>
-      </button>
-    `;
-  }).join("");
 }
 
 
-/* =========================================================
-   HERO PICK MODAL
-   ========================================================= */
+function renderHeroGrid(){
 
-function openHero(id){
-  if(usedIds().includes(id)) return;
+  const grid = document.getElementById("heroGrid");
 
-  modalMode="hero";
-  document.getElementById("modalTitle").textContent=
-    `${heroName(id).toUpperCase()} — ASSIGN POSITION`;
+  if(!grid) return;
 
-  const d=hero(id);
+  const query =
+    (document.getElementById("heroSearch")?.value || "")
+    .trim()
+    .toLowerCase();
 
-  document.getElementById("modalBody").innerHTML=`
-    <div style="
-      display:flex;
-      gap:14px;
-      align-items:center;
-      padding:5px 0 15px;
-    ">
-      <img src="${portrait(d[3])}"
-           style="width:85px;height:70px;object-fit:cover;border-radius:15px">
-      <div>
-        <div style="font-size:17px;font-weight:900">${d[0]}</div>
-        <div style="font-size:10px;color:#8c96aa;margin-top:5px">
-          ${attrName(d[1])} · ${d[2].map(x=>"POS "+x).join(" / ")}
-        </div>
+  let list = heroes.filter(h => {
+
+    const attrOK =
+      selectedAttr === "all" ||
+      h.primary_attr === selectedAttr ||
+      (
+        selectedAttr === "uni" &&
+        h.primary_attr === "all"
+      );
+
+    const searchOK =
+      !query ||
+      h.localized_name.toLowerCase().includes(query);
+
+    return attrOK && searchOK;
+
+  });
+
+  grid.innerHTML =
+    list.map(hero => heroCard(hero)).join("");
+
+}
+
+
+function heroCard(hero){
+
+  return `
+    <div
+      class="hero"
+      onclick="heroClicked(${hero.id})"
+      title="${escapeHtml(hero.localized_name)}"
+    >
+
+      <span class="attr ${attrClass(hero.primary_attr)}"></span>
+
+      <img
+        src="${heroImage(hero)}"
+        loading="lazy"
+        onerror="this.style.opacity=.25"
+      >
+
+      <div class="heroName">
+        ${escapeHtml(hero.localized_name)}
       </div>
-    </div>
 
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
-      ${[1,2,3,4,5].map(p=>`
-        <button
-          onclick="assignHero('${id}',${p})"
-          ${team[p]?"disabled":""}
-          style="
-            padding:15px 7px;
-            border-radius:14px;
-            border:1px solid ${team[p]?"rgba(255,255,255,.04)":"rgba(139,92,246,.25)"};
-            background:${team[p]?"rgba(255,255,255,.02)":"rgba(139,92,246,.12)"};
-            color:${team[p]?"#596277":"white"};
-            font-weight:900;
-          ">
-          P${p}
-          <small style="display:block;font-size:8px;margin-top:5px">
-            ${team[p] ? "OCCUPIED" : "SELECT"}
-          </small>
-        </button>
-      `).join("")}
-    </div>
-
-    <div style="margin-top:15px">
-      <button onclick="addEnemy('${id}')"
-        style="
-          width:100%;
-          padding:13px;
-          border-radius:14px;
-          background:rgba(251,113,133,.12);
-          color:#fecdd3;
-          font-weight:900;
-        ">
-        + ADD AS ENEMY
-      </button>
     </div>
   `;
 
-  document.getElementById("modal").classList.add("show");
 }
 
-function assignHero(id,pos){
-  if(team[pos]) return;
-  team[pos]=id;
-  closeModal();
-  renderAll();
-  toast(`${heroName(id)} → Position ${pos}`);
-}
 
-function addEnemy(id){
-  if(enemies.length>=5){
-    toast("Enemy draft is full");
+/* =========================================================
+   DRAFT
+========================================================= */
+
+function heroClicked(id){
+
+  const hero = heroMap[id];
+
+  if(!hero) return;
+
+  if(currentPickPosition){
+
+    /*
+      Position picker.
+      This is where the selected hero goes.
+    */
+
+    team[currentPickPosition] = hero;
+
+    currentPickPosition = null;
+
+    renderTeam();
+    renderRecommendations();
+
+    return;
+
+  }
+
+  /*
+    Normal tap = add to enemies.
+  */
+
+  if(Object.values(team).some(h => h?.id === hero.id)){
     return;
   }
 
-  if(usedIds().includes(id)) return;
+  if(enemies.some(h => h.id === hero.id)){
+    return;
+  }
 
-  enemies.push(id);
-  closeModal();
-  renderAll();
-  toast(`${heroName(id)} added to enemy draft`);
-}
+  if(enemies.length >= 5){
+    enemies.shift();
+  }
 
-function removeTeam(pos){
-  team[pos]=null;
-  renderAll();
-}
+  enemies.push(hero);
 
-function removeEnemy(index){
-  enemies.splice(index,1);
-  renderAll();
+  renderEnemies();
+  renderRecommendations();
+
 }
 
 
-/* =========================================================
-   SLOTS
-   ========================================================= */
+function pickForPosition(position){
+
+  currentPickPosition = position;
+
+  showDraft();
+
+  const input = document.getElementById("heroSearch");
+
+  input.value = "";
+
+  input.focus();
+
+  document.getElementById("recommendStatus").textContent =
+    "Choose hero for Position " + position;
+
+  renderHeroGrid();
+
+}
+
 
 function renderTeam(){
-  const box=document.getElementById("teamSlots");
 
-  box.innerHTML=[1,2,3,4,5].map(pos=>{
-    const id=team[pos];
+  for(let p=1;p<=5;p++){
 
-    if(!id){
-      return `
-        <button class="slot empty" onclick="toast('Выбери героя ниже')">
-          <div class="slotNumber">${pos}</div>
-          <div>
-            <strong style="font-size:11px">POSITION ${pos}</strong>
-            <small style="display:block;color:#596277">OPEN SLOT</small>
-          </div>
-        </button>
-      `;
+    const hero = team[p];
+
+    const imgBox =
+      document.getElementById("posImg" + p);
+
+    const nameBox =
+      document.getElementById("posName" + p);
+
+    if(hero){
+
+      imgBox.innerHTML =
+        `<img src="${heroImage(hero)}" loading="lazy">`;
+
+      nameBox.textContent =
+        hero.localized_name;
+
+    }else{
+
+      imgBox.innerHTML = "";
+
+      nameBox.textContent = "Choose";
+
     }
 
-    const d=hero(id);
-
-    return `
-      <div class="slot">
-        <div class="slotNumber">${pos}</div>
-        <img src="${portrait(d[3])}">
-        <div class="slotInfo">
-          <strong>${d[0]}</strong>
-          <small>${attrName(d[1])}</small>
-        </div>
-        <button class="remove" onclick="removeTeam(${pos})">×</button>
-      </div>
-    `;
-  }).join("");
-}
-
-function renderEnemies(){
-  const box=document.getElementById("enemyLine");
-
-  if(!enemies.length){
-    box.innerHTML=`
-      <div style="color:#69748a;font-size:10px">
-        ENEMY SIGNAL: waiting for information...
-      </div>
-    `;
-  }else{
-    box.innerHTML=enemies.map((id,i)=>{
-      const d=hero(id);
-      return `
-        <div class="enemyBadge">
-          <img src="${portrait(d[3])}">
-          ${d[0]}
-          <button onclick="removeEnemy(${i})">×</button>
-        </div>
-      `;
-    }).join("");
   }
 
-  document.getElementById("enemySlots").innerHTML=
-    enemies.map((id,i)=>{
-      const d=hero(id);
+}
 
-      return `
-        <div class="slot">
-          <div class="slotNumber">${i+1}</div>
-          <img src="${portrait(d[3])}">
-          <div class="slotInfo">
-            <strong>${d[0]}</strong>
-            <small>${attrName(d[1])}</small>
-          </div>
-          <button class="remove" onclick="removeEnemy(${i})">×</button>
-        </div>
-      `;
-    }).join("") || `
-      <div class="emptyState">No enemy data yet.</div>
+
+function renderEnemies(){
+
+  const box =
+    document.getElementById("enemyList");
+
+  document.getElementById("enemyCount").textContent =
+    enemies.length + " / 5";
+
+  if(!enemies.length){
+
+    box.innerHTML = `
+      <div class="enemyBox">
+        Tap a hero to add enemy
+      </div>
     `;
+
+    return;
+
+  }
+
+  box.innerHTML =
+    enemies.map((hero,index) => `
+      <div class="enemyItem">
+
+        <img
+          src="${heroImage(hero)}"
+          loading="lazy"
+        >
+
+        <span>${escapeHtml(hero.localized_name)}</span>
+
+        <button onclick="removeEnemy(${index})">
+          ×
+        </button>
+
+      </div>
+    `).join("");
+
+}
+
+
+function removeEnemy(index){
+
+  enemies.splice(index,1);
+
+  renderEnemies();
+  renderRecommendations();
+
 }
 
 
 /* =========================================================
-   RECOMMENDATION ENGINE
-   ========================================================= */
+   DRAFT RECOMMENDATIONS
+========================================================= */
 
-const synergies={
-  earthshaker:["meepo","broodmother","phantomlancer","nagasiren"],
-  magnus:["juggernaut","phantomassassin","trollwarlord"],
-  io:["gyro","tiny","luna"],
-  grimstroke:["juggernaut","axe","mars"],
-  darkseer:["facelessvoid","mars","magnus"],
-  snapfire:["mars","facelessvoid","tidehunter"],
-  enigma:["facelessvoid","mars","tidehunter"]
-};
+/*
+  IMPORTANT:
 
-const roleStrength={
-  1:["antimage","juggernaut","facelessvoid","phantomassassin","spectre","terrorblade","drowranger","luna","medusa","nagasiren"],
-  2:["puck","queenofpain","stormspirit","emberspirit","templarassassin","shadowfiend","invoker","outworlddestroyer","voidspirit"],
-  3:["axe","mars","centaur","tidehunter","underlord","doom","timbersaw","primalbeast","legioncommander"],
-  4:["earthshaker","hoodwink","rubick","mirana","darkwillow","tusk","nyxassassin","techies"],
-  5:["crystalmaiden","lich","oracle","dazzle","warlock","disruptor","ancientapparition","witchdoctor"]
-};
+  This part intentionally does NOT pretend that it has
+  live win-rate data for every possible 5v5 draft.
 
-function recommendationScore(id){
-  const d=hero(id);
-  const used=usedIds();
+  It simply prevents impossible role duplication and
+  uses hero roles + enemy composition as a lightweight
+  draft assistant.
 
-  if(used.includes(id)) return -999;
-
-  /*
-    HARD RULE:
-    If a position is already occupied, this hero is not eligible
-    as a recommendation for that position.
-  */
-
-  let best=-Infinity;
-  let bestPos=null;
-  let reasons=[];
-
-  for(const pos of availablePositions()){
-
-    let score=0;
-
-    if(d[2].includes(pos)){
-      score+=35;
-    }else{
-      score-=25;
-    }
-
-    if(roleStrength[pos]?.includes(id)){
-      score+=15;
-    }
-
-    /* Synergy with current team */
-    for(const ally of Object.values(team)){
-      if(!ally) continue;
-
-      if(synergies[id]?.includes(ally)){
-        score+=16;
-        reasons.push("synergy");
-      }
-
-      if(synergies[ally]?.includes(id)){
-        score+=12;
-        reasons.push("synergy");
-      }
-    }
-
-    /* Matchup vs enemies */
-    for(const enemy of enemies){
-
-      const data=COUNTERS[enemy];
-
-      if(data?.[id]){
-        score+=data[id][0]*2.1;
-        reasons.push("matchup");
-      }
-
-      /*
-       * If our hero is listed as a bad matchup for enemy,
-       * reward the pick.
-       */
-      const reverse=COUNTERS[id];
-
-      if(reverse?.[enemy]){
-        score+=reverse[enemy][0]*.9;
-        reasons.push("pressure");
-      }
-    }
-
-    /*
-      Don't recommend a position for which the hero is not a
-      natural role unless there is strong matchup value.
-    */
-    if(!d[2].includes(pos) && score<35){
-      continue;
-    }
-
-    if(score>best){
-      best=score;
-      bestPos=pos;
-    }
-  }
-
-  if(bestPos===null) return null;
-
-  if(enemies.length){
-    reasons.unshift("enemy read");
-  }
-
-  return {
-    id,
-    score:Math.round(best),
-    pos:bestPos,
-    reason:[...new Set(reasons)].slice(0,2)
-  };
-}
+  Counter Lab below is the statistical part.
+*/
 
 function renderRecommendations(){
 
-  const all=Object.keys(H)
-    .map(recommendationScore)
-    .filter(Boolean)
-    .sort((a,b)=>b.score-a.score)
-    .slice(0,5);
+  const box =
+    document.getElementById("recommendations");
 
-  const box=document.getElementById("recommendations");
+  const used =
+    new Set([
+      ...Object.values(team).filter(Boolean).map(h=>h.id),
+      ...enemies.map(h=>h.id)
+    ]);
 
-  if(!all.length){
-    box.innerHTML=`
-      <div class="emptyState">
-        Все подходящие позиции уже заняты.<br>
-        Добавь/убери героя, чтобы открыть новые варианты.
-      </div>
-    `;
-    return;
+  const occupied =
+    new Set(
+      Object.keys(team)
+        .filter(p => team[p])
+        .map(Number)
+    );
+
+  /*
+    Find first empty position.
+  */
+
+  let targetPos = null;
+
+  for(let p=1;p<=5;p++){
+
+    if(!team[p]){
+      targetPos = p;
+      break;
+    }
+
   }
 
-  box.innerHTML=all.map(r=>{
-    const d=hero(r.id);
+  if(!targetPos){
 
-    let reason="good fit";
-
-    if(r.reason.includes("matchup")) reason="strong vs enemy";
-    else if(r.reason.includes("synergy")) reason="team synergy";
-    else if(r.reason.includes("enemy read")) reason="draft response";
-
-    return `
-      <div class="recCard">
-        <img src="${portrait(d[3])}">
-
-        <div class="recMain">
-          <strong>${d[0]}</strong>
-          <small>
-            Best fit: POS ${r.pos} · ${reason}
-          </small>
-
-          <button class="pick" onclick="assignRecommended('${r.id}',${r.pos})">
-            + PICK POS ${r.pos}
-          </button>
-        </div>
-
-        <div class="recScore">
-          <b>${Math.max(1,r.score)}</b>
-          <small>FIT</small>
-        </div>
+    box.innerHTML = `
+      <div class="empty" style="grid-column:1/-1">
+        Your lineup is complete.
       </div>
     `;
-  }).join("");
 
-  document.getElementById("recommendStatus").textContent=
-    enemies.length ? "ENEMY-AWARE" : "TEAM-AWARE";
+    document.getElementById("recommendStatus").textContent =
+      "Team complete";
+
+    return;
+
+  }
+
+  const available =
+    heroes
+      .filter(h => !used.has(h.id))
+      .map(h => ({
+        hero:h,
+        score:recommendationScore(h,targetPos)
+      }))
+      .sort((a,b)=>b.score-a.score)
+      .slice(0,4);
+
+  document.getElementById("recommendStatus").textContent =
+    "Recommended for Position " + targetPos;
+
+  box.innerHTML =
+    available.map(x => `
+      <div
+        class="rec"
+        onclick="selectRecommended(${x.hero.id},${targetPos})"
+      >
+
+        <img src="${heroImage(x.hero)}">
+
+        <strong>
+          ${escapeHtml(x.hero.localized_name)}
+        </strong>
+
+        <small>
+          ${attrName(x.hero.primary_attr)}
+        </small>
+
+      </div>
+    `).join("");
+
 }
 
-function assignRecommended(id,pos){
-  if(team[pos]){
-    toast(`Position ${pos} is already occupied`);
-    return;
+
+function selectRecommended(id,pos){
+
+  const hero = heroMap[id];
+
+  if(!hero) return;
+
+  team[pos] = hero;
+
+  renderTeam();
+  renderRecommendations();
+
+}
+
+
+function recommendationScore(hero,pos){
+
+  let score = Math.random()*2;
+
+  const roles =
+    (hero.roles || []).map(x => x.toLowerCase());
+
+  /*
+    Basic position-role logic.
+  */
+
+  if(pos === 1){
+
+    if(roles.includes("carry"))
+      score += 25;
+
+    if(roles.includes("durable"))
+      score += 4;
+
   }
 
-  if(usedIds().includes(id)){
-    toast("Hero already selected");
-    return;
+  if(pos === 2){
+
+    if(roles.includes("nuker"))
+      score += 14;
+
+    if(roles.includes("escape"))
+      score += 8;
+
   }
 
-  team[pos]=id;
-  renderAll();
-  toast(`${heroName(id)} locked as Position ${pos}`);
+  if(pos === 3){
+
+    if(roles.includes("durable"))
+      score += 18;
+
+    if(roles.includes("initiator"))
+      score += 13;
+
+  }
+
+  if(pos === 4){
+
+    if(roles.includes("support"))
+      score += 17;
+
+    if(roles.includes("disabler"))
+      score += 12;
+
+  }
+
+  if(pos === 5){
+
+    if(roles.includes("support"))
+      score += 22;
+
+    if(roles.includes("disabler"))
+      score += 9;
+
+  }
+
+  /*
+    Enemy composition:
+    heroes with disables/nukes get a little extra value
+    from durable heroes.
+  */
+
+  const enemyCount = enemies.length;
+
+  if(enemyCount >= 2){
+
+    if(pos === 3 && roles.includes("durable"))
+      score += 7;
+
+    if(pos === 4 && roles.includes("disabler"))
+      score += 5;
+
+  }
+
+  return score;
+
 }
 
 
 /* =========================================================
    COUNTER LAB
-   ========================================================= */
+========================================================= */
 
-function getCounterList(target){
+function toggleCounterPicker(){
 
-  const direct=COUNTERS[target] || {};
+  const picker =
+    document.getElementById("counterPicker");
 
-  let list=Object.entries(direct)
-    .map(([id,data])=>({
-      id,
-      score:data[0],
-      reason:data[1]
-    }));
+  picker.style.display =
+    picker.style.display === "none"
+      ? ""
+      : "none";
 
-  /*
-    Generic illusion logic.
-  */
-  const illusionTargets=["phantomlancer","nagasiren","terrorblade"];
-
-  if(illusionTargets.includes(target)){
-    for(const [id,data] of Object.entries(COUNTERS.illusion_generic)){
-      if(!direct[id]){
-        list.push({
-          id,
-          score:data[0],
-          reason:data[1]
-        });
-      }
-    }
-  }
-
-  /*
-    Never show the target itself.
-  */
-  list=list.filter(x=>x.id!==target);
-
-  return list.sort((a,b)=>b.score-a.score);
-}
-
-function renderCounter(){
-
-  const d=hero(currentTarget);
-
-  document.getElementById("targetName").textContent=d[0];
-
-  document.getElementById("targetMeta").textContent=
-    `${attrName(d[1])} · POS ${d[2].join(" / ")}`;
-
-  document.getElementById("targetImage").src=portrait(d[3]);
-
-  const list=getCounterList(currentTarget);
-  const box=document.getElementById("counterList");
-
-  if(!list.length){
-    box.innerHTML=`
-      <div class="emptyState">
-        Для этого героя пока нет локальной matchup-карты.
-        Выбери другого героя или добавь данные.
-      </div>
-    `;
-    return;
-  }
-
-  box.innerHTML=list.map(x=>{
-    const h=hero(x.id);
-
-    return `
-      <div class="counterCard">
-        <img src="${portrait(h[3])}">
-
-        <div>
-          <strong>${h[0]}</strong>
-          <p>${x.reason}</p>
-        </div>
-
-        <div class="counterScore">
-          <b>+${x.score.toFixed(1)}</b>
-          <span>MATCHUP</span>
-        </div>
-      </div>
-    `;
-  }).join("");
 }
 
 
-/* =========================================================
-   COUNTER TARGET PICKER
-   ========================================================= */
+function renderCounterPicker(){
 
-function openCounterPicker(){
-
-  modalMode="counter";
-
-  document.getElementById("modalTitle").textContent=
-    "SELECT TARGET HERO";
-
-  document.getElementById("modalBody").innerHTML=`
-    <input
-      id="modalHeroSearch"
-      placeholder="Search hero..."
-      style="
-        width:100%;
-        padding:13px;
-        border-radius:13px;
-        border:1px solid rgba(255,255,255,.08);
-        background:rgba(255,255,255,.04);
-        color:white;
-        outline:none;
-        margin-bottom:12px;
-      "
-    >
-
-    <div class="heroGrid" id="modalHeroGrid"
-         style="max-height:55vh"></div>
-  `;
-
-  document.getElementById("modal").classList.add("show");
-
-  renderModalHeroes();
-
-  document.getElementById("modalHeroSearch")
-    .addEventListener("input",renderModalHeroes);
-}
-
-function renderModalHeroes(){
-
-  const q=document.getElementById("modalHeroSearch")
-    ?.value.toLowerCase() || "";
-
-  const grid=document.getElementById("modalHeroGrid");
+  const grid =
+    document.getElementById("counterPickerGrid");
 
   if(!grid) return;
 
-  grid.innerHTML=Object.entries(H)
-    .filter(([id,d])=>
-      !q ||
-      d[0].toLowerCase().includes(q) ||
-      id.includes(q)
+  const query =
+    (
+      document.getElementById("counterSearch")?.value ||
+      ""
     )
-    .map(([id,d])=>`
-      <button class="heroCard"
-        onclick="setCounterTarget('${id}')">
+    .trim()
+    .toLowerCase();
 
-        <img src="${portrait(d[3])}">
-        <i class="attr ${d[1]}"></i>
-        <div class="heroShade"></div>
-        <div class="heroName">${d[0]}</div>
+  const list =
+    heroes.filter(hero =>
+      !query ||
+      hero.localized_name.toLowerCase().includes(query)
+    );
+
+  grid.innerHTML =
+    list.map(hero => `
+      <button
+        class="pickerHero"
+        onclick="setCounterHeroById(${hero.id})"
+      >
+
+        <img
+          src="${heroImage(hero)}"
+          loading="lazy"
+        >
+
+        <span>
+          ${escapeHtml(hero.localized_name)}
+        </span>
+
       </button>
     `).join("");
+
 }
 
-function setCounterTarget(id){
-  currentTarget=id;
-  closeModal();
-  renderCounter();
+
+function setCounterHeroById(id){
+
+  const hero = heroMap[id];
+
+  if(!hero) return;
+
+  setCounterHero(hero);
+
 }
 
-document.getElementById("changeTarget")
-  .addEventListener("click",openCounterPicker);
+
+async function setCounterHero(hero){
+
+  currentCounterHero = hero;
+
+  document.getElementById("counterTargetName").textContent =
+    hero.localized_name;
+
+  document.getElementById("counterTargetImg").src =
+    heroImage(hero);
+
+  document.getElementById("counterTargetInfo").textContent =
+    `${attrName(hero.primary_attr)} • ${hero.attack_type || "Dota 2 hero"}`;
+
+  await loadMatchups(hero);
+
+}
 
 
 /* =========================================================
-   TABS
-   ========================================================= */
+   REAL MATCHUP DATA
+========================================================= */
 
-document.getElementById("draftTab").onclick=()=>{
-  document.getElementById("draftPage").style.display="block";
-  document.getElementById("counterPage").style.display="none";
+async function loadMatchups(hero){
 
-  document.getElementById("draftTab").classList.add("active");
-  document.getElementById("counterTab").classList.remove("active");
-};
+  const box =
+    document.getElementById("counterResults");
 
-document.getElementById("counterTab").onclick=()=>{
-  document.getElementById("draftPage").style.display="none";
-  document.getElementById("counterPage").style.display="block";
+  const status =
+    document.getElementById("counterDataStatus");
 
-  document.getElementById("counterTab").classList.add("active");
-  document.getElementById("draftTab").classList.remove("active");
+  box.innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      Загружаю matchup statistics...
+    </div>
+  `;
 
-  renderCounter();
-};
+  status.textContent = "loading";
+
+  /*
+    Use cache so changing back to a hero is instant.
+  */
+
+  if(matchupCache[hero.id]){
+
+    renderMatchups(
+      hero,
+      matchupCache[hero.id]
+    );
+
+    return;
+
+  }
+
+  try{
+
+    const data =
+      await api(
+        `/heroes/${hero.id}/matchups`,
+        15000
+      );
+
+    /*
+      Keep only meaningful samples.
+      Very tiny samples can create ridiculous
+      20-30% swings.
+    */
+
+    const usable =
+      data
+        .filter(row =>
+          row.hero_id &&
+          row.games_played >= 50
+        )
+        .map(row => {
+
+          const winRate =
+            row.wins /
+            row.games_played *
+            100;
+
+          /*
+            If hero X has 45% win rate against
+            selected hero, then X is a strong counter.
+
+            Selected hero disadvantage:
+            50 - selectedHeroWinRate
+
+            Equivalent counter advantage:
+            50 - winRateOfSelectedHero
+          */
+
+          return {
+            opponentId:row.hero_id,
+            games:row.games_played,
+            wins:row.wins,
+            heroWinRate:winRate,
+            advantage:50-winRate
+          };
+
+        })
+        .filter(x => x.opponentId !== hero.id)
+        .sort((a,b)=>b.advantage-a.advantage);
+
+    matchupCache[hero.id] = usable;
+
+    renderMatchups(hero,usable);
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent = "error";
+
+    box.innerHTML = `
+      <div class="empty">
+
+        <strong>
+          OpenDota не ответил
+        </strong>
+
+        <br><br>
+
+        Не удалось получить статистику для
+        <b>${escapeHtml(hero.localized_name)}</b>.
+
+        <br><br>
+
+        Попробуй нажать CHANGE и выбрать героя ещё раз
+        или обновить страницу.
+
+      </div>
+    `;
+
+  }
+
+}
 
 
 /* =========================================================
-   FILTERS
-   ========================================================= */
+   RENDER COUNTERS
+========================================================= */
 
-document.querySelectorAll("[data-filter]").forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll("[data-filter]")
-      .forEach(x=>x.classList.remove("active"));
+function renderMatchups(target,data){
 
-    btn.classList.add("active");
-    attrFilter=btn.dataset.filter;
-    renderHeroes();
+  const box =
+    document.getElementById("counterResults");
+
+  const status =
+    document.getElementById("counterDataStatus");
+
+  if(!data.length){
+
+    box.innerHTML = `
+      <div class="empty">
+        Недостаточно matchup-данных.
+      </div>
+    `;
+
+    status.textContent = "no data";
+
+    return;
+
+  }
+
+  /*
+    The strongest statistical counters are first.
+  */
+
+  const top =
+    data.slice(0,10);
+
+  status.textContent =
+    `${data.length} matchups`;
+
+  box.innerHTML = `
+    <div class="counterGrid">
+
+      ${top.map((row,index) => {
+
+        const opponent =
+          heroMap[row.opponentId];
+
+        if(!opponent) return "";
+
+        const advantage =
+          row.advantage;
+
+        return `
+          <div class="counterCard">
+
+            <span class="rank">
+              #${index+1}
+            </span>
+
+            <img
+              src="${heroImage(opponent)}"
+              loading="lazy"
+            >
+
+            <strong>
+              ${escapeHtml(opponent.localized_name)}
+            </strong>
+
+            <div class="counterStats">
+
+              <span class="${
+                advantage >= 0
+                  ? "advantage"
+                  : "bad"
+              }">
+
+                ${advantage >= 0 ? "+" : ""}
+                ${advantage.toFixed(2)}%
+
+              </span>
+
+              <span>
+                ${formatNumber(row.games)} games
+              </span>
+
+            </div>
+
+            <div class="explain">
+
+              ${explainCounter(
+                target,
+                opponent,
+                advantage
+              )}
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("")}
+
+    </div>
+  `;
+
+}
+
+
+/* =========================================================
+   EXPLANATION
+========================================================= */
+
+function explainCounter(target,opponent,advantage){
+
+  /*
+    The statistic itself is real.
+    The sentence is deliberately generic unless we have
+    a known mechanical interaction.
+  */
+
+  const t =
+    target.localized_name.toLowerCase();
+
+  const o =
+    opponent.localized_name.toLowerCase();
+
+  const known = {
+
+    "broodmother":{
+
+      "earthshaker":
+        "AoE control and Echo Slam punish Broodmother's spiders.",
+
+      "meepo":
+        "Multiple Meepos can quickly clear spider units and fight her map pressure.",
+
+      "necrophos":
+        "Sustained lane pressure and healing reduction make prolonged fights harder.",
+
+      "sand king":
+        "Sand King's AoE damage is excellent against spider swarms.",
+
+    },
+
+    "phantom assassin":{
+
+      "axe":
+        "Axe's Counter Helix and Culling Blade punish PA's close-range commitment.",
+
+      "pudge":
+        "Hook and dismember can isolate PA before she gets full damage value.",
+
+    },
+
+    "outworld destroyer":{
+
+      "nyx assassin":
+        "Nyx punishes intelligence-heavy heroes with mana burn and burst.",
+
+      "phantom lancer":
+        "Illusions can overload OD's single-target damage profile.",
+
+      "naga siren":
+        "Multiple units make it harder for OD to maintain clean single-target fights.",
+
+    },
+
+    "queen of pain":{
+
+      "puck":
+        "Puck can match mobility and punish predictable Blink-based movement.",
+
+      "huskar":
+        "Huskar's durability and magic resistance pressure QoP's burst pattern.",
+
+    }
+
   };
-});
 
-document.querySelectorAll("[data-pos]").forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll("[data-pos]")
-      .forEach(x=>x.classList.remove("active"));
+  if(
+    known[t] &&
+    known[t][o]
+  ){
 
-    btn.classList.add("active");
-    posFilter=btn.dataset.pos;
-    renderHeroes();
-  };
-});
+    return known[t][o];
 
-document.getElementById("search")
-  .addEventListener("input",renderHeroes);
+  }
+
+  if(advantage >= 7){
+
+    return "Strong statistical matchup in the current OpenDota dataset.";
+
+  }
+
+  if(advantage >= 4){
+
+    return "Clear statistical advantage across the recorded matchup.";
+
+  }
+
+  if(advantage >= 2){
+
+    return "Moderate statistical advantage.";
+
+  }
+
+  return "Slight statistical advantage; check the full draft before picking.";
+
+}
 
 
 /* =========================================================
-   MODAL
-   ========================================================= */
+   VIEW SWITCHING
+========================================================= */
 
-function closeModal(){
-  document.getElementById("modal").classList.remove("show");
+function showView(view){
+
+  document
+    .getElementById("draftView")
+    .classList.toggle(
+      "active",
+      view === "draft"
+    );
+
+  document
+    .getElementById("counterView")
+    .classList.toggle(
+      "active",
+      view === "counter"
+    );
+
+  document
+    .getElementById("tabDraft")
+    .classList.toggle(
+      "active",
+      view === "draft"
+    );
+
+  document
+    .getElementById("tabCounter")
+    .classList.toggle(
+      "active",
+      view === "counter"
+    );
+
+  document
+    .getElementById("bottomDraft")
+    .classList.toggle(
+      "active",
+      view === "draft"
+    );
+
+  document
+    .getElementById("bottomCounter")
+    .classList.toggle(
+      "active",
+      view === "counter"
+    );
+
 }
 
-document.getElementById("closeModal")
-  .addEventListener("click",closeModal);
 
-document.getElementById("modal")
-  .addEventListener("click",e=>{
-    if(e.target.id==="modal") closeModal();
-  });
+function showDraft(){
+  showView("draft");
+}
 
 
 /* =========================================================
-   RENDER
-   ========================================================= */
+   UTILITIES
+========================================================= */
 
-function renderAll(){
-  renderTeam();
-  renderEnemies();
-  renderHeroes();
-  renderRecommendations();
+function formatNumber(number){
+
+  return Number(number || 0)
+    .toLocaleString("en-US");
+
 }
 
-renderAll();
-renderCounter();
+
+function escapeHtml(value){
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
 
 </script>
 
