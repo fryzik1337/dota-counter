@@ -1,1 +1,1768 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
 
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+
+<title>Dota Counter Assistant</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: #080b10;
+  color: #f5f7fa;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+header {
+  padding: 12px 2px 18px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 27px;
+  line-height: 32px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #8993a3;
+  font-size: 14px;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tab {
+  border: 0;
+  border-radius: 14px;
+  padding: 13px 8px;
+  background: #151a23;
+  color: #8e98a8;
+  font-weight: 800;
+}
+
+.tab.active {
+  background: #ffffff;
+  color: #080b10;
+}
+
+.card {
+  background: #11161f;
+  border: 1px solid #202834;
+  border-radius: 18px;
+  padding: 15px;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 11px;
+}
+
+.positions {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.position {
+  border: 1px solid #28313d;
+  border-radius: 11px;
+  background: #0b0f15;
+  color: #8d97a7;
+  padding: 9px 2px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.position.active {
+  background: #202733;
+  color: white;
+  border-color: #ffffff;
+}
+
+.search {
+  width: 100%;
+  border: 1px solid #293240;
+  background: #0a0e14;
+  color: white;
+  outline: none;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.search::placeholder {
+  color: #667181;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.hero {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid #252e3a;
+  background: #0a0e14;
+  color: white;
+}
+
+.hero.selected {
+  border-color: white;
+}
+
+.hero img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: block;
+  object-fit: cover;
+}
+
+.hero-name {
+  min-height: 29px;
+  padding: 5px 3px 6px;
+  font-size: 10px;
+  line-height: 12px;
+}
+
+.enemy-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.enemy {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #293240;
+  border-radius: 20px;
+  background: #0a0e14;
+  color: white;
+  padding: 4px 8px 4px 4px;
+  font-size: 12px;
+}
+
+.enemy img {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+.primary {
+  width: 100%;
+  margin-top: 11px;
+  border: 0;
+  border-radius: 13px;
+  padding: 14px;
+  background: white;
+  color: #080b10;
+  font-weight: 900;
+}
+
+.primary:disabled {
+  opacity: .35;
+}
+
+.status {
+  color: #929cad;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.error {
+  color: #ff8585;
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 0;
+  border-bottom: 1px solid #202733;
+}
+
+.result:last-child {
+  border-bottom: 0;
+}
+
+.result img {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.result-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.result-name {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.result-meta {
+  color: #8993a3;
+  font-size: 11px;
+  line-height: 16px;
+  margin-top: 4px;
+}
+
+.result-right {
+  text-align: right;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.result-right small {
+  display: block;
+  color: #727c8c;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.muted {
+  color: #727c8c;
+  font-size: 11px;
+}
+
+.loading {
+  opacity: .65;
+}
+
+@media (max-width: 430px) {
+  .hero-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .app {
+    padding: 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <h1>⚔️ Dota Counter Assistant</h1>
+  <p>Draft Assistant · Counter Finder</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" id="draftTab">
+    ⚔️ Draft Assistant
+  </button>
+
+  <button class="tab" id="counterTab">
+    🎯 Counter Finder
+  </button>
+</div>
+
+<!-- ========================= -->
+<!-- DRAFT -->
+<!-- ========================= -->
+
+<section id="draftPage">
+
+<div class="card">
+
+  <div class="title">
+    Твоя позиция
+  </div>
+
+  <div class="positions">
+
+    <button class="position active" data-position="1">
+      1<br>Carry
+    </button>
+
+    <button class="position" data-position="2">
+      2<br>Mid
+    </button>
+
+    <button class="position" data-position="3">
+      3<br>Offlane
+    </button>
+
+    <button class="position" data-position="4">
+      4<br>Soft
+    </button>
+
+    <button class="position" data-position="5">
+      5<br>Hard
+    </button>
+
+  </div>
+
+</div>
+
+
+<div class="card">
+
+  <div class="title">
+    Твой герой
+  </div>
+
+  <input
+    id="myHeroSearch"
+    class="search"
+    placeholder="🔎 Поиск героя..."
+  >
+
+  <div id="myHeroGrid" class="hero-grid"></div>
+
+</div>
+
+
+<div class="card">
+
+  <div class="title">
+    Вражеские герои
+    <span id="enemyCount" class="muted">
+      0 / 5
+    </span>
+  </div>
+
+  <input
+    id="enemySearch"
+    class="search"
+    placeholder="🔎 Добавить врага..."
+  >
+
+  <div id="enemyGrid" class="hero-grid"></div>
+
+  <div id="enemyList" class="enemy-list"></div>
+
+  <button
+    id="analyzeButton"
+    class="primary"
+    disabled
+  >
+    Найти лучшие пики
+  </button>
+
+</div>
+
+
+<div class="card">
+
+  <div class="title">
+    Лучшие пики
+  </div>
+
+  <div id="draftStatus" class="status">
+    Выбери врагов, чтобы получить рекомендации.
+  </div>
+
+  <div id="draftResults"></div>
+
+</div>
+
+</section>
+
+
+<!-- ========================= -->
+<!-- COUNTER FINDER -->
+<!-- ========================= -->
+
+<section id="counterPage" class="hidden">
+
+<div class="card">
+
+  <div class="title">
+    Выбери героя
+  </div>
+
+  <input
+    id="counterSearch"
+    class="search"
+    placeholder="🔎 Поиск героя..."
+  >
+
+  <div id="counterGrid" class="hero-grid"></div>
+
+</div>
+
+
+<div class="card">
+
+  <div class="title">
+    Контрпики
+  </div>
+
+  <div id="counterStatus" class="status">
+    Выбери одного героя.
+  </div>
+
+  <div id="counterResults"></div>
+
+</div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/*
+====================================================
+ DOTA DATA
+====================================================
+*/
+
+const HEROES = [
+
+{
+id:1,
+name:"Anti-Mage",
+slug:"antimage",
+roles:["carry","escape"],
+counters:["Axe","Bloodseeker","Doom"]
+},
+
+{
+id:2,
+name:"Axe",
+slug:"axe",
+roles:["durable","initiator","disabler"],
+counters:["Ursa","Viper","Timbersaw"]
+},
+
+{
+id:3,
+name:"Bane",
+slug:"bane",
+roles:["support","disabler"],
+counters:["Abaddon","Rubick","Oracle"]
+},
+
+{
+id:4,
+name:"Bloodseeker",
+slug:"bloodseeker",
+roles:["carry","nuker"],
+counters:["Phantom Lancer","Naga Siren","Faceless Void"]
+},
+
+{
+id:5,
+name:"Crystal Maiden",
+slug:"crystal_maiden",
+roles:["support","nuker","disabler"],
+counters:["Storm Spirit","Anti-Mage","Pudge"]
+},
+
+{
+id:6,
+name:"Drow Ranger",
+slug:"drow_ranger",
+roles:["carry"],
+counters:["Phantom Assassin","Spectre","Clockwerk"]
+},
+
+{
+id:7,
+name:"Earthshaker",
+slug:"earthshaker",
+roles:["support","initiator","disabler"],
+counters:["Rubick","Silencer","Viper"]
+},
+
+{
+id:8,
+name:"Juggernaut",
+slug:"juggernaut",
+roles:["carry"],
+counters:["Axe","Phantom Lancer","Shadow Demon"]
+},
+
+{
+id:9,
+name:"Mirana",
+slug:"mirana",
+roles:["support","escape","nuker"],
+counters:["Clockwerk","Storm Spirit","Puck"]
+},
+
+{
+id:10,
+name:"Morphling",
+slug:"morphling",
+roles:["carry","escape","nuker"],
+counters:["Ancient Apparition","Viper","Lion"]
+},
+
+{
+id:11,
+name:"Phantom Assassin",
+slug:"phantom_assassin",
+roles:["carry","escape"],
+counters:["Axe","Viper","Bloodseeker"]
+},
+
+{
+id:12,
+name:"Pudge",
+slug:"pudge",
+roles:["durable","initiator","disabler"],
+counters:["Viper","Necrophos","Drow Ranger"]
+},
+
+{
+id:13,
+name:"Puck",
+slug:"puck",
+roles:["nuker","escape","disabler"],
+counters:["Silencer","Doom","Lion"]
+},
+
+{
+id:14,
+name:"Shadow Fiend",
+slug:"nevermore",
+roles:["carry","nuker"],
+counters:["Puck","Storm Spirit","Viper"]
+},
+
+{
+id:15,
+name:"Sniper",
+slug:"sniper",
+roles:["carry","nuker"],
+counters:["Phantom Assassin","Storm Spirit","Clockwerk"]
+},
+
+{
+id:16,
+name:"Storm Spirit",
+slug:"storm_spirit",
+roles:["carry","nuker","escape"],
+counters:["Anti-Mage","Silencer","Doom"]
+},
+
+{
+id:17,
+name:"Sven",
+slug:"sven",
+roles:["carry","durable","initiator"],
+counters:["Shadow Demon","Viper","Timbersaw"]
+},
+
+{
+id:18,
+name:"Tidehunter",
+slug:"tidehunter",
+roles:["durable","initiator","disabler"],
+counters:["Viper","Ursa","Silencer"]
+},
+
+{
+id:19,
+name:"Tinker",
+slug:"tinker",
+roles:["nuker","escape"],
+counters:["Spirit Breaker","Anti-Mage","Silencer"]
+},
+
+{
+id:20,
+name:"Ursa",
+slug:"ursa",
+roles:["carry","durable"],
+counters:["Viper","Drow Ranger","Phoenix"]
+},
+
+{
+id:21,
+name:"Viper",
+slug:"viper",
+roles:["nuker","durable"],
+counters:["Drow Ranger","Phantom Assassin","Sniper"]
+},
+
+{
+id:22,
+name:"Windranger",
+slug:"windranger",
+roles:["carry","escape","nuker","disabler"],
+counters:["Silencer","Axe","Viper"]
+},
+
+{
+id:23,
+name:"Zeus",
+slug:"zuus",
+roles:["nuker"],
+counters:["Anti-Mage","Storm Spirit","Puck"]
+},
+
+{
+id:24,
+name:"Faceless Void",
+slug:"faceless_void",
+roles:["carry","escape","initiator"],
+counters:["Disruptor","Silencer","Viper"]
+},
+
+{
+id:25,
+name:"Doom",
+slug:"doom_bringer",
+roles:["durable","initiator","disabler"],
+counters:["Ursa","Viper","Lifestealer"]
+},
+
+{
+id:26,
+name:"Lifestealer",
+slug:"life_stealer",
+roles:["carry","durable"],
+counters:["Viper","Necrophos","Razor"]
+},
+
+{
+id:27,
+name:"Silencer",
+slug:"silencer",
+roles:["support","disabler","nuker"],
+counters:["Storm Spirit","Phantom Assassin","Pudge"]
+},
+
+{
+id:28,
+name:"Rubick",
+slug:"rubick",
+roles:["support","disabler","nuker"],
+counters:["Silencer","Nyx Assassin","Pudge"]
+},
+
+{
+id:29,
+name:"Lion",
+slug:"lion",
+roles:["support","disabler","nuker"],
+counters:["Abaddon","Rubick","Anti-Mage"]
+},
+
+{
+id:30,
+name:"Abaddon",
+slug:"abaddon",
+roles:["support","durable"],
+counters:["Ancient Apparition","Silencer","Doom"]
+},
+
+{
+id:31,
+name:"Ancient Apparition",
+slug:"ancient_apparition",
+roles:["support","nuker","disabler"],
+counters:["Storm Spirit","Pudge","Anti-Mage"]
+},
+
+{
+id:32,
+name:"Dazzle",
+slug:"dazzle",
+roles:["support","nuker"],
+counters:["Ancient Apparition","Silencer","Axe"]
+},
+
+{
+id:33,
+name:"Disruptor",
+slug:"disruptor",
+roles:["support","disabler","nuker"],
+counters:["Rubick","Puck","Storm Spirit"]
+},
+
+{
+id:34,
+name:"Earth Spirit",
+slug:"earth_spirit",
+roles:["support","initiator","disabler"],
+counters:["Silencer","Puck","Rubick"]
+},
+
+{
+id:35,
+name:"Ember Spirit",
+slug:"ember_spirit",
+roles:["carry","escape","nuker"],
+counters:["Silencer","Puck","Storm Spirit"]
+},
+
+{
+id:36,
+name:"Invoker",
+slug:"invoker",
+roles:["nuker","disabler","carry"],
+counters:["Anti-Mage","Silencer","Nyx Assassin"]
+},
+
+{
+id:37,
+name:"Lina",
+slug:"lina",
+roles:["carry","support","nuker","disabler"],
+counters:["Anti-Mage","Storm Spirit","Phantom Assassin"]
+},
+
+{
+id:38,
+name:"Luna",
+slug:"luna",
+roles:["carry","nuker"],
+counters:["Anti-Mage","Terrorblade","Phantom Lancer"]
+},
+
+{
+id:39,
+name:"Magnus",
+slug:"magnataur",
+roles:["initiator","disabler","durable"],
+counters:["Silencer","Viper","Rubick"]
+},
+
+{
+id:40,
+name:"Medusa",
+slug:"medusa",
+roles:["carry","durable"],
+counters:["Anti-Mage","Phantom Lancer","Doom"]
+},
+
+{
+id:41,
+name:"Necrophos",
+slug:"necrolyte",
+roles:["durable","nuker"],
+counters:["Ancient Apparition","Viper","Anti-Mage"]
+},
+
+{
+id:42,
+name:"Naga Siren",
+slug:"naga_siren",
+roles:["carry","escape","disabler"],
+counters:["Axe","Ember Spirit","Earthshaker"]
+},
+
+{
+id:43,
+name:"Nature's Prophet",
+slug:"furion",
+roles:["carry","nuker","escape"],
+counters:["Spectre","Storm Spirit","Ember Spirit"]
+},
+
+{
+id:44,
+name:"Night Stalker",
+slug:"night_stalker",
+roles:["durable","initiator","disabler"],
+counters:["Viper","Silencer","Drow Ranger"]
+},
+
+{
+id:45,
+name:"Omniknight",
+slug:"omniknight",
+roles:["support","durable"],
+counters:["Ancient Apparition","Doom","Silencer"]
+},
+
+{
+id:46,
+name:"Oracle",
+slug:"oracle",
+roles:["support","nuker","disabler"],
+counters:["Silencer","Pudge","Rubick"]
+},
+
+{
+id:47,
+name:"Phantom Lancer",
+slug:"phantom_lancer",
+roles:["carry","escape"],
+counters:["Axe","Earthshaker","Ember Spirit"]
+},
+
+{
+id:48,
+name:"Queen of Pain",
+slug:"queenofpain",
+roles:["nuker","escape"],
+counters:["Silencer","Anti-Mage","Storm Spirit"]
+},
+
+{
+id:49,
+name:"Razor",
+slug:"razor",
+roles:["carry","durable"],
+counters:["Viper","Lifestealer","Ursa"]
+},
+
+{
+id:50,
+name:"Shadow Demon",
+slug:"shadow_demon",
+roles:["support","disabler","nuker"],
+counters:["Puck","Storm Spirit","Rubick"]
+},
+
+{
+id:51,
+name:"Slark",
+slug:"slark",
+roles:["carry","escape"],
+counters:["Bloodseeker","Axe","Viper"]
+},
+
+{
+id:52,
+name:"Spectre",
+slug:"spectre",
+roles:["carry","durable","escape"],
+counters:["Anti-Mage","Viper","Bloodseeker"]
+},
+
+{
+id:53,
+name:"Spirit Breaker",
+slug:"spirit_breaker",
+roles:["durable","initiator","disabler"],
+counters:["Viper","Drow Ranger","Monkey King"]
+},
+
+{
+id:54,
+name:"Terrorblade",
+slug:"terrorblade",
+roles:["carry","escape"],
+counters:["Luna","Viper","Phantom Lancer"]
+},
+
+{
+id:55,
+name:"Timbersaw",
+slug:"shredder",
+roles:["durable","nuker"],
+counters:["Viper","Ursa","Necrophos"]
+},
+
+{
+id:56,
+name:"Tiny",
+slug:"tiny",
+roles:["carry","initiator","disabler"],
+counters:["Viper","Lifestealer","Ursa"]
+},
+
+{
+id:57,
+name:"Treant Protector",
+slug:"treant",
+roles:["support","durable","disabler"],
+counters:["Timbersaw","Silencer","Rubick"]
+},
+
+{
+id:58,
+name:"Troll Warlord",
+slug:"troll_warlord",
+roles:["carry","disabler"],
+counters:["Axe","Viper","Phantom Lancer"]
+},
+
+{
+id:59,
+name:"Underlord",
+slug:"abyssal_underlord",
+roles:["durable","nuker","disabler"],
+counters:["Viper","Ursa","Lifestealer"]
+},
+
+{
+id:60,
+name:"Undying",
+slug:"undying",
+roles:["support","durable"],
+counters:["Timbersaw","Silencer","Ancient Apparition"]
+},
+
+{
+id:61,
+name:"Venomancer",
+slug:"venomancer",
+roles:["support","nuker"],
+counters:["Abaddon","Juggernaut","Oracle"]
+},
+
+{
+id:62,
+name:"Visage",
+slug:"visage",
+roles:["support","nuker","durable"],
+counters:["Viper","Lina","Zeus"]
+},
+
+{
+id:63,
+name:"Warlock",
+slug:"warlock",
+roles:["support","disabler","nuker"],
+counters:["Silencer","Rubick","Oracle"]
+},
+
+{
+id:64,
+name:"Weaver",
+slug:"weaver",
+roles:["carry","escape"],
+counters:["Bloodseeker","Axe","Lion"]
+},
+
+{
+id:65,
+name:"Witch Doctor",
+slug:"witch_doctor",
+roles:["support","nuker","disabler"],
+counters:["Pudge","Silencer","Storm Spirit"]
+},
+
+{
+id:66,
+name:"Wraith King",
+slug:"skeleton_king",
+roles:["carry","durable"],
+counters:["Anti-Mage","Viper","Ancient Apparition"]
+}
+
+];
+
+
+/*
+====================================================
+ STATE
+====================================================
+*/
+
+const state = {
+  position: "1",
+  selectedHero: null,
+  enemies: [],
+  counterHero: null
+};
+
+
+/*
+====================================================
+ IMAGE
+====================================================
+*/
+
+function image(hero) {
+
+  if (!hero) {
+    return "";
+  }
+
+  return
+    "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/"
+    + hero.slug
+    + ".png";
+}
+
+
+/*
+====================================================
+ HELPERS
+====================================================
+*/
+
+function getHeroByName(name) {
+
+  return HEROES.find(
+    h =>
+      h.name.toLowerCase() ===
+      name.toLowerCase()
+  );
+}
+
+
+function getHero(id) {
+
+  return HEROES.find(
+    h => h.id === id
+  );
+}
+
+
+function escapeHTML(text) {
+
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+/*
+====================================================
+ TABS
+====================================================
+*/
+
+document
+  .getElementById("draftTab")
+  .onclick = () => {
+
+    document
+      .getElementById("draftPage")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("counterPage")
+      .classList.add("hidden");
+
+    document
+      .getElementById("draftTab")
+      .classList.add("active");
+
+    document
+      .getElementById("counterTab")
+      .classList.remove("active");
+  };
+
+
+document
+  .getElementById("counterTab")
+  .onclick = () => {
+
+    document
+      .getElementById("draftPage")
+      .classList.add("hidden");
+
+    document
+      .getElementById("counterPage")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("draftTab")
+      .classList.remove("active");
+
+    document
+      .getElementById("counterTab")
+      .classList.add("active");
+  };
+
+
+/*
+====================================================
+ POSITIONS
+====================================================
+*/
+
+document
+  .querySelectorAll(".position")
+  .forEach(button => {
+
+    button.onclick = () => {
+
+      document
+        .querySelectorAll(".position")
+        .forEach(b =>
+          b.classList.remove("active")
+        );
+
+      button.classList.add("active");
+
+      state.position =
+        button.dataset.position;
+    };
+
+  });
+
+
+/*
+====================================================
+ HERO CARD
+====================================================
+*/
+
+function heroCard(hero, selected, callback) {
+
+  return `
+    <button
+      class="hero ${selected ? "selected" : ""}"
+      onclick="${callback}(${hero.id})"
+    >
+
+      <img
+        src="${image(hero)}"
+        alt=""
+        onerror="
+          this.style.visibility='hidden'
+        "
+      >
+
+      <div class="hero-name">
+        ${escapeHTML(hero.name)}
+      </div>
+
+    </button>
+  `;
+}
+
+
+/*
+====================================================
+ MY HERO
+====================================================
+*/
+
+function renderMyHeroes() {
+
+  const search =
+    document
+      .getElementById("myHeroSearch")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const heroes =
+    HEROES
+      .filter(hero =>
+        hero.name
+          .toLowerCase()
+          .includes(search)
+      )
+      .slice(0, 48);
+
+  document
+    .getElementById("myHeroGrid")
+    .innerHTML =
+      heroes
+        .map(hero =>
+          heroCard(
+            hero,
+            state.selectedHero === hero.id,
+            "selectMyHero"
+          )
+        )
+        .join("");
+}
+
+
+window.selectMyHero = function(id) {
+
+  state.selectedHero = id;
+
+  renderMyHeroes();
+
+};
+
+
+/*
+====================================================
+ ENEMIES
+====================================================
+*/
+
+function renderEnemyHeroes() {
+
+  const search =
+    document
+      .getElementById("enemySearch")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const heroes =
+    HEROES
+      .filter(hero =>
+        hero.name
+          .toLowerCase()
+          .includes(search)
+      )
+      .filter(hero =>
+        !state.enemies.includes(hero.id)
+      )
+      .slice(0, 36);
+
+  document
+    .getElementById("enemyGrid")
+    .innerHTML =
+      heroes
+        .map(hero =>
+          heroCard(
+            hero,
+            false,
+            "addEnemy"
+          )
+        )
+        .join("");
+
+  document
+    .getElementById("enemyCount")
+    .textContent =
+      `${state.enemies.length} / 5`;
+}
+
+
+window.addEnemy = function(id) {
+
+  if (state.enemies.length >= 5) {
+    return;
+  }
+
+  if (!state.enemies.includes(id)) {
+    state.enemies.push(id);
+  }
+
+  renderEnemyHeroes();
+  renderEnemyList();
+
+  document
+    .getElementById("analyzeButton")
+    .disabled =
+      state.enemies.length === 0;
+};
+
+
+window.removeEnemy = function(id) {
+
+  state.enemies =
+    state.enemies.filter(
+      x => x !== id
+    );
+
+  renderEnemyHeroes();
+  renderEnemyList();
+
+  document
+    .getElementById("analyzeButton")
+    .disabled =
+      state.enemies.length === 0;
+};
+
+
+function renderEnemyList() {
+
+  document
+    .getElementById("enemyList")
+    .innerHTML =
+      state.enemies
+        .map(id => {
+
+          const hero =
+            getHero(id);
+
+          if (!hero) return "";
+
+          return `
+            <button
+              class="enemy"
+              onclick="removeEnemy(${id})"
+            >
+
+              <img
+                src="${image(hero)}"
+                alt=""
+              >
+
+              ${escapeHTML(hero.name)}
+              ×
+
+            </button>
+          `;
+
+        })
+        .join("");
+}
+
+
+/*
+====================================================
+ DRAFT ANALYSIS
+====================================================
+*/
+
+function calculateDraft() {
+
+  const enemies =
+    state.enemies
+      .map(getHero)
+      .filter(Boolean);
+
+  const candidates =
+    HEROES.filter(hero =>
+      !state.enemies.includes(hero.id)
+    );
+
+  const results =
+    candidates.map(candidate => {
+
+      let score = 0;
+      let reasons = [];
+
+      enemies.forEach(enemy => {
+
+        const isCounter =
+          enemy.counters
+            .some(
+              name =>
+                name.toLowerCase() ===
+                candidate.name.toLowerCase()
+            );
+
+        if (isCounter) {
+
+          score += 18;
+
+          reasons.push(
+            `хорош против ${enemy.name}`
+          );
+
+        }
+
+        /*
+        Role-based bonuses
+        */
+
+        if (
+          enemy.roles.includes("carry") &&
+          candidate.roles.includes("disabler")
+        ) {
+
+          score += 3;
+
+        }
+
+        if (
+          enemy.roles.includes("nuker") &&
+          candidate.roles.includes("durable")
+        ) {
+
+          score += 3;
+
+        }
+
+        if (
+          enemy.roles.includes("escape") &&
+          candidate.roles.includes("disabler")
+        ) {
+
+          score += 3;
+
+        }
+
+      });
+
+      /*
+      Position bonuses
+      */
+
+      const position =
+        state.position;
+
+      if (
+        position === "1" &&
+        candidate.roles.includes("carry")
+      ) {
+        score += 4;
+      }
+
+      if (
+        position === "2" &&
+        candidate.roles.includes("nuker")
+      ) {
+        score += 3;
+      }
+
+      if (
+        position === "3" &&
+        candidate.roles.includes("durable")
+      ) {
+        score += 4;
+      }
+
+      if (
+        (position === "4" ||
+         position === "5") &&
+        candidate.roles.includes("support")
+      ) {
+        score += 4;
+      }
+
+      /*
+      Slight general role bonus
+      */
+
+      if (
+        candidate.roles.includes("disabler")
+      ) {
+        score += 1;
+      }
+
+      return {
+        hero: candidate,
+        score,
+        reasons
+      };
+
+    });
+
+
+  return results
+    .sort(
+      (a,b) =>
+        b.score - a.score
+    )
+    .slice(0, 15);
+}
+
+
+function analyzeDraft() {
+
+  const status =
+    document.getElementById(
+      "draftStatus"
+    );
+
+  const results =
+    document.getElementById(
+      "draftResults"
+    );
+
+  status.textContent =
+    "Анализирую состав...";
+
+  status.classList.add("loading");
+
+  setTimeout(() => {
+
+    const data =
+      calculateDraft();
+
+    status.classList.remove(
+      "loading"
+    );
+
+    if (!data.length) {
+
+      status.textContent =
+        "Не удалось найти пики.";
+
+      return;
+    }
+
+    status.textContent =
+      "Лучшие варианты:";
+
+    results.innerHTML =
+      data
+        .map((item,index) => {
+
+          const reason =
+            item.reasons.length
+              ? item.reasons
+                  .slice(0,2)
+                  .join(" · ")
+              : "хороший универсальный пик";
+
+          return `
+
+            <div class="result">
+
+              <img
+                src="${image(item.hero)}"
+                alt=""
+              >
+
+              <div class="result-main">
+
+                <div class="result-name">
+                  #${index + 1}
+                  ${escapeHTML(
+                    item.hero.name
+                  )}
+                </div>
+
+                <div class="result-meta">
+                  ${escapeHTML(reason)}
+                </div>
+
+              </div>
+
+              <div class="result-right">
+
+                ${item.score}
+
+                <small>
+                  score
+                </small>
+
+              </div>
+
+            </div>
+
+          `;
+
+        })
+        .join("");
+
+  }, 250);
+
+}
+
+
+document
+  .getElementById("analyzeButton")
+  .onclick =
+    analyzeDraft;
+
+
+/*
+====================================================
+ COUNTER FINDER
+====================================================
+*/
+
+function renderCounterHeroes() {
+
+  const search =
+    document
+      .getElementById("counterSearch")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const heroes =
+    HEROES
+      .filter(hero =>
+        hero.name
+          .toLowerCase()
+          .includes(search)
+      )
+      .slice(0,48);
+
+  document
+    .getElementById("counterGrid")
+    .innerHTML =
+      heroes
+        .map(hero =>
+          heroCard(
+            hero,
+            state.counterHero === hero.id,
+            "selectCounterHero"
+          )
+        )
+        .join("");
+}
+
+
+window.selectCounterHero =
+  function(id) {
+
+    state.counterHero = id;
+
+    renderCounterHeroes();
+
+    const hero =
+      getHero(id);
+
+    if (!hero) return;
+
+    const status =
+      document.getElementById(
+        "counterStatus"
+      );
+
+    status.textContent =
+      `Контрпики против ${hero.name}:`;
+
+    const results =
+      document.getElementById(
+        "counterResults"
+      );
+
+    const counters =
+      hero.counters
+        .map(name =>
+          getHeroByName(name)
+        )
+        .filter(Boolean);
+
+    results.innerHTML =
+      counters
+        .map((counter,index) => {
+
+          let reason =
+            "имеет favourable matchup";
+
+          if (
+            counter.roles.includes(
+              "disabler"
+            )
+          ) {
+            reason =
+              "может надёжно контролировать цель";
+          }
+
+          else if (
+            counter.roles.includes(
+              "nuker"
+            )
+          ) {
+            reason =
+              "может быстро наносить burst-урон";
+          }
+
+          else if (
+            counter.roles.includes(
+              "durable"
+            )
+          ) {
+            reason =
+              "лучше переживает длительный бой";
+          }
+
+          return `
+
+            <div class="result">
+
+              <img
+                src="${image(counter)}"
+                alt=""
+              >
+
+              <div class="result-main">
+
+                <div class="result-name">
+                  #${index + 1}
+                  ${escapeHTML(
+                    counter.name
+                  )}
+                </div>
+
+                <div class="result-meta">
+                  ${reason}
+                </div>
+
+              </div>
+
+              <div class="result-right">
+
+                ${counter.roles
+                  .slice(0,2)
+                  .join(" · ")}
+
+              </div>
+
+            </div>
+
+          `;
+
+        })
+        .join("");
+
+  };
+
+
+/*
+====================================================
+ SEARCH
+====================================================
+*/
+
+document
+  .getElementById("myHeroSearch")
+  .oninput =
+    renderMyHeroes;
+
+
+document
+  .getElementById("enemySearch")
+  .oninput =
+    renderEnemyHeroes;
+
+
+document
+  .getElementById("counterSearch")
+  .oninput =
+    renderCounterHeroes;
+
+
+/*
+====================================================
+ START
+====================================================
+*/
+
+renderMyHeroes();
+
+renderEnemyHeroes();
+
+renderCounterHeroes();
+
+</script>
+
+</body>
+</html>
