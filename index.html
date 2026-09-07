@@ -2,592 +2,818 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Dota Draft Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DRAFT//VOID — Dota 2 Draft Intelligence</title>
 
 <style>
 :root{
-  --bg:#070a0f;
-  --panel:#0e141d;
-  --panel2:#121a25;
-  --line:#253140;
-  --text:#f5f7fa;
-  --muted:#7e8b9b;
-  --accent:#e65b45;
-  --accent2:#ff8a65;
-  --green:#55d68a;
-  --blue:#5da9ff;
+  --bg:#05070d;
+  --panel:rgba(15,19,30,.78);
+  --panel2:rgba(20,25,39,.92);
+  --line:rgba(255,255,255,.09);
+  --text:#f4f7ff;
+  --muted:#8992aa;
+  --accent:#8b5cf6;
+  --cyan:#22d3ee;
+  --green:#4ade80;
+  --red:#fb7185;
+  --gold:#fbbf24;
+  --shadow:0 20px 70px rgba(0,0,0,.45);
 }
 
 *{box-sizing:border-box}
 
-html,body{
-  margin:0;
-  padding:0;
-  background:
-    radial-gradient(circle at 10% 0%,rgba(230,91,69,.13),transparent 30%),
-    radial-gradient(circle at 90% 15%,rgba(93,169,255,.10),transparent 28%),
-    var(--bg);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-  min-height:100%;
-}
-
 body{
-  padding-bottom:30px;
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 10% 0%,rgba(139,92,246,.18),transparent 28%),
+    radial-gradient(circle at 90% 10%,rgba(34,211,238,.12),transparent 26%),
+    radial-gradient(circle at 50% 100%,rgba(236,72,153,.08),transparent 32%),
+    var(--bg);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+  overflow-x:hidden;
 }
 
-button,input{
-  font:inherit;
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.16;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom,black,transparent 85%);
 }
+
+button,input{font:inherit}
 
 button{
-  -webkit-tap-highlight-color:transparent;
+  color:inherit;
+  border:0;
+  cursor:pointer;
 }
 
-.top{
-  position:sticky;
-  top:0;
-  z-index:50;
-  padding:
-    max(14px,env(safe-area-inset-top))
-    15px 12px;
-  background:rgba(7,10,15,.88);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(255,255,255,.06);
+.app{
+  width:min(1500px,100%);
+  margin:auto;
+  padding:20px 16px 50px;
 }
 
-.brand{
+.topbar{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
 }
 
 .logo{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
 }
 
-.logo-icon{
-  width:40px;
-  height:40px;
-  border-radius:13px;
+.logoMark{
+  width:44px;
+  height:44px;
+  border-radius:15px;
   display:grid;
   place-items:center;
-  background:linear-gradient(135deg,#ef654d,#8c2118);
-  box-shadow:0 8px 30px rgba(230,91,69,.25);
+  background:
+    linear-gradient(135deg,#8b5cf6,#ec4899);
+  box-shadow:0 0 35px rgba(139,92,246,.35);
   font-size:21px;
-}
-
-.logo-title{
   font-weight:900;
-  font-size:19px;
-  letter-spacing:-.4px;
 }
 
-.logo-sub{
+.logoText{
+  line-height:1;
+}
+
+.logoText b{
+  display:block;
+  letter-spacing:.13em;
+  font-size:15px;
+}
+
+.logoText span{
+  display:block;
+  margin-top:5px;
   color:var(--muted);
   font-size:10px;
-  margin-top:2px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
 }
 
 .live{
   display:flex;
   align-items:center;
-  gap:5px;
-  color:#72df9a;
-  font-size:10px;
-  font-weight:800;
-  text-transform:uppercase;
+  gap:7px;
+  padding:8px 11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:#aeb7ca;
+  font-size:11px;
+  background:rgba(255,255,255,.035);
 }
 
-.live-dot{
+.liveDot{
   width:7px;
   height:7px;
   border-radius:50%;
-  background:#58dc8a;
-  box-shadow:0 0 12px #58dc8a;
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
 }
 
 .tabs{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-  margin-top:13px;
+  display:flex;
+  padding:5px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(8,11,19,.78);
+  margin-bottom:18px;
 }
 
 .tab{
-  border:1px solid var(--line);
-  background:#0d131c;
-  color:#8793a3;
-  padding:11px 8px;
-  border-radius:12px;
-  font-size:12px;
-  font-weight:850;
+  flex:1;
+  padding:13px;
+  border-radius:13px;
+  color:var(--muted);
+  background:transparent;
+  font-weight:800;
+  transition:.2s;
 }
 
 .tab.active{
-  color:#fff;
-  background:linear-gradient(135deg,#2a3442,#171f2a);
-  border-color:#48576a;
-  box-shadow:inset 0 1px rgba(255,255,255,.06);
+  color:white;
+  background:linear-gradient(135deg,rgba(139,92,246,.32),rgba(34,211,238,.12));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
 }
 
-main{
-  width:min(920px,100%);
-  margin:auto;
-  padding:13px;
-}
-
-.page{display:none}
-.page.active{display:block}
-
-.card{
-  background:linear-gradient(145deg,rgba(18,26,37,.97),rgba(11,16,24,.97));
-  border:1px solid rgba(255,255,255,.065);
+.command{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 16px;
+  border:1px solid var(--line);
   border-radius:18px;
-  margin-bottom:12px;
-  padding:14px;
-  box-shadow:0 12px 40px rgba(0,0,0,.18);
+  background:var(--panel);
+  box-shadow:var(--shadow);
+  margin-bottom:18px;
 }
 
-.card-head{
+.command span{
+  color:var(--cyan);
+  font-weight:900;
+}
+
+.command input{
+  width:100%;
+  border:0;
+  outline:0;
+  color:white;
+  background:transparent;
+}
+
+.command input::placeholder{
+  color:#657087;
+}
+
+.draftGrid{
+  display:grid;
+  grid-template-columns:1fr 1.6fr 1fr;
+  gap:16px;
+}
+
+.panel{
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);
+  overflow:hidden;
+}
+
+.panelHead{
+  padding:17px 18px 13px;
+  border-bottom:1px solid var(--line);
+}
+
+.panelHead h2{
+  margin:0;
+  font-size:14px;
+  letter-spacing:.04em;
+}
+
+.panelHead p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.slots{
+  padding:12px;
+  display:grid;
+  gap:9px;
+}
+
+.slot{
+  min-height:73px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:9px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:17px;
+  background:rgba(255,255,255,.025);
+  transition:.2s;
+}
+
+.slot:hover{
+  border-color:rgba(139,92,246,.5);
+  transform:translateY(-1px);
+}
+
+.slotNumber{
+  width:27px;
+  height:27px;
+  border-radius:9px;
+  display:grid;
+  place-items:center;
+  color:#aab2c5;
+  background:rgba(255,255,255,.06);
+  font-size:11px;
+  font-weight:900;
+}
+
+.slot.empty{
+  color:#606b80;
+  border-style:dashed;
+}
+
+.slot img{
+  width:48px;
+  height:48px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+.slotInfo{
+  min-width:0;
+}
+
+.slotInfo strong{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size:12px;
+}
+
+.slotInfo small{
+  color:var(--muted);
+  font-size:9px;
+}
+
+.remove{
+  margin-left:auto;
+  width:27px;
+  height:27px;
+  border-radius:9px;
+  background:rgba(255,255,255,.06);
+  color:#8992a6;
+}
+
+.remove:hover{
+  color:white;
+  background:rgba(251,113,133,.18);
+}
+
+.center{
+  min-width:0;
+}
+
+.centerHeader{
+  padding:20px;
+  position:relative;
+  min-height:185px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  overflow:hidden;
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(circle at 75% 15%,rgba(139,92,246,.28),transparent 35%),
+    radial-gradient(circle at 15% 90%,rgba(34,211,238,.12),transparent 32%);
+}
+
+.centerHeader:after{
+  content:"VOID";
+  position:absolute;
+  right:-10px;
+  top:-25px;
+  color:rgba(255,255,255,.025);
+  font-size:150px;
+  font-weight:1000;
+  letter-spacing:-.08em;
+  pointer-events:none;
+}
+
+.eyebrow{
+  color:var(--cyan);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+
+.centerHeader h1{
+  margin:7px 0 5px;
+  font-size:clamp(28px,5vw,46px);
+  line-height:.95;
+  letter-spacing:-.05em;
+}
+
+.centerHeader p{
+  max-width:520px;
+  color:#8d97ac;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.enemyLine{
+  padding:12px 14px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  border-bottom:1px solid var(--line);
+}
+
+.enemyBadge{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 7px 5px 5px;
+  border-radius:10px;
+  background:rgba(251,113,133,.08);
+  border:1px solid rgba(251,113,133,.18);
+  font-size:10px;
+}
+
+.enemyBadge img{
+  width:23px;
+  height:23px;
+  border-radius:7px;
+}
+
+.enemyBadge button{
+  background:transparent;
+  color:#7e8799;
+}
+
+.recommend{
+  padding:15px;
+}
+
+.recommendTitle{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-bottom:12px;
-}
-
-.title{
-  font-size:14px;
-  font-weight:900;
-  letter-spacing:-.2px;
-}
-
-.hint{
-  font-size:10px;
-  color:var(--muted);
-}
-
-.pos-grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
-}
-
-.pos{
-  position:relative;
-  overflow:hidden;
-  border:1px solid #293543;
-  background:#0d141d;
-  border-radius:12px;
-  color:#7e8b9b;
-  padding:11px 2px 10px;
-  font-size:10px;
-  font-weight:900;
-}
-
-.pos small{
-  display:block;
-  font-size:8px;
-  opacity:.65;
-  margin-top:3px;
-}
-
-.pos.active{
-  color:#fff;
-  border-color:#b64d3d;
-  background:linear-gradient(145deg,#3b211e,#1b1517);
-  box-shadow:0 0 25px rgba(230,91,69,.12);
-}
-
-.pos.active:after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  height:2px;
-  background:#ef674f;
-}
-
-.search-wrap{
-  position:relative;
   margin-bottom:10px;
 }
 
-.search{
-  width:100%;
-  height:43px;
-  padding:0 13px 0 39px;
-  border:1px solid #283442;
-  border-radius:12px;
-  outline:none;
-  color:#fff;
-  background:#090e15;
+.recommendTitle b{
+  font-size:12px;
 }
 
-.search:focus{
-  border-color:#55677b;
-  box-shadow:0 0 0 3px rgba(93,169,255,.06);
+.recommendTitle span{
+  color:var(--green);
+  font-size:10px;
 }
 
-.search-icon{
-  position:absolute;
-  left:13px;
-  top:12px;
-  color:#718093;
+.recCard{
+  display:grid;
+  grid-template-columns:62px 1fr auto;
+  gap:11px;
+  align-items:center;
+  padding:10px;
+  margin-bottom:8px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;
+  background:rgba(255,255,255,.025);
+  transition:.2s;
+}
+
+.recCard:hover{
+  transform:translateY(-2px);
+  border-color:rgba(139,92,246,.45);
+  background:rgba(139,92,246,.07);
+}
+
+.recCard img{
+  width:62px;
+  height:62px;
+  border-radius:13px;
+  object-fit:cover;
+}
+
+.recMain strong{
+  font-size:13px;
+  display:block;
+}
+
+.recMain small{
+  color:#8e98ac;
+  font-size:10px;
+  line-height:1.4;
+}
+
+.recScore{
+  text-align:right;
+}
+
+.recScore b{
+  display:block;
+  color:var(--green);
+  font-size:15px;
+}
+
+.recScore small{
+  color:#687388;
+  font-size:9px;
+}
+
+.pick{
+  margin-top:7px;
+  padding:6px 9px;
+  border-radius:9px;
+  background:rgba(139,92,246,.18);
+  color:#d9ceff;
+  font-size:9px;
+  font-weight:800;
+}
+
+.heroes{
+  padding:15px;
 }
 
 .filters{
   display:flex;
-  gap:6px;
+  gap:7px;
   overflow-x:auto;
-  padding-bottom:9px;
+  padding-bottom:8px;
   scrollbar-width:none;
 }
 
 .filters::-webkit-scrollbar{display:none}
 
 .filter{
-  white-space:nowrap;
-  border:1px solid #273341;
-  background:#0b1119;
-  color:#8996a6;
-  border-radius:20px;
-  padding:7px 10px;
+  flex:0 0 auto;
+  padding:8px 11px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  color:#8993a8;
+  background:rgba(255,255,255,.025);
   font-size:10px;
   font-weight:800;
 }
 
 .filter.active{
-  background:#273544;
-  color:#fff;
-  border-color:#536579;
+  color:white;
+  border-color:rgba(139,92,246,.6);
+  background:rgba(139,92,246,.16);
 }
 
-.hero-grid{
+.heroGrid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:7px;
+  gap:8px;
+  max-height:650px;
+  overflow:auto;
+  padding-right:2px;
 }
 
-.hero{
-  min-width:0;
-  position:relative;
-  overflow:hidden;
-  border:1px solid #25303d;
-  background:#0d141d;
-  border-radius:12px;
-  padding:4px;
-  color:#fff;
-  text-align:left;
-  transition:.15s;
-}
-
-.hero:active{
-  transform:scale(.96);
-}
-
-.hero.selected{
-  border-color:#e15e49;
-  box-shadow:
-    0 0 0 1px #e15e49,
-    0 7px 25px rgba(230,91,69,.13);
-}
-
-.hero.taken{
-  opacity:.24;
-}
-
-.hero img{
-  width:100%;
-  aspect-ratio:1.32/1;
-  object-fit:cover;
-  display:block;
-  border-radius:8px;
-  background:#171e28;
-}
-
-.hero-name{
-  padding:5px 3px 4px;
-  font-size:9px;
-  font-weight:800;
-  line-height:11px;
-  min-height:21px;
-}
-
-.hero-tag{
-  position:absolute;
-  top:7px;
-  right:7px;
-  background:rgba(0,0,0,.72);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:6px;
-  padding:3px 4px;
-  font-size:7px;
-  font-weight:900;
-}
-
-.team{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
-}
-
-.team-slot{
-  position:relative;
-  overflow:hidden;
-  min-width:0;
-  aspect-ratio:.76/1;
-  border:1px solid #263240;
-  border-radius:12px;
-  background:#0a1017;
-}
-
-.team-slot.empty{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  color:#596777;
-}
-
-.team-slot img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.slot-number{
-  position:absolute;
-  left:5px;
-  top:5px;
-  z-index:2;
-  padding:3px 5px;
-  background:rgba(0,0,0,.7);
-  border-radius:5px;
-  font-size:8px;
-  font-weight:900;
-}
-
-.slot-name{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  padding:16px 4px 5px;
-  background:linear-gradient(transparent,rgba(0,0,0,.92));
-  font-size:8px;
-  font-weight:800;
-  text-align:center;
-}
-
-.remove{
-  position:absolute;
-  right:4px;
-  top:4px;
-  width:21px;
-  height:21px;
-  border:0;
-  border-radius:50%;
-  background:rgba(0,0,0,.72);
-  color:#fff;
-  font-size:11px;
-  z-index:4;
-}
-
-.enemy-grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
-}
-
-.enemy{
-  position:relative;
-  aspect-ratio:.76/1;
-  border:1px dashed #354251;
-  border-radius:12px;
-  background:#0a1017;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#5f6c7b;
-  font-size:9px;
-  text-align:center;
-}
-
-.enemy img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.enemy-label{
-  position:absolute;
-  top:5px;
-  left:5px;
-  background:rgba(0,0,0,.75);
-  padding:3px 5px;
-  border-radius:5px;
-  color:#fff;
-  font-size:8px;
-  font-weight:900;
-}
-
-.enemy-name{
-  position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
-  padding:15px 3px 5px;
-  background:linear-gradient(transparent,rgba(0,0,0,.95));
-  color:#fff;
-  font-size:8px;
-  font-weight:800;
-  text-align:center;
-}
-
-.enemy-add{
-  border:0;
-  width:100%;
-  margin-top:8px;
-  border-radius:11px;
-  padding:10px;
-  color:#8d9aaa;
-  background:#111a24;
-  border:1px dashed #334151;
-  font-size:11px;
-  font-weight:800;
-}
-
-.recommendation{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  padding:9px;
-  border:1px solid #26313e;
-  border-radius:13px;
-  background:#0c131c;
-  margin-bottom:7px;
-}
-
-.rank{
-  width:24px;
-  color:#667485;
-  font-weight:900;
-  font-size:11px;
-  text-align:center;
-}
-
-.rec-img{
-  width:52px;
-  height:52px;
-  border-radius:9px;
-  object-fit:cover;
-}
-
-.rec-info{
-  flex:1;
-  min-width:0;
-}
-
-.rec-name{
-  font-size:12px;
-  font-weight:900;
-}
-
-.rec-reason{
-  margin-top:3px;
-  color:#8491a1;
-  font-size:9px;
-  line-height:13px;
-}
-
-.score{
-  min-width:48px;
-  text-align:center;
-  color:#70dd98;
-  font-size:12px;
-  font-weight:900;
-}
-
-.score small{
-  display:block;
-  color:#667485;
-  font-size:7px;
-  margin-top:2px;
-}
-
-.empty{
-  padding:20px 8px;
-  color:#627080;
-  text-align:center;
-  font-size:11px;
-  line-height:16px;
-}
-
-.counter-hero{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  padding:10px;
-  border:1px solid #2b3745;
-  border-radius:14px;
-  background:#0b121b;
-}
-
-.counter-hero img{
-  width:70px;
-  height:70px;
-  object-fit:cover;
+.heroGrid::-webkit-scrollbar{width:4px}
+.heroGrid::-webkit-scrollbar-thumb{
+  background:#2a3141;
   border-radius:10px;
 }
 
-.counter-hero-name{
-  font-size:17px;
-  font-weight:950;
+.heroCard{
+  position:relative;
+  min-width:0;
+  aspect-ratio:1/1.08;
+  border-radius:13px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+  background:#111622;
+  transition:.18s;
 }
 
-.counter-hero-role{
-  color:#778596;
-  font-size:10px;
-  margin-top:4px;
+.heroCard:hover{
+  transform:scale(1.025);
+  border-color:rgba(255,255,255,.25);
+  z-index:2;
 }
 
-.counter-result{
-  margin-top:10px;
+.heroCard.disabled{
+  opacity:.22;
+  filter:grayscale(1);
 }
 
-.reason-box{
-  margin-top:7px;
-  color:#8d99a8;
-  font-size:9px;
-  line-height:13px;
-}
-
-.big-button{
+.heroCard img{
   width:100%;
-  border:0;
-  padding:12px;
-  border-radius:12px;
-  color:#fff;
-  font-weight:900;
-  background:linear-gradient(135deg,#d95843,#86281e);
-  box-shadow:0 10px 30px rgba(217,88,67,.15);
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 
-@media(min-width:600px){
-  .hero-grid{
-    grid-template-columns:repeat(7,1fr);
+.heroShade{
+  position:absolute;
+  inset:45% 0 0;
+  background:linear-gradient(transparent,rgba(0,0,0,.92));
+}
+
+.heroName{
+  position:absolute;
+  left:7px;
+  right:7px;
+  bottom:7px;
+  font-size:9px;
+  font-weight:900;
+  text-shadow:0 2px 5px #000;
+}
+
+.attr{
+  position:absolute;
+  top:6px;
+  left:6px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  box-shadow:0 0 10px currentColor;
+}
+
+.attr.str{color:#ef4444;background:#ef4444}
+.attr.agi{color:#4ade80;background:#4ade80}
+.attr.int{color:#60a5fa;background:#60a5fa}
+.attr.uni{color:#c084fc;background:#c084fc}
+
+.posTag{
+  position:absolute;
+  right:5px;
+  top:4px;
+  color:white;
+  font-size:8px;
+  font-weight:900;
+  opacity:.85;
+}
+
+.counterPage{
+  display:none;
+}
+
+.counterLayout{
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:16px;
+}
+
+.target{
+  padding:18px;
+  min-height:440px;
+  display:flex;
+  flex-direction:column;
+}
+
+.targetImage{
+  width:100%;
+  aspect-ratio:1.5;
+  object-fit:cover;
+  border-radius:20px;
+  border:1px solid var(--line);
+}
+
+.targetName{
+  margin-top:15px;
+  font-size:28px;
+  font-weight:950;
+  letter-spacing:-.04em;
+}
+
+.targetMeta{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.counterControls{
+  display:flex;
+  gap:8px;
+  margin-top:auto;
+}
+
+.counterSearch{
+  flex:1;
+  padding:11px;
+  color:white;
+  outline:none;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:rgba(255,255,255,.04);
+}
+
+.counterList{
+  padding:14px;
+}
+
+.counterCard{
+  display:grid;
+  grid-template-columns:70px 1fr 72px;
+  gap:12px;
+  align-items:center;
+  padding:12px;
+  margin-bottom:8px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:17px;
+  background:rgba(255,255,255,.025);
+}
+
+.counterCard img{
+  width:70px;
+  height:55px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+.counterCard strong{
+  font-size:12px;
+}
+
+.counterCard p{
+  margin:4px 0 0;
+  color:#8993a8;
+  font-size:10px;
+  line-height:1.4;
+}
+
+.counterScore{
+  text-align:right;
+}
+
+.counterScore b{
+  color:var(--green);
+  font-size:17px;
+}
+
+.counterScore span{
+  display:block;
+  color:#6d778d;
+  font-size:8px;
+}
+
+.emptyState{
+  padding:35px 15px;
+  text-align:center;
+  color:#667187;
+  font-size:11px;
+  line-height:1.6;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  z-index:50;
+  padding:11px 15px;
+  border-radius:13px;
+  background:#171c29;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  font-size:11px;
+  transition:.25s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:40;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:10px;
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(12px);
+}
+
+.modal.show{display:flex}
+
+.modalBox{
+  width:min(700px,100%);
+  max-height:90vh;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:25px 25px 18px 18px;
+  background:#0c101a;
+  box-shadow:0 30px 100px #000;
+}
+
+.modalHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:15px;
+  border-bottom:1px solid var(--line);
+}
+
+.modalHead strong{font-size:13px}
+
+.close{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+}
+
+.modalBody{
+  padding:13px;
+  overflow:auto;
+  max-height:75vh;
+}
+
+@media(max-width:1000px){
+  .draftGrid{
+    grid-template-columns:1fr;
+  }
+
+  .center{
+    order:-1;
+  }
+
+  .heroGrid{
+    grid-template-columns:repeat(6,1fr);
+    max-height:none;
+  }
+
+  .counterLayout{
+    grid-template-columns:1fr;
+  }
+
+  .target{
+    min-height:auto;
   }
 }
 
-@media(max-width:350px){
-  .hero-grid{
-    grid-template-columns:repeat(3,1fr);
+@media(max-width:600px){
+  .app{
+    padding:12px 10px 35px;
+  }
+
+  .logoText span{display:none}
+  .live{font-size:9px}
+
+  .centerHeader{
+    min-height:210px;
+  }
+
+  .centerHeader h1{
+    font-size:36px;
+  }
+
+  .heroGrid{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .slot{
+    min-height:65px;
+  }
+
+  .slot img{
+    width:43px;
+    height:43px;
+  }
+
+  .counterCard{
+    grid-template-columns:60px 1fr 60px;
+  }
+
+  .counterCard img{
+    width:60px;
+    height:50px;
   }
 }
 </style>
@@ -595,1204 +821,1070 @@ main{
 
 <body>
 
-<header class="top">
+<div class="app">
 
-  <div class="brand">
-
+  <div class="topbar">
     <div class="logo">
-
-      <div class="logo-icon">⚔️</div>
-
-      <div>
-        <div class="logo-title">DOTA DRAFT LAB</div>
-        <div class="logo-sub">COUNTER • DRAFT • ANALYSIS</div>
+      <div class="logoMark">◈</div>
+      <div class="logoText">
+        <b>DRAFT//VOID</b>
+        <span>Dota 2 draft intelligence</span>
       </div>
-
     </div>
 
     <div class="live">
-      <span class="live-dot"></span>
-      LIVE
+      <i class="liveDot"></i>
+      DRAFT ENGINE ONLINE
     </div>
-
   </div>
 
   <div class="tabs">
-
-    <button class="tab active" onclick="openTab('draft',this)">
-      ⚔️ DRAFT ASSISTANT
-    </button>
-
-    <button class="tab" onclick="openTab('counter',this)">
-      🎯 COUNTER FINDER
-    </button>
-
+    <button class="tab active" id="draftTab">⚡ DRAFT LAB</button>
+    <button class="tab" id="counterTab">◈ COUNTER LAB</button>
   </div>
 
-</header>
+  <section id="draftPage">
 
-
-<main>
-
-<!-- ========================= -->
-<!-- DRAFT -->
-<!-- ========================= -->
-
-<div id="draft" class="page active">
-
-  <div class="card">
-
-    <div class="card-head">
-      <div class="title">YOUR POSITION</div>
-      <div class="hint">Choose role</div>
+    <div class="command">
+      <span>⌘</span>
+      <input id="search" placeholder="Найти героя... например Broodmother">
     </div>
 
-    <div class="pos-grid">
+    <div class="draftGrid">
 
-      <button class="pos active" onclick="setPos(1,this)">
-        POS 1
-        <small>CARRY</small>
-      </button>
+      <div class="panel">
+        <div class="panelHead">
+          <h2>YOUR SQUAD</h2>
+          <p>Позиции 1–5. Каждая позиция независима.</p>
+        </div>
+        <div class="slots" id="teamSlots"></div>
+      </div>
 
-      <button class="pos" onclick="setPos(2,this)">
-        POS 2
-        <small>MID</small>
-      </button>
+      <div class="panel center">
 
-      <button class="pos" onclick="setPos(3,this)">
-        POS 3
-        <small>OFFLANE</small>
-      </button>
+        <div class="centerHeader">
+          <div class="eyebrow">TACTICAL DRAFT ENGINE</div>
+          <h1>BUILD YOUR<br>WIN CONDITION.</h1>
+          <p>
+            Выбирай героев. Система смотрит на свободные позиции,
+            союзников и врагов — и пытается собрать состав, а не просто
+            показать случайный список персонажей.
+          </p>
+        </div>
 
-      <button class="pos" onclick="setPos(4,this)">
-        POS 4
-        <small>SUPPORT</small>
-      </button>
+        <div class="enemyLine" id="enemyLine"></div>
 
-      <button class="pos" onclick="setPos(5,this)">
-        POS 5
-        <small>HARD SUP</small>
-      </button>
+        <div class="recommend">
+          <div class="recommendTitle">
+            <b>RECOMMENDED FOR YOU</b>
+            <span id="recommendStatus">ANALYZING</span>
+          </div>
 
-    </div>
+          <div id="recommendations"></div>
+        </div>
 
-  </div>
+        <div class="heroes">
+          <div class="filters">
+            <button class="filter active" data-filter="all">ALL</button>
+            <button class="filter" data-filter="str">STRENGTH</button>
+            <button class="filter" data-filter="agi">AGILITY</button>
+            <button class="filter" data-filter="int">INTELLIGENCE</button>
+            <button class="filter" data-filter="uni">UNIVERSAL</button>
+          </div>
 
+          <div class="filters" style="margin-top:3px">
+            <button class="filter active" data-pos="all">ALL POSITIONS</button>
+            <button class="filter" data-pos="1">POS 1</button>
+            <button class="filter" data-pos="2">POS 2</button>
+            <button class="filter" data-pos="3">POS 3</button>
+            <button class="filter" data-pos="4">POS 4</button>
+            <button class="filter" data-pos="5">POS 5</button>
+          </div>
 
-  <div class="card">
+          <div class="heroGrid" id="heroGrid"></div>
+        </div>
 
-    <div class="card-head">
-      <div class="title">CHOOSE YOUR HERO</div>
-      <div class="hint" id="heroCount">128 heroes</div>
-    </div>
+      </div>
 
-    <div class="search-wrap">
+      <div class="panel">
+        <div class="panelHead">
+          <h2>ENEMY READ</h2>
+          <p>До 5 врагов. Выбирай героя → затем нажми Enemy.</p>
+        </div>
 
-      <span class="search-icon">⌕</span>
+        <div class="slots" id="enemySlots"></div>
 
-      <input
-        id="heroSearch"
-        class="search"
-        placeholder="Search hero..."
-        oninput="renderHeroes()"
-      >
-
-    </div>
-
-    <div class="filters">
-
-      <button class="filter active" onclick="setFilter('ALL',this)">ALL</button>
-      <button class="filter" onclick="setFilter('Strength',this)">💪 STR</button>
-      <button class="filter" onclick="setFilter('Agility',this)">⚡ AGI</button>
-      <button class="filter" onclick="setFilter('Intelligence',this)">🧠 INT</button>
-      <button class="filter" onclick="setFilter('Universal',this)">◈ UNI</button>
-
-    </div>
-
-    <div id="heroes" class="hero-grid"></div>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="card-head">
-      <div class="title">YOUR DRAFT</div>
-      <div class="hint">5 positions</div>
-    </div>
-
-    <div id="team" class="team"></div>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="card-head">
-      <div class="title">ENEMY DRAFT</div>
-      <div class="hint" id="enemyCounter">0 / 5</div>
-    </div>
-
-    <div id="enemies" class="enemy-grid"></div>
-
-    <button class="enemy-add" onclick="addEnemy()">
-      ＋ ADD ENEMY HERO
-    </button>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="card-head">
-      <div class="title">🔥 BEST PICKS</div>
-      <div class="hint">Draft recommendation</div>
-    </div>
-
-    <div id="recommendations"></div>
-
-  </div>
-
-</div>
-
-
-<!-- ========================= -->
-<!-- COUNTER -->
-<!-- ========================= -->
-
-<div id="counter" class="page">
-
-  <div class="card">
-
-    <div class="card-head">
-
-      <div>
-        <div class="title">COUNTER FINDER</div>
-        <div class="hint">Find the best answers to an enemy hero</div>
+        <div class="emptyState">
+          Совет: сначала заполни 1–2 вражеских героя.
+          Чем больше информации — тем умнее рекомендации.
+        </div>
       </div>
 
     </div>
 
-    <div class="search-wrap">
+  </section>
 
-      <span class="search-icon">⌕</span>
+  <section class="counterPage" id="counterPage">
 
-      <input
-        id="counterSearch"
-        class="search"
-        placeholder="Search enemy hero..."
-        oninput="renderCounterHeroes()"
-      >
+    <div class="counterLayout">
+
+      <div class="panel target">
+        <div class="eyebrow">COUNTER LAB</div>
+
+        <img id="targetImage" class="targetImage" src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/broodmother.png">
+
+        <div class="targetName" id="targetName">Broodmother</div>
+        <div class="targetMeta" id="targetMeta">
+          AGILITY · POS 3 / 4
+        </div>
+
+        <div class="counterControls">
+          <input class="counterSearch" id="counterSearch" placeholder="Выбрать героя...">
+          <button class="pick" id="changeTarget">CHANGE</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHead">
+          <h2>BEST ANSWERS</h2>
+          <p>Матчап + механическое объяснение. Не выдуманный winrate.</p>
+        </div>
+
+        <div class="counterList" id="counterList"></div>
+      </div>
 
     </div>
 
-    <div id="counterHeroes" class="hero-grid"></div>
-
-  </div>
-
-
-  <div id="counterResult"></div>
+  </section>
 
 </div>
 
-</main>
+<div class="toast" id="toast"></div>
 
+<div class="modal" id="modal">
+  <div class="modalBox">
+    <div class="modalHead">
+      <strong id="modalTitle">SELECT HERO</strong>
+      <button class="close" id="closeModal">×</button>
+    </div>
+    <div class="modalBody" id="modalBody"></div>
+  </div>
+</div>
 
 <script>
 
-/* =====================================================
+/* =========================================================
    HERO DATABASE
-===================================================== */
+   ========================================================= */
 
-const HEROES = [
-["Abaddon","abaddon","Strength"],
-["Alchemist","alchemist","Strength"],
-["Ancient Apparition","ancient_apparition","Intelligence"],
-["Anti-Mage","antimage","Agility"],
-["Arc Warden","arc_warden","Agility"],
-["Axe","axe","Strength"],
-["Bane","bane","Intelligence"],
-["Batrider","batrider","Intelligence"],
-["Beastmaster","beastmaster","Strength"],
-["Bloodseeker","bloodseeker","Agility"],
-["Bounty Hunter","bounty_hunter","Agility"],
-["Brewmaster","brewmaster","Strength"],
-["Bristleback","bristleback","Strength"],
-["Broodmother","broodmother","Universal"],
-["Centaur Warrunner","centaur","Strength"],
-["Chaos Knight","chaos_knight","Strength"],
-["Chen","chen","Intelligence"],
-["Clinkz","clinkz","Agility"],
-["Clockwerk","rattletrap","Strength"],
-["Crystal Maiden","crystal_maiden","Intelligence"],
-["Dark Seer","dark_seer","Intelligence"],
-["Dark Willow","dark_willow","Intelligence"],
-["Dawnbreaker","dawnbreaker","Strength"],
-["Dazzle","dazzle","Intelligence"],
-["Death Prophet","death_prophet","Intelligence"],
-["Disruptor","disruptor","Intelligence"],
-["Doom","doom_bringer","Strength"],
-["Dragon Knight","dragon_knight","Strength"],
-["Drow Ranger","drow_ranger","Agility"],
-["Earth Spirit","earth_spirit","Strength"],
-["Earthshaker","earthshaker","Strength"],
-["Elder Titan","elder_titan","Strength"],
-["Ember Spirit","ember_spirit","Agility"],
-["Enchantress","enchantress","Intelligence"],
-["Enigma","enigma","Intelligence"],
-["Faceless Void","faceless_void","Agility"],
-["Grimstroke","grimstroke","Intelligence"],
-["Gyrocopter","gyrocopter","Agility"],
-["Hoodwink","hoodwink","Agility"],
-["Huskar","huskar","Strength"],
-["Invoker","invoker","Intelligence"],
-["Jakiro","jakiro","Intelligence"],
-["Juggernaut","juggernaut","Agility"],
-["Keeper of the Light","keeper_of_the_light","Intelligence"],
-["Kez","kez","Agility"],
-["Kunkka","kunkka","Strength"],
-["Largo","largo","Strength"],
-["Legion Commander","legion_commander","Strength"],
-["Leshrac","leshrac","Intelligence"],
-["Lich","lich","Intelligence"],
-["Lifestealer","life_stealer","Strength"],
-["Lina","lina","Intelligence"],
-["Lion","lion","Intelligence"],
-["Lone Druid","lone_druid","Agility"],
-["Luna","luna","Agility"],
-["Lycan","lycan","Strength"],
-["Magnus","magnataur","Strength"],
-["Marci","marci","Strength"],
-["Mars","mars","Strength"],
-["Medusa","medusa","Agility"],
-["Meepo","meepo","Agility"],
-["Mirana","mirana","Agility"],
-["Monkey King","monkey_king","Agility"],
-["Morphling","morphling","Agility"],
-["Muerta","muerta","Intelligence"],
-["Naga Siren","naga_siren","Agility"],
-["Nature's Prophet","furion","Intelligence"],
-["Necrophos","necrolyte","Intelligence"],
-["Night Stalker","night_stalker","Strength"],
-["Nyx Assassin","nyx_assassin","Agility"],
-["Ogre Magi","ogre_magi","Strength"],
-["Omniknight","omniknight","Strength"],
-["Oracle","oracle","Intelligence"],
-["Outworld Destroyer","obsidian_destroyer","Intelligence"],
-["Pangolier","pangolier","Agility"],
-["Phantom Assassin","phantom_assassin","Agility"],
-["Phantom Lancer","phantom_lancer","Agility"],
-["Phoenix","phoenix","Universal"],
-["Primal Beast","primal_beast","Strength"],
-["Puck","puck","Intelligence"],
-["Pudge","pudge","Strength"],
-["Pugna","pugna","Intelligence"],
-["Queen of Pain","queenofpain","Intelligence"],
-["Razor","razor","Agility"],
-["Riki","riki","Agility"],
-["Ringmaster","ringmaster","Intelligence"],
-["Rubick","rubick","Intelligence"],
-["Sand King","sand_king","Strength"],
-["Shadow Demon","shadow_demon","Intelligence"],
-["Shadow Fiend","nevermore","Agility"],
-["Shadow Shaman","shadow_shaman","Intelligence"],
-["Silencer","silencer","Intelligence"],
-["Skywrath Mage","skywrath_mage","Intelligence"],
-["Slardar","slardar","Strength"],
-["Slark","slark","Agility"],
-["Snapfire","snapfire","Strength"],
-["Sniper","sniper","Agility"],
-["Spectre","spectre","Agility"],
-["Spirit Breaker","spirit_breaker","Strength"],
-["Storm Spirit","storm_spirit","Intelligence"],
-["Sven","sven","Strength"],
-["Techies","techies","Intelligence"],
-["Templar Assassin","templar_assassin","Agility"],
-["Terrorblade","terrorblade","Agility"],
-["Tidehunter","tidehunter","Strength"],
-["Timbersaw","shredder","Strength"],
-["Tinker","tinker","Intelligence"],
-["Tiny","tiny","Strength"],
-["Treant Protector","treant","Strength"],
-["Troll Warlord","troll_warlord","Agility"],
-["Tusk","tusk","Strength"],
-["Underlord","abyssal_underlord","Strength"],
-["Undying","undying","Strength"],
-["Ursa","ursa","Agility"],
-["Vengeful Spirit","vengefulspirit","Agility"],
-["Venomancer","venomancer","Agility"],
-["Viper","viper","Agility"],
-["Visage","visage","Intelligence"],
-["Void Spirit","void_spirit","Universal"],
-["Warlock","warlock","Intelligence"],
-["Weaver","weaver","Agility"],
-["Windranger","windrunner","Universal"],
-["Winter Wyvern","winter_wyvern","Intelligence"],
-["Witch Doctor","witch_doctor","Intelligence"],
-["Wraith King","skeleton_king","Strength"],
-["Zeus","zuus","Intelligence"]
-].map((x,i)=>({
-  id:i+1,
-  name:x[0],
-  slug:x[1],
-  attr:x[2]
-}));
+const H = {
 
+abaddon:["Abaddon","str",[3,5],"abaddon"],
+alchemist:["Alchemist","str",[1,2,3],"alchemist"],
+ancientapparition:["Ancient Apparition","int",[4,5],"ancient_apparition"],
+antimage:["Anti-Mage","agi",[1],"antimage"],
+arcwarden:["Arc Warden","agi",[1,2],"arc_warden"],
+axe:["Axe","str",[3,4],"axe"],
+bane:["Bane","int",[4,5],"bane"],
+batrider:["Batrider","int",[3,4,5],"batrider"],
+beastmaster:["Beastmaster","str",[3],"beastmaster"],
+bloodseeker:["Bloodseeker","agi",[1,2,3],"bloodseeker"],
+bountyhunter:["Bounty Hunter","agi",[2,4],"bounty_hunter"],
+brewmaster:["Brewmaster","str",[3],"brewmaster"],
+bristleback:["Bristleback","str",[3],"bristleback"],
+broodmother:["Broodmother","agi",[2,3,4],"broodmother"],
+centaur:["Centaur Warrunner","str",[3,4],"centaur"],
+chaosknight:["Chaos Knight","str",[1,3],"chaos_knight"],
+chen:["Chen","int",[5],"chen"],
+clinkz:["Clinkz","agi",[1,2,4],"clinkz"],
+crystalmaiden:["Crystal Maiden","int",[5],"crystal_maiden"],
+darkseer:["Dark Seer","str",[3,4],"dark_seer"],
+darkwillow:["Dark Willow","int",[4,5],"dark_willow"],
+dawnbreaker:["Dawnbreaker","str",[3,4,5],"dawnbreaker"],
+dazzle:["Dazzle","int",[4,5],"dazzle"],
+deathprophet:["Death Prophet","int",[2,3],"death_prophet"],
+disruptor:["Disruptor","int",[4,5],"disruptor"],
+doom:["Doom","str",[3],"doom"],
+dragonknight:["Dragon Knight","str",[2,3],"dragon_knight"],
+drowranger:["Drow Ranger","agi",[1,2],"drow_ranger"],
+earthspirit:["Earth Spirit","str",[2,4],"earth_spirit"],
+earthshaker:["Earthshaker","str",[4,5],"earthshaker"],
+eldertitan:["Elder Titan","str",[4,5],"elder_titan"],
+emberspirit:["Ember Spirit","agi",[2],"ember_spirit"],
+enchantress:["Enchantress","int",[4,5],"enchantress"],
+enigma:["Enigma","int",[3,4,5],"enigma"],
+facelessvoid:["Faceless Void","agi",[1],"faceless_void"],
+grimstroke:["Grimstroke","int",[4,5],"grimstroke"],
+gyrocopter:["Gyrocopter","agi",[1,2,4],"gyrocopter"],
+hoodwink:["Hoodwink","agi",[4,5],"hoodwink"],
+huskar:["Huskar","str",[2,3],"huskar"],
+invoker:["Invoker","int",[2,4,5],"invoker"],
+jakiro:["Jakiro","int",[4,5],"jakiro"],
+juggernaut:["Juggernaut","agi",[1],"juggernaut"],
+keeperofthelight:["Keeper of the Light","int",[4,5],"keeper_of_the_light"],
+kunkka:["Kunkka","str",[2,3,4],"kunkka"],
+largo:["Largo","str",[3,4,5],"largo"],
+legioncommander:["Legion Commander","str",[3],"legion_commander"],
+leshrac:["Leshrac","int",[2,3,4],"leshrac"],
+lich:["Lich","int",[5],"lich"],
+lifestealer:["Lifestealer","str",[1,2],"life_stealer"],
+lina:["Lina","int",[2,4],"lina"],
+lion:["Lion","int",[4,5],"lion"],
+lone_druid:["Lone Druid","agi",[1,2,3],"lone_druid"],
+luna:["Luna","agi",[1,2],"luna"],
+lycan:["Lycan","str",[3],"lycan"],
+magnus:["Magnus","str",[3,4],"magnataur"],
+marci:["Marci","str",[3,4],"marci"],
+mars:["Mars","str",[3,4],"mars"],
+medusa:["Medusa","agi",[1],"medusa"],
+meepo:["Meepo","agi",[2,3],"meepo"],
+mirana:["Mirana","agi",[4,5],"mirana"],
+monkeyking:["Monkey King","agi",[1,2,3],"monkey_king"],
+morphling:["Morphling","agi",[1,2],"morphling"],
+muerta:["Muerta","int",[1,2,4],"muerta"],
+nagasiren:["Naga Siren","agi",[1],"naga_siren"],
+naturesprophet:["Nature's Prophet","int",[2,3,4],"furion"],
+necrophos:["Necrophos","int",[2,3],"necrolyte"],
+nightstalker:["Night Stalker","str",[2,3,4],"night_stalker"],
+nyxassassin:["Nyx Assassin","agi",[4,5],"nyx_assassin"],
+ogremagi:["Ogre Magi","int",[4,5],"ogre_magi"],
+omniknight:["Omniknight","str",[4,5],"omniknight"],
+oracle:["Oracle","int",[5],"oracle"],
+outworlddestroyer:["Outworld Destroyer","int",[2],"obsidian_destroyer"],
+pangolier:["Pangolier","agi",[2,3,4],"pangolier"],
+phantomassassin:["Phantom Assassin","agi",[1],"phantom_assassin"],
+phantomlancer:["Phantom Lancer","agi",[1],"phantom_lancer"],
+phoenix:["Phoenix","str",[4,5],"phoenix"],
+primalbeast:["Primal Beast","str",[3,4],"primal_beast"],
+puck:["Puck","int",[2],"puck"],
+pudge:["Pudge","str",[3,4,5],"pudge"],
+pugna:["Pugna","int",[2,4,5],"pugna"],
+queenofpain:["Queen of Pain","int",[2],"queenofpain"],
+razor:["Razor","agi",[1,2,3],"razor"],
+riki:["Riki","agi",[1,4],"riki"],
+ringmaster:["Ringmaster","int",[4,5],"ringmaster"],
+rubick:["Rubick","int",[4,5],"rubick"],
+sandking:["Sand King","str",[3,4],"sand_king"],
+shadowdemon:["Shadow Demon","int",[4,5],"shadow_demon"],
+shadowfiend:["Shadow Fiend","agi",[1,2],"nevermore"],
+shadowshaman:["Shadow Shaman","int",[4,5],"shadow_shaman"],
+silencer:["Silencer","int",[4,5],"silencer"],
+skywrathmage:["Skywrath Mage","int",[4,5],"skywrath_mage"],
+slardar:["Slardar","str",[3,4],"slardar"],
+slark:["Slark","agi",[1],"slark"],
+snapfire:["Snapfire","str",[4,5],"snapfire"],
+sniper:["Sniper","agi",[1,2],"sniper"],
+spectre:["Spectre","agi",[1],"spectre"],
+spiritbreaker:["Spirit Breaker","str",[3,4],"spirit_breaker"],
+stormspirit:["Storm Spirit","int",[2],"storm_spirit"],
+sven:["Sven","str",[1,3],"sven"],
+techies:["Techies","int",[4,5],"techies"],
+templarassassin:["Templar Assassin","agi",[1,2],"templar_assassin"],
+terrorblade:["Terrorblade","agi",[1],"terrorblade"],
+tidehunter:["Tidehunter","str",[3,4],"tidehunter"],
+timbersaw:["Timbersaw","str",[3,4],"shredder"],
+tinker:["Tinker","int",[2,4],"tinker"],
+tiny:["Tiny","str",[2,3,4],"tiny"],
+treantprotector:["Treant Protector","str",[3,4,5],"treant"],
+trollwarlord:["Troll Warlord","agi",[1],"troll_warlord"],
+tusk:["Tusk","str",[3,4,5],"tusk"],
+underlord:["Underlord","str",[3],"abyssal_underlord"],
+undying:["Undying","str",[4,5],"undying"],
+ursa:["Ursa","agi",[1,2],"ursa"],
+vengefulspirit:["Vengeful Spirit","agi",[4,5],"vengefulspirit"],
+venomancer:["Venomancer","agi",[3,4,5],"venomancer"],
+viper:["Viper","agi",[2,3],"viper"],
+visage:["Visage","int",[3,4],"visage"],
+voidspirit:["Void Spirit","int",[2],"void_spirit"],
+warlock:["Warlock","int",[4,5],"warlock"],
+weaver:["Weaver","agi",[1,2,4],"weaver"],
+windranger:["Windranger","int",[2,4],"windrunner"],
+winterwyvern:["Winter Wyvern","int",[4,5],"winter_wyvern"],
+witchdoctor:["Witch Doctor","int",[4,5],"witch_doctor"],
+wraithking:["Wraith King","str",[1,3],"skeleton_king"],
+zeus:["Zeus","int",[2,4],"zuus"]
 
-/* =====================================================
-   ROLES
-===================================================== */
-
-const ROLES={
-
-"Abaddon":["3","5","Durable","Support"],
-"Alchemist":["1","2","Carry","Nuker"],
-"Ancient Apparition":["4","5","Support","Nuker"],
-"Anti-Mage":["1","Carry","Escape"],
-"Arc Warden":["1","2","Carry","Escape"],
-"Axe":["3","Durable","Initiator"],
-"Bane":["4","5","Support","Disabler"],
-"Batrider":["3","4","Initiator","Disabler"],
-"Beastmaster":["3","Initiator","Durable"],
-"Bloodseeker":["1","2","Carry"],
-"Bounty Hunter":["4","3","Escape"],
-"Brewmaster":["3","Initiator","Durable"],
-"Bristleback":["3","Durable"],
-"Broodmother":["2","3","Push","Escape"],
-"Centaur Warrunner":["3","Durable","Initiator"],
-"Chaos Knight":["1","3","Carry","Durable"],
-"Chen":["5","Support","Push"],
-"Clinkz":["1","2","Carry","Escape"],
-"Clockwerk":["4","3","Initiator","Disabler"],
-"Crystal Maiden":["5","4","Support","Nuker"],
-"Dark Seer":["3","Initiator","Nuker"],
-"Dark Willow":["4","2","Support","Nuker"],
-"Dawnbreaker":["3","1","Durable","Initiator"],
-"Dazzle":["5","4","Support"],
-"Death Prophet":["2","3","Nuker","Push"],
-"Disruptor":["5","4","Support","Disabler"],
-"Doom":["3","1","Durable","Disabler"],
-"Dragon Knight":["2","3","Durable","Push"],
-"Drow Ranger":["1","Carry"],
-"Earth Spirit":["4","Initiator","Disabler"],
-"Earthshaker":["4","3","Initiator","Disabler"],
-"Elder Titan":["4","5","Support","Disabler"],
-"Ember Spirit":["2","1","Escape","Nuker"],
-"Enchantress":["4","5","Support"],
-"Enigma":["3","4","Initiator","Disabler"],
-"Faceless Void":["1","Carry","Initiator"],
-"Grimstroke":["4","5","Support","Disabler"],
-"Gyrocopter":["1","2","Carry","Nuker"],
-"Hoodwink":["4","2","Nuker","Escape"],
-"Huskar":["2","3","Carry","Durable"],
-"Invoker":["2","4","Nuker","Disabler"],
-"Jakiro":["4","5","Support","Nuker"],
-"Juggernaut":["1","Carry","Escape"],
-"Keeper of the Light":["5","4","Support","Nuker"],
-"Kez":["1","2","Carry","Escape"],
-"Kunkka":["2","3","Initiator","Durable"],
-"Largo":["4","5","Support","Disabler"],
-"Legion Commander":["3","2","Initiator","Durable"],
-"Leshrac":["2","3","Nuker","Push"],
-"Lich":["5","4","Support","Nuker"],
-"Lifestealer":["1","Carry","Durable"],
-"Lina":["2","1","Nuker","Carry"],
-"Lion":["4","5","Support","Disabler"],
-"Lone Druid":["1","2","Carry","Push"],
-"Luna":["1","Carry","Nuker"],
-"Lycan":["3","1","Push","Carry"],
-"Magnus":["3","4","Initiator","Disabler"],
-"Marci":["4","3","Support","Initiator"],
-"Mars":["3","2","Initiator","Durable"],
-"Medusa":["1","Carry","Durable"],
-"Meepo":["1","2","Carry","Push"],
-"Mirana":["4","5","Escape","Nuker"],
-"Monkey King":["1","2","Carry"],
-"Morphling":["1","2","Carry","Escape"],
-"Muerta":["1","2","Carry","Nuker"],
-"Naga Siren":["1","Carry","Push"],
-"Nature's Prophet":["1","2","3","Push"],
-"Necrophos":["2","3","Durable","Nuker"],
-"Night Stalker":["3","2","Initiator","Durable"],
-"Nyx Assassin":["4","3","Disabler","Escape"],
-"Ogre Magi":["5","4","Support","Durable"],
-"Omniknight":["5","3","Support","Durable"],
-"Oracle":["5","4","Support"],
-"Outworld Destroyer":["2","1","Nuker"],
-"Pangolier":["2","3","Initiator","Escape"],
-"Phantom Assassin":["1","Carry","Escape"],
-"Phantom Lancer":["1","Carry","Escape"],
-"Phoenix":["4","5","Support","Nuker"],
-"Primal Beast":["3","2","Initiator","Durable"],
-"Puck":["2","4","Escape","Disabler"],
-"Pudge":["4","3","Durable","Disabler"],
-"Pugna":["4","2","Nuker","Push"],
-"Queen of Pain":["2","1","Nuker","Escape"],
-"Razor":["1","2","Carry","Durable"],
-"Riki":["1","4","Carry","Escape"],
-"Ringmaster":["4","5","Support","Disabler"],
-"Rubick":["4","5","Support","Nuker"],
-"Sand King":["3","4","Initiator","Nuker"],
-"Shadow Demon":["4","5","Support","Disabler"],
-"Shadow Fiend":["1","2","Carry","Nuker"],
-"Shadow Shaman":["4","5","Support","Push"],
-"Silencer":["5","4","Support","Disabler"],
-"Skywrath Mage":["4","5","Nuker"],
-"Slardar":["3","Durable","Initiator"],
-"Slark":["1","Carry","Escape"],
-"Snapfire":["4","5","Support","Nuker"],
-"Sniper":["1","2","Carry","Nuker"],
-"Spectre":["1","Carry","Durable"],
-"Spirit Breaker":["4","3","Initiator","Durable"],
-"Storm Spirit":["2","Carry","Escape","Nuker"],
-"Sven":["1","3","Carry","Durable"],
-"Techies":["4","5","Nuker","Disabler"],
-"Templar Assassin":["1","2","Carry","Escape"],
-"Terrorblade":["1","Carry","Push"],
-"Tidehunter":["3","Durable","Initiator"],
-"Timbersaw":["3","2","Durable","Escape"],
-"Tinker":["2","4","Nuker"],
-"Tiny":["1","2","4","Initiator"],
-"Treant Protector":["5","4","Support","Durable"],
-"Troll Warlord":["1","Carry","Durable"],
-"Tusk":["4","3","Initiator"],
-"Underlord":["3","Durable","Push"],
-"Undying":["5","3","Support","Durable"],
-"Ursa":["1","Carry","Durable"],
-"Vengeful Spirit":["4","5","Support","Disabler"],
-"Venomancer":["3","4","Nuker","Push"],
-"Viper":["2","3","Nuker","Durable"],
-"Visage":["3","4","Push","Durable"],
-"Void Spirit":["2","4","Escape","Nuker"],
-"Warlock":["5","4","Support","Disabler"],
-"Weaver":["1","4","Carry","Escape"],
-"Windranger":["1","2","4","Carry","Escape"],
-"Winter Wyvern":["5","4","Support","Disabler"],
-"Witch Doctor":["5","4","Support","Nuker"],
-"Wraith King":["1","3","Carry","Durable"],
-"Zeus":["2","4","Nuker"]
 };
 
 
-/* =====================================================
+/* =========================================================
+   COUNTER KNOWLEDGE
+   Positive = good answer against target.
+   These are intentionally conservative.
+   ========================================================= */
+
+const COUNTERS = {
+
+broodmother:{
+  earthshaker:[9.0,"Massive AoE punishes Spiderlings; Echo Slam becomes extremely valuable when Brood floods the fight."],
+  necrophos:[4.9,"Sustained AoE and Reaper's Scythe make Brood's aggressive sustain much harder to exploit."],
+  meepo:[4.6,"Multiple units can fight through Brood's lane pressure and punish isolated Spiderlings."],
+  sandking:[4.4,"Burrowstrike + Sand Storm + Epicenter give strong AoE and punish clustered spiders."],
+  kunkka:[4.0,"Tidebringer and Torrent provide reliable area damage and control against the swarm."],
+  jakiro:[3.9,"Liquid Fire and Macropyre create strong area denial and clear clustered units."],
+  axe:[3.8,"Counter Helix and Berserker's Call punish Brood's large number of attacking units."]
+},
+
+meepo:{
+  earthshaker:[8.0,"Echo Slam scales brutally with multiple Meepos."],
+  winterwyvern:[5.5,"Cold Embrace and Winter's Curse punish grouped Meepos."],
+  lion:[4.7,"Reliable control and burst can remove a Meepo before the clone army takes over."],
+  axe:[4.5,"Counter Helix and Call punish multiple Meepos attacking together."]
+},
+
+phantomlancer:{
+  earthshaker:[4.5,"Large illusion counts amplify Echo Slam."],
+  axe:[4.3,"Counter Helix and Berserker's Call punish illusion-heavy fights."],
+  leshrac:[4.0,"High-area magic damage clears illusion waves."],
+  sandking:[3.8,"Strong AoE damage and control against grouped illusions."]
+},
+
+nagasiren:{
+  earthshaker:[4.2,"Large numbers of illusions dramatically improve Echo Slam value."],
+  leshrac:[3.9,"Strong sustained AoE damages illusion waves."],
+  axe:[3.7,"Call and Counter Helix punish clustered illusions."]
+},
+
+terrorblade:{
+  axe:[3.0,"Call can force TB into bad close-range fights and Counter Helix punishes illusions."],
+  winterwyvern:[2.8,"Winter's Curse can turn illusion pressure against TB's team."]
+},
+
+illusion_generic:{
+  earthshaker:[3.0,"Area damage becomes more valuable against dense illusion counts."],
+  axe:[2.8,"Counter Helix scales naturally with many attacking units."],
+  leshrac:[2.6,"Sustained AoE pressure is effective against illusion-heavy compositions."]
+}
+
+};
+
+
+/* =========================================================
+   IMAGE SYSTEM
+   ========================================================= */
+
+function portrait(slug){
+  return `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${slug}.png`;
+}
+
+
+/* =========================================================
    STATE
-===================================================== */
+   ========================================================= */
 
-let position=1;
-let filter="ALL";
-
-const team={
-  1:null,
-  2:null,
-  3:null,
-  4:null,
-  5:null
-};
-
-let enemies=[];
-let counterTarget=null;
+let team = {1:null,2:null,3:null,4:null,5:null};
+let enemies = [];
+let attrFilter = "all";
+let posFilter = "all";
+let currentTarget = "broodmother";
+let modalMode = null;
 
 
-/* =====================================================
-   PORTRAIT SYSTEM
-===================================================== */
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
-function portrait(hero){
+function hero(id){
+  return H[id];
+}
 
+function heroName(id){
+  return H[id]?.[0] || id;
+}
+
+function attrName(a){
+  return {
+    str:"STRENGTH",
+    agi:"AGILITY",
+    int:"INTELLIGENCE",
+    uni:"UNIVERSAL"
+  }[a] || "";
+}
+
+function usedIds(){
   return [
-    `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${hero.slug}.png`,
-    `https://cdn.dota2.com/apps/dota2/images/heroes/${hero.slug}_full.png`
+    ...Object.values(team).filter(Boolean),
+    ...enemies
   ];
 }
 
+function occupiedPositions(){
+  return Object.entries(team)
+    .filter(([p,id])=>id)
+    .map(([p])=>Number(p));
+}
 
-function imgHTML(hero,className=""){
+function availablePositions(){
+  return [1,2,3,4,5].filter(p=>!team[p]);
+}
 
-  const urls=portrait(hero);
-
-  return `
-    <img
-      class="${className}"
-      src="${urls[0]}"
-      data-fallback="${urls[1]}"
-      onerror="
-        if(this.dataset.fallback && this.src!==this.dataset.fallback){
-          this.src=this.dataset.fallback;
-        }else{
-          this.style.display='none';
-        }
-      "
-      alt="${hero.name}"
-    >
-  `;
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  clearTimeout(window.__toast);
+  window.__toast=setTimeout(()=>t.classList.remove("show"),1800);
 }
 
 
-/* =====================================================
-   TABS
-===================================================== */
-
-function openTab(id,btn){
-
-  document.querySelectorAll(".page")
-    .forEach(x=>x.classList.remove("active"));
-
-  document.querySelectorAll(".tab")
-    .forEach(x=>x.classList.remove("active"));
-
-  document.getElementById(id)
-    .classList.add("active");
-
-  btn.classList.add("active");
-
-  if(id==="counter"){
-    renderCounterHeroes();
-  }
-}
-
-
-/* =====================================================
-   POSITION
-===================================================== */
-
-function setPos(pos,btn){
-
-  position=pos;
-
-  document.querySelectorAll(".pos")
-    .forEach(x=>x.classList.remove("active"));
-
-  btn.classList.add("active");
-
-  renderHeroes();
-}
-
-
-/* =====================================================
-   FILTER
-===================================================== */
-
-function setFilter(value,btn){
-
-  filter=value;
-
-  document.querySelectorAll(".filter")
-    .forEach(x=>x.classList.remove("active"));
-
-  btn.classList.add("active");
-
-  renderHeroes();
-}
-
-
-/* =====================================================
-   TAKEN
-===================================================== */
-
-function taken(id){
-
-  return Object.values(team)
-    .filter(Boolean)
-    .some(h=>h.id===id);
-}
-
-
-/* =====================================================
-   HEROES
-===================================================== */
+/* =========================================================
+   HERO GRID
+   ========================================================= */
 
 function renderHeroes(){
+  const q=document.getElementById("search").value.trim().toLowerCase();
+  const grid=document.getElementById("heroGrid");
+  const used=usedIds();
 
-  const query=
-    document.getElementById("heroSearch")
-      .value
-      .toLowerCase()
-      .trim();
+  const list=Object.entries(H).filter(([id,d])=>{
+    const name=d[0].toLowerCase();
 
-  let list=HEROES.filter(h=>{
-
-    if(!h.name.toLowerCase().includes(query))
-      return false;
-
-    if(filter!=="ALL" && h.attr!==filter)
-      return false;
+    if(q && !name.includes(q) && !id.includes(q)) return false;
+    if(attrFilter!=="all" && d[1]!==attrFilter) return false;
+    if(posFilter!=="all" && !d[2].includes(Number(posFilter))) return false;
 
     return true;
   });
 
-  document.getElementById("heroCount")
-    .textContent=list.length+" heroes";
-
-  document.getElementById("heroes")
-    .innerHTML=list.map(hero=>{
-
-      const disabled=
-        taken(hero.id) &&
-        team[position]?.id!==hero.id;
-
-      const selected=
-        team[position]?.id===hero.id;
-
-      const attr={
-        Strength:"STR",
-        Agility:"AGI",
-        Intelligence:"INT",
-        Universal:"UNI"
-      }[hero.attr];
-
-      return `
-        <button
-          class="hero ${disabled?"taken":""} ${selected?"selected":""}"
-          ${disabled?"disabled":""}
-          onclick="pickHero(${hero.id})"
-        >
-
-          ${imgHTML(hero)}
-
-          <span class="hero-tag">${attr}</span>
-
-          <div class="hero-name">
-            ${hero.name}
-          </div>
-
-        </button>
-      `;
-
-    }).join("");
-}
-
-
-/* =====================================================
-   PICK HERO
-===================================================== */
-
-function pickHero(id){
-
-  const hero=HEROES.find(h=>h.id===id);
-
-  if(!hero)return;
-
-  for(let p=1;p<=5;p++){
-
-    if(
-      p!==position &&
-      team[p]?.id===hero.id
-    ){
-      return;
-    }
-  }
-
-  team[position]=hero;
-
-  renderTeam();
-  renderHeroes();
-  renderRecommendations();
-}
-
-
-/* =====================================================
-   TEAM
-===================================================== */
-
-function renderTeam(){
-
-  document.getElementById("team").innerHTML=
-    [1,2,3,4,5].map(p=>{
-
-      const hero=team[p];
-
-      if(!hero){
-
-        return `
-          <div class="team-slot empty">
-            <b>POS ${p}</b>
-            <span>EMPTY</span>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="team-slot">
-
-          <span class="slot-number">
-            POS ${p}
-          </span>
-
-          ${imgHTML(hero)}
-
-          <button
-            class="remove"
-            onclick="removeTeam(${p})"
-          >
-            ×
-          </button>
-
-          <div class="slot-name">
-            ${hero.name}
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
-}
-
-
-function removeTeam(p){
-
-  team[p]=null;
-
-  renderTeam();
-  renderHeroes();
-  renderRecommendations();
-}
-
-
-/* =====================================================
-   ENEMIES
-===================================================== */
-
-function addEnemy(){
-
-  if(enemies.length>=5)return;
-
-  enemies.push(null);
-
-  renderEnemies();
-}
-
-
-function renderEnemies(){
-
-  document.getElementById("enemyCounter")
-    .textContent=enemies.filter(Boolean).length+" / 5";
-
-  document.getElementById("enemies").innerHTML=
-    [0,1,2,3,4].map(i=>{
-
-      const hero=enemies[i];
-
-      if(!hero){
-
-        return `
-          <button
-            class="enemy"
-            onclick="chooseEnemyFromList(${i})"
-          >
-            <div>
-              ＋<br>
-              ENEMY ${i+1}
-            </div>
-          </button>
-        `;
-      }
-
-      return `
-        <div class="enemy">
-
-          ${imgHTML(hero)}
-
-          <div class="enemy-label">
-            ${i+1}
-          </div>
-
-          <button
-            class="remove"
-            onclick="removeEnemy(${i})"
-          >
-            ×
-          </button>
-
-          <div class="enemy-name">
-            ${hero.name}
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
-}
-
-
-function chooseEnemyFromList(index){
-
-  const name=prompt(
-    "Напиши имя героя противника:"
-  );
-
-  if(!name)return;
-
-  const hero=HEROES.find(
-    h=>h.name.toLowerCase()===
-       name.toLowerCase().trim()
-  );
-
-  if(hero){
-
-    enemies[index]=hero;
-    renderEnemies();
-    renderRecommendations();
-
-  }else{
-
-    alert("Герой не найден. Используй точное имя.");
-
-  }
-}
-
-
-function removeEnemy(index){
-
-  enemies.splice(index,1);
-
-  renderEnemies();
-  renderRecommendations();
-}
-
-
-/* =====================================================
-   COUNTER SCORE
-===================================================== */
-
-function scoreAgainst(candidate,enemy){
-
-  const c=ROLES[candidate.name]||[];
-  const e=ROLES[enemy.name]||[];
-
-  let score=0;
-
-  if(e.includes("Carry") && c.includes("Disabler"))
-    score+=9;
-
-  if(e.includes("Carry") && c.includes("Nuker"))
-    score+=5;
-
-  if(e.includes("Nuker") && c.includes("Durable"))
-    score+=7;
-
-  if(e.includes("Nuker") && c.includes("Escape"))
-    score+=4;
-
-  if(e.includes("Carry") && c.includes("Initiator"))
-    score+=4;
-
-  if(c.includes("Push"))
-    score+=2;
-
-  if(c.includes("Durable") && e.includes("Carry"))
-    score+=2;
-
-  return score;
-}
-
-
-/* =====================================================
-   RECOMMENDATIONS
-===================================================== */
-
-function renderRecommendations(){
-
-  const box=
-    document.getElementById("recommendations");
-
-  const enemyList=
-    enemies.filter(Boolean);
-
-  if(!enemyList.length){
-
-    box.innerHTML=`
-      <div class="empty">
-        Добавь врагов выше —<br>
-        и здесь появятся лучшие варианты пика.
-      </div>
-    `;
-
-    return;
-  }
-
-  let candidates=
-    HEROES.filter(hero=>{
-
-      if(taken(hero.id))return false;
-
-      if(enemyList.some(e=>e.id===hero.id))
-        return false;
-
-      const roles=ROLES[hero.name]||[];
-
-      return roles.includes(String(position));
-
-    });
-
-
-  candidates=candidates.map(hero=>{
-
-    let score=0;
-
-    enemyList.forEach(enemy=>{
-      score+=scoreAgainst(hero,enemy);
-    });
-
-    const roles=ROLES[hero.name]||[];
-
-    if(position===1 && roles.includes("Carry"))
-      score+=5;
-
-    if(position===2 && roles.includes("Nuker"))
-      score+=4;
-
-    if(position===3 && roles.includes("Durable"))
-      score+=5;
-
-    if((position===4||position===5)&&roles.includes("Support"))
-      score+=5;
-
-    if(roles.includes("Disabler"))
-      score+=1;
-
-    return {hero,score};
-
-  })
-  .sort((a,b)=>b.score-a.score)
-  .slice(0,8);
-
-
-  box.innerHTML=candidates.map((item,i)=>{
-
-    const roles=
-      (ROLES[item.hero.name]||[])
-        .filter(x=>!["1","2","3","4","5"].includes(x))
-        .slice(0,3)
-        .join(" • ");
+  grid.innerHTML=list.map(([id,d])=>{
+    const disabled=used.includes(id);
 
     return `
-      <div class="recommendation">
+      <button class="heroCard ${disabled?"disabled":""}"
+        ${disabled?"disabled":""}
+        onclick="openHero('${id}')">
 
-        <div class="rank">
-          #${i+1}
-        </div>
+        <img src="${portrait(d[3])}" loading="lazy"
+             onerror="this.style.opacity=.25">
 
-        ${imgHTML(item.hero,"rec-img")}
-
-        <div class="rec-info">
-
-          <div class="rec-name">
-            ${item.hero.name}
-          </div>
-
-          <div class="rec-reason">
-            ${roles||"Flexible pick"} • strong draft fit
-          </div>
-
-        </div>
-
-        <div class="score">
-          ${item.score}
-          <small>SCORE</small>
-        </div>
-
-      </div>
+        <i class="attr ${d[1]}"></i>
+        <span class="posTag">${d[2].map(x=>"P"+x).join(" · ")}</span>
+        <div class="heroShade"></div>
+        <div class="heroName">${d[0]}</div>
+      </button>
     `;
-
   }).join("");
 }
 
 
-/* =====================================================
-   COUNTER FINDER
-===================================================== */
+/* =========================================================
+   HERO PICK MODAL
+   ========================================================= */
 
-function renderCounterHeroes(){
+function openHero(id){
+  if(usedIds().includes(id)) return;
 
-  const query=
-    document.getElementById("counterSearch")
-      .value
-      .toLowerCase()
-      .trim();
+  modalMode="hero";
+  document.getElementById("modalTitle").textContent=
+    `${heroName(id).toUpperCase()} — ASSIGN POSITION`;
 
-  const list=
-    HEROES.filter(h=>
-      h.name.toLowerCase().includes(query)
-    );
+  const d=hero(id);
 
-  document.getElementById("counterHeroes")
-    .innerHTML=list.map(hero=>{
+  document.getElementById("modalBody").innerHTML=`
+    <div style="
+      display:flex;
+      gap:14px;
+      align-items:center;
+      padding:5px 0 15px;
+    ">
+      <img src="${portrait(d[3])}"
+           style="width:85px;height:70px;object-fit:cover;border-radius:15px">
+      <div>
+        <div style="font-size:17px;font-weight:900">${d[0]}</div>
+        <div style="font-size:10px;color:#8c96aa;margin-top:5px">
+          ${attrName(d[1])} · ${d[2].map(x=>"POS "+x).join(" / ")}
+        </div>
+      </div>
+    </div>
 
-      return `
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+      ${[1,2,3,4,5].map(p=>`
         <button
-          class="hero ${counterTarget?.id===hero.id?"selected":""}"
-          onclick="selectCounter(${hero.id})"
-        >
-
-          ${imgHTML(hero)}
-
-          <div class="hero-name">
-            ${hero.name}
-          </div>
-
+          onclick="assignHero('${id}',${p})"
+          ${team[p]?"disabled":""}
+          style="
+            padding:15px 7px;
+            border-radius:14px;
+            border:1px solid ${team[p]?"rgba(255,255,255,.04)":"rgba(139,92,246,.25)"};
+            background:${team[p]?"rgba(255,255,255,.02)":"rgba(139,92,246,.12)"};
+            color:${team[p]?"#596277":"white"};
+            font-weight:900;
+          ">
+          P${p}
+          <small style="display:block;font-size:8px;margin-top:5px">
+            ${team[p] ? "OCCUPIED" : "SELECT"}
+          </small>
         </button>
-      `;
+      `).join("")}
+    </div>
 
-    }).join("");
+    <div style="margin-top:15px">
+      <button onclick="addEnemy('${id}')"
+        style="
+          width:100%;
+          padding:13px;
+          border-radius:14px;
+          background:rgba(251,113,133,.12);
+          color:#fecdd3;
+          font-weight:900;
+        ">
+        + ADD AS ENEMY
+      </button>
+    </div>
+  `;
+
+  document.getElementById("modal").classList.add("show");
 }
 
-
-function selectCounter(id){
-
-  counterTarget=
-    HEROES.find(h=>h.id===id);
-
-  renderCounterHeroes();
-  renderCounterResult();
+function assignHero(id,pos){
+  if(team[pos]) return;
+  team[pos]=id;
+  closeModal();
+  renderAll();
+  toast(`${heroName(id)} → Position ${pos}`);
 }
 
-
-/* =====================================================
-   COUNTER RESULT
-===================================================== */
-
-function renderCounterResult(){
-
-  const box=
-    document.getElementById("counterResult");
-
-  if(!counterTarget){
-
-    box.innerHTML="";
+function addEnemy(id){
+  if(enemies.length>=5){
+    toast("Enemy draft is full");
     return;
   }
 
+  if(usedIds().includes(id)) return;
 
-  let counters=
-    HEROES
-      .filter(h=>h.id!==counterTarget.id)
-      .map(hero=>({
-        hero,
-        score:scoreAgainst(hero,counterTarget)
-      }))
-      .sort((a,b)=>b.score-a.score)
-      .slice(0,8);
+  enemies.push(id);
+  closeModal();
+  renderAll();
+  toast(`${heroName(id)} added to enemy draft`);
+}
 
+function removeTeam(pos){
+  team[pos]=null;
+  renderAll();
+}
 
-  const roles=
-    ROLES[counterTarget.name]||[];
-
-
-  box.innerHTML=`
-
-    <div class="card">
-
-      <div class="counter-hero">
-
-        ${imgHTML(counterTarget)}
-
-        <div>
-
-          <div class="counter-hero-name">
-            ${counterTarget.name}
-          </div>
-
-          <div class="counter-hero-role">
-            ${roles.join(" • ")}
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="card-head">
-
-        <div class="title">
-          🎯 BEST COUNTERS
-        </div>
-
-        <div class="hint">
-          Top 8
-        </div>
-
-      </div>
-
-      <div class="counter-result">
-
-        ${counters.map((item,i)=>{
-
-          const r=
-            ROLES[item.hero.name]||[];
-
-          let reason=
-            "полезный набор инструментов против этого героя.";
-
-          if(r.includes("Disabler"))
-            reason=
-              "контроль позволяет ограничить действия противника.";
-
-          if(r.includes("Nuker"))
-            reason=
-              "burst-урон помогает быстро наказывать уязвимые окна.";
-
-          if(r.includes("Durable"))
-            reason=
-              "высокая выживаемость позволяет пережить основной урон.";
-
-          if(r.includes("Escape"))
-            reason=
-              "мобильность помогает избегать опасных ситуаций.";
-
-          return `
-
-            <div class="recommendation">
-
-              <div class="rank">
-                #${i+1}
-              </div>
-
-              ${imgHTML(item.hero,"rec-img")}
-
-              <div class="rec-info">
-
-                <div class="rec-name">
-                  ${item.hero.name}
-                </div>
-
-                <div class="reason-box">
-                  ${reason}
-                </div>
-
-              </div>
-
-              <div class="score">
-                ${item.score}
-                <small>SCORE</small>
-              </div>
-
-            </div>
-
-          `;
-
-        }).join("")}
-
-      </div>
-
-    </div>
-
-  `;
+function removeEnemy(index){
+  enemies.splice(index,1);
+  renderAll();
 }
 
 
-/* =====================================================
-   START
-===================================================== */
+/* =========================================================
+   SLOTS
+   ========================================================= */
 
-renderHeroes();
-renderTeam();
-renderEnemies();
-renderRecommendations();
-renderCounterHeroes();
+function renderTeam(){
+  const box=document.getElementById("teamSlots");
+
+  box.innerHTML=[1,2,3,4,5].map(pos=>{
+    const id=team[pos];
+
+    if(!id){
+      return `
+        <button class="slot empty" onclick="toast('Выбери героя ниже')">
+          <div class="slotNumber">${pos}</div>
+          <div>
+            <strong style="font-size:11px">POSITION ${pos}</strong>
+            <small style="display:block;color:#596277">OPEN SLOT</small>
+          </div>
+        </button>
+      `;
+    }
+
+    const d=hero(id);
+
+    return `
+      <div class="slot">
+        <div class="slotNumber">${pos}</div>
+        <img src="${portrait(d[3])}">
+        <div class="slotInfo">
+          <strong>${d[0]}</strong>
+          <small>${attrName(d[1])}</small>
+        </div>
+        <button class="remove" onclick="removeTeam(${pos})">×</button>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderEnemies(){
+  const box=document.getElementById("enemyLine");
+
+  if(!enemies.length){
+    box.innerHTML=`
+      <div style="color:#69748a;font-size:10px">
+        ENEMY SIGNAL: waiting for information...
+      </div>
+    `;
+  }else{
+    box.innerHTML=enemies.map((id,i)=>{
+      const d=hero(id);
+      return `
+        <div class="enemyBadge">
+          <img src="${portrait(d[3])}">
+          ${d[0]}
+          <button onclick="removeEnemy(${i})">×</button>
+        </div>
+      `;
+    }).join("");
+  }
+
+  document.getElementById("enemySlots").innerHTML=
+    enemies.map((id,i)=>{
+      const d=hero(id);
+
+      return `
+        <div class="slot">
+          <div class="slotNumber">${i+1}</div>
+          <img src="${portrait(d[3])}">
+          <div class="slotInfo">
+            <strong>${d[0]}</strong>
+            <small>${attrName(d[1])}</small>
+          </div>
+          <button class="remove" onclick="removeEnemy(${i})">×</button>
+        </div>
+      `;
+    }).join("") || `
+      <div class="emptyState">No enemy data yet.</div>
+    `;
+}
+
+
+/* =========================================================
+   RECOMMENDATION ENGINE
+   ========================================================= */
+
+const synergies={
+  earthshaker:["meepo","broodmother","phantomlancer","nagasiren"],
+  magnus:["juggernaut","phantomassassin","trollwarlord"],
+  io:["gyro","tiny","luna"],
+  grimstroke:["juggernaut","axe","mars"],
+  darkseer:["facelessvoid","mars","magnus"],
+  snapfire:["mars","facelessvoid","tidehunter"],
+  enigma:["facelessvoid","mars","tidehunter"]
+};
+
+const roleStrength={
+  1:["antimage","juggernaut","facelessvoid","phantomassassin","spectre","terrorblade","drowranger","luna","medusa","nagasiren"],
+  2:["puck","queenofpain","stormspirit","emberspirit","templarassassin","shadowfiend","invoker","outworlddestroyer","voidspirit"],
+  3:["axe","mars","centaur","tidehunter","underlord","doom","timbersaw","primalbeast","legioncommander"],
+  4:["earthshaker","hoodwink","rubick","mirana","darkwillow","tusk","nyxassassin","techies"],
+  5:["crystalmaiden","lich","oracle","dazzle","warlock","disruptor","ancientapparition","witchdoctor"]
+};
+
+function recommendationScore(id){
+  const d=hero(id);
+  const used=usedIds();
+
+  if(used.includes(id)) return -999;
+
+  /*
+    HARD RULE:
+    If a position is already occupied, this hero is not eligible
+    as a recommendation for that position.
+  */
+
+  let best=-Infinity;
+  let bestPos=null;
+  let reasons=[];
+
+  for(const pos of availablePositions()){
+
+    let score=0;
+
+    if(d[2].includes(pos)){
+      score+=35;
+    }else{
+      score-=25;
+    }
+
+    if(roleStrength[pos]?.includes(id)){
+      score+=15;
+    }
+
+    /* Synergy with current team */
+    for(const ally of Object.values(team)){
+      if(!ally) continue;
+
+      if(synergies[id]?.includes(ally)){
+        score+=16;
+        reasons.push("synergy");
+      }
+
+      if(synergies[ally]?.includes(id)){
+        score+=12;
+        reasons.push("synergy");
+      }
+    }
+
+    /* Matchup vs enemies */
+    for(const enemy of enemies){
+
+      const data=COUNTERS[enemy];
+
+      if(data?.[id]){
+        score+=data[id][0]*2.1;
+        reasons.push("matchup");
+      }
+
+      /*
+       * If our hero is listed as a bad matchup for enemy,
+       * reward the pick.
+       */
+      const reverse=COUNTERS[id];
+
+      if(reverse?.[enemy]){
+        score+=reverse[enemy][0]*.9;
+        reasons.push("pressure");
+      }
+    }
+
+    /*
+      Don't recommend a position for which the hero is not a
+      natural role unless there is strong matchup value.
+    */
+    if(!d[2].includes(pos) && score<35){
+      continue;
+    }
+
+    if(score>best){
+      best=score;
+      bestPos=pos;
+    }
+  }
+
+  if(bestPos===null) return null;
+
+  if(enemies.length){
+    reasons.unshift("enemy read");
+  }
+
+  return {
+    id,
+    score:Math.round(best),
+    pos:bestPos,
+    reason:[...new Set(reasons)].slice(0,2)
+  };
+}
+
+function renderRecommendations(){
+
+  const all=Object.keys(H)
+    .map(recommendationScore)
+    .filter(Boolean)
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,5);
+
+  const box=document.getElementById("recommendations");
+
+  if(!all.length){
+    box.innerHTML=`
+      <div class="emptyState">
+        Все подходящие позиции уже заняты.<br>
+        Добавь/убери героя, чтобы открыть новые варианты.
+      </div>
+    `;
+    return;
+  }
+
+  box.innerHTML=all.map(r=>{
+    const d=hero(r.id);
+
+    let reason="good fit";
+
+    if(r.reason.includes("matchup")) reason="strong vs enemy";
+    else if(r.reason.includes("synergy")) reason="team synergy";
+    else if(r.reason.includes("enemy read")) reason="draft response";
+
+    return `
+      <div class="recCard">
+        <img src="${portrait(d[3])}">
+
+        <div class="recMain">
+          <strong>${d[0]}</strong>
+          <small>
+            Best fit: POS ${r.pos} · ${reason}
+          </small>
+
+          <button class="pick" onclick="assignRecommended('${r.id}',${r.pos})">
+            + PICK POS ${r.pos}
+          </button>
+        </div>
+
+        <div class="recScore">
+          <b>${Math.max(1,r.score)}</b>
+          <small>FIT</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("recommendStatus").textContent=
+    enemies.length ? "ENEMY-AWARE" : "TEAM-AWARE";
+}
+
+function assignRecommended(id,pos){
+  if(team[pos]){
+    toast(`Position ${pos} is already occupied`);
+    return;
+  }
+
+  if(usedIds().includes(id)){
+    toast("Hero already selected");
+    return;
+  }
+
+  team[pos]=id;
+  renderAll();
+  toast(`${heroName(id)} locked as Position ${pos}`);
+}
+
+
+/* =========================================================
+   COUNTER LAB
+   ========================================================= */
+
+function getCounterList(target){
+
+  const direct=COUNTERS[target] || {};
+
+  let list=Object.entries(direct)
+    .map(([id,data])=>({
+      id,
+      score:data[0],
+      reason:data[1]
+    }));
+
+  /*
+    Generic illusion logic.
+  */
+  const illusionTargets=["phantomlancer","nagasiren","terrorblade"];
+
+  if(illusionTargets.includes(target)){
+    for(const [id,data] of Object.entries(COUNTERS.illusion_generic)){
+      if(!direct[id]){
+        list.push({
+          id,
+          score:data[0],
+          reason:data[1]
+        });
+      }
+    }
+  }
+
+  /*
+    Never show the target itself.
+  */
+  list=list.filter(x=>x.id!==target);
+
+  return list.sort((a,b)=>b.score-a.score);
+}
+
+function renderCounter(){
+
+  const d=hero(currentTarget);
+
+  document.getElementById("targetName").textContent=d[0];
+
+  document.getElementById("targetMeta").textContent=
+    `${attrName(d[1])} · POS ${d[2].join(" / ")}`;
+
+  document.getElementById("targetImage").src=portrait(d[3]);
+
+  const list=getCounterList(currentTarget);
+  const box=document.getElementById("counterList");
+
+  if(!list.length){
+    box.innerHTML=`
+      <div class="emptyState">
+        Для этого героя пока нет локальной matchup-карты.
+        Выбери другого героя или добавь данные.
+      </div>
+    `;
+    return;
+  }
+
+  box.innerHTML=list.map(x=>{
+    const h=hero(x.id);
+
+    return `
+      <div class="counterCard">
+        <img src="${portrait(h[3])}">
+
+        <div>
+          <strong>${h[0]}</strong>
+          <p>${x.reason}</p>
+        </div>
+
+        <div class="counterScore">
+          <b>+${x.score.toFixed(1)}</b>
+          <span>MATCHUP</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+
+/* =========================================================
+   COUNTER TARGET PICKER
+   ========================================================= */
+
+function openCounterPicker(){
+
+  modalMode="counter";
+
+  document.getElementById("modalTitle").textContent=
+    "SELECT TARGET HERO";
+
+  document.getElementById("modalBody").innerHTML=`
+    <input
+      id="modalHeroSearch"
+      placeholder="Search hero..."
+      style="
+        width:100%;
+        padding:13px;
+        border-radius:13px;
+        border:1px solid rgba(255,255,255,.08);
+        background:rgba(255,255,255,.04);
+        color:white;
+        outline:none;
+        margin-bottom:12px;
+      "
+    >
+
+    <div class="heroGrid" id="modalHeroGrid"
+         style="max-height:55vh"></div>
+  `;
+
+  document.getElementById("modal").classList.add("show");
+
+  renderModalHeroes();
+
+  document.getElementById("modalHeroSearch")
+    .addEventListener("input",renderModalHeroes);
+}
+
+function renderModalHeroes(){
+
+  const q=document.getElementById("modalHeroSearch")
+    ?.value.toLowerCase() || "";
+
+  const grid=document.getElementById("modalHeroGrid");
+
+  if(!grid) return;
+
+  grid.innerHTML=Object.entries(H)
+    .filter(([id,d])=>
+      !q ||
+      d[0].toLowerCase().includes(q) ||
+      id.includes(q)
+    )
+    .map(([id,d])=>`
+      <button class="heroCard"
+        onclick="setCounterTarget('${id}')">
+
+        <img src="${portrait(d[3])}">
+        <i class="attr ${d[1]}"></i>
+        <div class="heroShade"></div>
+        <div class="heroName">${d[0]}</div>
+      </button>
+    `).join("");
+}
+
+function setCounterTarget(id){
+  currentTarget=id;
+  closeModal();
+  renderCounter();
+}
+
+document.getElementById("changeTarget")
+  .addEventListener("click",openCounterPicker);
+
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+document.getElementById("draftTab").onclick=()=>{
+  document.getElementById("draftPage").style.display="block";
+  document.getElementById("counterPage").style.display="none";
+
+  document.getElementById("draftTab").classList.add("active");
+  document.getElementById("counterTab").classList.remove("active");
+};
+
+document.getElementById("counterTab").onclick=()=>{
+  document.getElementById("draftPage").style.display="none";
+  document.getElementById("counterPage").style.display="block";
+
+  document.getElementById("counterTab").classList.add("active");
+  document.getElementById("draftTab").classList.remove("active");
+
+  renderCounter();
+};
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+document.querySelectorAll("[data-filter]").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll("[data-filter]")
+      .forEach(x=>x.classList.remove("active"));
+
+    btn.classList.add("active");
+    attrFilter=btn.dataset.filter;
+    renderHeroes();
+  };
+});
+
+document.querySelectorAll("[data-pos]").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll("[data-pos]")
+      .forEach(x=>x.classList.remove("active"));
+
+    btn.classList.add("active");
+    posFilter=btn.dataset.pos;
+    renderHeroes();
+  };
+});
+
+document.getElementById("search")
+  .addEventListener("input",renderHeroes);
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+function closeModal(){
+  document.getElementById("modal").classList.remove("show");
+}
+
+document.getElementById("closeModal")
+  .addEventListener("click",closeModal);
+
+document.getElementById("modal")
+  .addEventListener("click",e=>{
+    if(e.target.id==="modal") closeModal();
+  });
+
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+
+function renderAll(){
+  renderTeam();
+  renderEnemies();
+  renderHeroes();
+  renderRecommendations();
+}
+
+renderAll();
+renderCounter();
 
 </script>
 
