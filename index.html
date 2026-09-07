@@ -4,16 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 
-<title>D2 COUNTER PICKER — Dota 2 Draft Assistant</title>
+<title>D2 COUNTER PICKER — Dota 2 Draft Intelligence</title>
 
 <style>
 :root{
   --bg:#05070c;
-  --panel:#0b1019;
-  --panel2:#111827;
-  --line:rgba(255,255,255,.09);
-  --text:#f7f8fb;
-  --muted:#8d98ab;
+  --panel:#0b1018;
+  --panel2:#101722;
+  --panel3:#151d2a;
+  --line:rgba(255,255,255,.085);
+  --text:#f5f7fb;
+  --muted:#8995a8;
   --purple:#8b5cf6;
   --cyan:#22d3ee;
   --green:#4ade80;
@@ -26,23 +27,23 @@
   -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
-  margin:0;
-  min-height:100%;
+html{
   background:var(--bg);
 }
 
 body{
+  margin:0;
   color:var(--text);
+  background:
+    radial-gradient(circle at 5% 0%,rgba(139,92,246,.16),transparent 28%),
+    radial-gradient(circle at 95% 5%,rgba(34,211,238,.09),transparent 25%),
+    var(--bg);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
   padding-bottom:90px;
-  background:
-    radial-gradient(circle at 10% 0%,rgba(139,92,246,.16),transparent 28%),
-    radial-gradient(circle at 90% 15%,rgba(34,211,238,.10),transparent 25%),
-    var(--bg);
 }
 
-button,input{
+button,
+input{
   font:inherit;
 }
 
@@ -50,71 +51,84 @@ button{
   border:0;
 }
 
-.app{
-  width:min(1450px,100%);
-  margin:auto;
-  padding:14px;
+a{
+  color:inherit;
 }
 
-/* HEADER */
+.app{
+  width:min(1500px,100%);
+  margin:auto;
+  padding:12px;
+}
+
+/* =========================
+   HEADER
+========================= */
 
 .header{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  margin-bottom:14px;
+  margin-bottom:12px;
 }
 
 .brand{
   display:flex;
   align-items:center;
-  gap:11px;
+  gap:10px;
 }
 
 .logo{
   width:45px;
   height:45px;
-  border-radius:14px;
   display:grid;
   place-items:center;
+  border-radius:14px;
+  font-size:18px;
   font-weight:1000;
-  font-size:21px;
   background:linear-gradient(135deg,var(--purple),var(--cyan));
-  box-shadow:0 0 35px rgba(139,92,246,.3);
+  box-shadow:0 0 35px rgba(139,92,246,.28);
 }
 
 .brand h1{
   margin:0;
   font-size:17px;
-  letter-spacing:.08em;
+  letter-spacing:.07em;
 }
 
 .brand p{
   margin:3px 0 0;
-  font-size:10px;
   color:var(--muted);
+  font-size:9px;
 }
 
-.headerRight{
+.headerActions{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:7px;
+}
+
+.telegram{
+  text-decoration:none;
+  border:1px solid rgba(34,211,238,.18);
+  background:rgba(34,211,238,.08);
+  color:#a5edf5;
+  padding:9px 11px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:900;
 }
 
 .status{
   display:flex;
   align-items:center;
-  gap:7px;
-  padding:8px 11px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.035);
-  border-radius:999px;
+  gap:6px;
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
 }
 
-.dot{
+.statusDot{
   width:7px;
   height:7px;
   border-radius:50%;
@@ -122,44 +136,42 @@ button{
   box-shadow:0 0 12px var(--green);
 }
 
-.telegram{
-  padding:9px 12px;
-  border-radius:999px;
-  background:rgba(34,211,238,.10);
-  color:#9eeaf5;
-  border:1px solid rgba(34,211,238,.2);
-  text-decoration:none;
-  font-size:10px;
-  font-weight:800;
-}
-
-/* NAV */
+/* =========================
+   MAIN NAV
+========================= */
 
 .nav{
   display:flex;
-  gap:6px;
+  gap:5px;
   padding:5px;
-  margin-bottom:14px;
+  margin-bottom:12px;
   border:1px solid var(--line);
-  border-radius:17px;
+  border-radius:16px;
   background:rgba(255,255,255,.035);
 }
 
 .nav button{
   flex:1;
-  padding:12px;
-  border-radius:12px;
-  background:transparent;
+  padding:11px 7px;
+  border-radius:11px;
   color:var(--muted);
+  background:transparent;
+  font-size:10px;
   font-weight:900;
 }
 
 .nav button.active{
   color:white;
-  background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(34,211,238,.10));
+  background:linear-gradient(
+    135deg,
+    rgba(139,92,246,.32),
+    rgba(34,211,238,.08)
+  );
 }
 
-/* VIEWS */
+/* =========================
+   VIEWS
+========================= */
 
 .view{
   display:none;
@@ -169,188 +181,258 @@ button{
   display:block;
 }
 
-/* COMMON */
+/* =========================
+   COMMON
+========================= */
 
 .card{
-  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
   border:1px solid var(--line);
-  border-radius:19px;
-  box-shadow:0 18px 60px rgba(0,0,0,.16);
+  border-radius:18px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.045),
+      rgba(255,255,255,.015)
+    );
+  box-shadow:0 18px 60px rgba(0,0,0,.15);
 }
 
-.sectionTitle{
+.titleRow{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   gap:8px;
-  margin-bottom:11px;
+  margin-bottom:10px;
 }
 
-.sectionTitle h2{
+.titleRow h2,
+.titleRow h3{
   margin:0;
-  font-size:14px;
+  font-size:13px;
 }
 
-.sectionTitle span{
+.titleRow span{
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
 }
 
-/* DRAFT */
+.search{
+  width:100%;
+  padding:11px 13px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  outline:0;
+  background:rgba(0,0,0,.22);
+  color:white;
+}
+
+.search:focus{
+  border-color:rgba(139,92,246,.55);
+}
+
+.smallBtn{
+  padding:8px 10px;
+  border-radius:9px;
+  color:#d9caff;
+  background:rgba(139,92,246,.13);
+  border:1px solid rgba(139,92,246,.18);
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+/* =========================
+   DRAFT
+========================= */
 
 .draftLayout{
   display:grid;
   grid-template-columns:225px minmax(0,1fr) 225px;
-  gap:12px;
+  gap:11px;
 }
 
 .side{
-  padding:13px;
+  padding:12px;
 }
 
-.pos{
+.positionCard{
   width:100%;
+  min-height:59px;
   display:flex;
   align-items:center;
   gap:7px;
-  margin-bottom:7px;
-  padding:7px;
-  min-height:58px;
-  background:rgba(255,255,255,.035);
+  padding:6px;
+  margin-bottom:6px;
+  border-radius:12px;
   border:1px solid var(--line);
-  border-radius:13px;
+  background:rgba(255,255,255,.035);
   color:white;
-  cursor:pointer;
   text-align:left;
+  cursor:pointer;
 }
 
-.pos:hover{
-  border-color:rgba(139,92,246,.6);
+.positionCard.selected{
+  border-color:var(--purple);
+  box-shadow:0 0 0 1px rgba(139,92,246,.15);
 }
 
-.posNum{
-  width:31px;
-  height:31px;
+.posNumber{
+  width:28px;
+  height:28px;
+  flex:none;
   display:grid;
   place-items:center;
-  flex:none;
-  border-radius:9px;
+  border-radius:8px;
   background:rgba(255,255,255,.06);
   color:var(--muted);
+  font-size:10px;
   font-weight:900;
-  font-size:11px;
 }
 
-.pos img{
-  width:53px;
-  height:37px;
+.positionCard img{
+  width:54px;
+  height:36px;
   object-fit:cover;
   border-radius:7px;
 }
 
-.posName{
-  font-size:10px;
+.posText{
+  min-width:0;
+  font-size:9px;
   overflow:hidden;
   white-space:nowrap;
   text-overflow:ellipsis;
 }
 
-.emptyName{
+.posText.empty{
   color:var(--muted);
 }
 
-.center{
-  min-width:0;
+.removeTiny{
+  margin-left:auto;
+  width:24px;
+  height:24px;
+  flex:none;
+  border-radius:7px;
+  color:var(--red);
+  background:rgba(251,113,133,.08);
+  cursor:pointer;
 }
 
-/* DRAFT STATUS */
+/* =========================
+   DRAFT HEADER
+========================= */
 
-.draftStatus{
-  padding:15px;
-  margin-bottom:12px;
+.draftHeader{
+  padding:13px;
+  margin-bottom:11px;
 }
 
-.draftHeadline{
+.draftTop{
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:10px;
 }
 
-.draftHeadline h2{
+.draftTop h2{
   margin:0;
   font-size:18px;
 }
 
-.draftHeadline span{
-  color:var(--cyan);
-  font-size:10px;
-}
-
-.scoreRow{
-  display:flex;
-  gap:7px;
-  margin-top:11px;
-  overflow:auto;
-}
-
-.score{
-  min-width:90px;
-  padding:8px;
-  border-radius:10px;
-  background:rgba(255,255,255,.035);
-  border:1px solid var(--line);
-}
-
-.score b{
-  display:block;
-  font-size:13px;
-}
-
-.score small{
+.draftTop p{
+  margin:4px 0 0;
   color:var(--muted);
   font-size:9px;
 }
 
-/* RECOMMENDATIONS */
+.phaseBadge{
+  padding:7px 9px;
+  border-radius:8px;
+  background:rgba(34,211,238,.08);
+  color:#9debf4;
+  font-size:8px;
+  font-weight:900;
+}
 
-.recommendations{
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:6px;
+  margin-top:11px;
+}
+
+.metric{
+  padding:8px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+}
+
+.metric b{
+  display:block;
+  font-size:12px;
+}
+
+.metric span{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:8px;
+}
+
+/* =========================
+   RECOMMENDATIONS
+========================= */
+
+.recommendPanel{
+  padding:12px;
+}
+
+.recommendGrid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:9px;
+  gap:8px;
 }
 
 .rec{
-  padding:8px;
+  position:relative;
+  overflow:hidden;
+  padding:7px;
   border:1px solid var(--line);
-  border-radius:14px;
+  border-radius:13px;
   background:rgba(255,255,255,.035);
   cursor:pointer;
 }
 
-.rec:hover{
-  border-color:rgba(139,92,246,.7);
+.rec.best{
+  border-color:rgba(74,222,128,.45);
 }
 
 .rec img{
+  display:block;
   width:100%;
   aspect-ratio:1.65;
   object-fit:cover;
-  border-radius:9px;
+  border-radius:8px;
 }
 
 .recName{
   margin-top:6px;
-  font-size:11px;
+  font-size:10px;
   font-weight:900;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
 
-.tags{
+.recScore{
+  margin-top:4px;
+  color:var(--green);
+  font-size:10px;
+  font-weight:900;
+}
+
+.recTags{
   display:flex;
-  gap:4px;
+  gap:3px;
   flex-wrap:wrap;
   margin-top:5px;
 }
@@ -358,122 +440,104 @@ button{
 .tag{
   padding:3px 5px;
   border-radius:5px;
-  background:rgba(255,255,255,.06);
+  background:rgba(255,255,255,.05);
   color:var(--muted);
-  font-size:8px;
+  font-size:7px;
+  font-weight:800;
+}
+
+.tag.good{
+  color:#a8f6be;
+  background:rgba(74,222,128,.08);
 }
 
 .tag.meta{
-  color:#cdbbff;
-  background:rgba(139,92,246,.13);
+  color:#d8c8ff;
+  background:rgba(139,92,246,.11);
 }
 
-.tag.counter{
-  color:#ffc0cb;
-  background:rgba(251,113,133,.11);
+.tag.bad{
+  color:#ffb2c0;
+  background:rgba(251,113,133,.08);
 }
 
-.tag.synergy{
-  color:#a9f6c0;
-  background:rgba(74,222,128,.10);
-}
-
-.reason{
+.recReason{
   margin-top:6px;
-  color:#b5becd;
-  font-size:9px;
-  line-height:1.35;
+  color:#aab4c4;
+  font-size:8px;
+  line-height:1.4;
 }
 
-/* HERO POOL */
+/* =========================
+   HERO POOL
+========================= */
 
 .heroPanel{
-  padding:13px;
-  margin-top:12px;
-}
-
-.toolbar{
-  display:flex;
-  gap:7px;
-  margin-bottom:10px;
-}
-
-.search{
-  width:100%;
-  min-width:0;
-  padding:11px 13px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  outline:none;
-  color:white;
-  background:rgba(0,0,0,.25);
-}
-
-.search:focus{
-  border-color:rgba(139,92,246,.6);
+  padding:12px;
+  margin-top:11px;
 }
 
 .filters{
   display:flex;
   gap:5px;
   overflow:auto;
-  margin-bottom:10px;
+  margin:8px 0;
 }
 
-.filters button{
+.filter{
   flex:none;
   padding:7px 10px;
   border-radius:999px;
-  color:var(--muted);
-  background:rgba(255,255,255,.04);
   border:1px solid var(--line);
-  font-size:9px;
-  font-weight:800;
+  background:rgba(255,255,255,.035);
+  color:var(--muted);
+  font-size:8px;
+  font-weight:900;
 }
 
-.filters button.active{
+.filter.active{
   color:white;
-  border-color:rgba(139,92,246,.55);
-  background:rgba(139,92,246,.18);
+  background:rgba(139,92,246,.16);
+  border-color:rgba(139,92,246,.45);
 }
 
 .heroGrid{
   display:grid;
-  grid-template-columns:repeat(6,1fr);
+  grid-template-columns:repeat(7,1fr);
   gap:6px;
-  max-height:510px;
+  max-height:500px;
   overflow:auto;
 }
 
 .hero{
   position:relative;
   overflow:hidden;
-  border-radius:9px;
-  background:#0c111b;
+  border-radius:8px;
   border:1px solid transparent;
+  background:#0d131d;
   cursor:pointer;
 }
 
 .hero:hover{
-  border-color:var(--purple);
+  border-color:rgba(139,92,246,.7);
 }
 
 .hero img{
-  width:100%;
-  aspect-ratio:1.45;
   display:block;
+  width:100%;
+  aspect-ratio:1.48;
   object-fit:cover;
 }
 
 .heroName{
   padding:5px;
-  font-size:8px;
+  font-size:7px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
-.attr{
+.attrDot{
   position:absolute;
   z-index:2;
   top:4px;
@@ -484,274 +548,498 @@ button{
   box-shadow:0 0 8px currentColor;
 }
 
-.attr.str{color:#ef4444;background:#ef4444}
-.attr.agi{color:#22c55e;background:#22c55e}
-.attr.int{color:#60a5fa;background:#60a5fa}
-.attr.all{color:#fbbf24;background:#fbbf24}
-
-/* ENEMY */
-
-.enemy{
-  padding:13px;
+.attrDot.str{
+  background:#ef4444;
+  color:#ef4444;
 }
 
-.enemyBox{
-  min-height:90px;
-  display:grid;
-  place-items:center;
-  border:1px dashed rgba(255,255,255,.12);
-  border-radius:14px;
-  color:var(--muted);
-  text-align:center;
-  font-size:10px;
-  padding:10px;
+.attrDot.agi{
+  background:#22c55e;
+  color:#22c55e;
 }
 
-.enemyItem{
+.attrDot.int{
+  background:#60a5fa;
+  color:#60a5fa;
+}
+
+.attrDot.all{
+  background:#fbbf24;
+  color:#fbbf24;
+}
+
+/* =========================
+   ENEMIES
+========================= */
+
+.enemySide{
+  padding:12px;
+}
+
+.enemyHero{
   display:flex;
   align-items:center;
   gap:7px;
   padding:7px;
-  margin-bottom:7px;
+  margin-bottom:6px;
   border-radius:11px;
-  background:rgba(255,255,255,.035);
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
 }
 
-.enemyItem img{
-  width:48px;
-  height:34px;
+.enemyHero img{
+  width:49px;
+  height:33px;
   object-fit:cover;
-  border-radius:7px;
+  border-radius:6px;
 }
 
-.enemyItem span{
+.enemyHero span{
+  min-width:0;
   flex:1;
-  font-size:10px;
+  font-size:9px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
-.remove{
-  width:27px;
-  height:27px;
-  border-radius:8px;
-  background:rgba(251,113,133,.08);
-  color:var(--red);
+.emptyBox{
+  padding:25px 10px;
+  border:1px dashed rgba(255,255,255,.1);
+  border-radius:13px;
+  text-align:center;
+  color:var(--muted);
+  font-size:9px;
+}
+
+/* =========================
+   FINISH BUTTON
+========================= */
+
+.finishBox{
+  margin-top:11px;
+  padding:11px;
+}
+
+.finishBtn{
+  width:100%;
+  padding:12px;
+  border-radius:11px;
+  color:white;
+  background:linear-gradient(
+    135deg,
+    #7c3aed,
+    #0891b2
+  );
+  font-size:10px;
+  font-weight:1000;
   cursor:pointer;
 }
 
-/* COUNTER */
+/* =========================
+   COUNTERS
+========================= */
 
 .counterHeader{
-  padding:15px;
-  margin-bottom:12px;
+  padding:13px;
+  margin-bottom:11px;
 }
 
 .counterHero{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
 }
 
 .counterHero img{
-  width:95px;
-  height:65px;
+  width:92px;
+  height:62px;
   object-fit:cover;
-  border-radius:13px;
+  border-radius:11px;
 }
 
 .counterHero h2{
   margin:0;
-  font-size:20px;
+  font-size:18px;
 }
 
 .counterHero p{
   margin:4px 0 0;
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
 }
 
-.change{
+.counterHero .smallBtn{
   margin-left:auto;
-  padding:9px 11px;
-  border-radius:10px;
-  background:rgba(139,92,246,.15);
-  color:#d9c9ff;
-  font-size:9px;
-  font-weight:900;
-  cursor:pointer;
 }
 
 .counterLayout{
   display:grid;
-  grid-template-columns:290px minmax(0,1fr);
-  gap:12px;
+  grid-template-columns:270px minmax(0,1fr);
+  gap:11px;
 }
 
-.pickPanel{
-  padding:13px;
+.picker{
+  padding:11px;
 }
 
 .pickerGrid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:6px;
-  max-height:500px;
+  gap:5px;
+  max-height:510px;
   overflow:auto;
-  margin-top:9px;
+  margin-top:8px;
 }
 
-.picker{
+.pickerHero{
   display:flex;
   align-items:center;
-  gap:6px;
-  padding:6px;
+  gap:5px;
+  padding:5px;
+  border-radius:9px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.03);
-  border-radius:10px;
+  background:rgba(255,255,255,.025);
   color:white;
   cursor:pointer;
   text-align:left;
 }
 
-.picker img{
+.pickerHero img{
   width:42px;
   height:29px;
   object-fit:cover;
   border-radius:6px;
 }
 
-.picker span{
-  font-size:9px;
-  overflow:hidden;
+.pickerHero span{
+  min-width:0;
+  font-size:8px;
   white-space:nowrap;
+  overflow:hidden;
   text-overflow:ellipsis;
+}
+
+.counterPanel{
+  padding:11px;
+}
+
+.sourceBadge{
+  color:#a9ebf2;
+  font-size:8px;
 }
 
 .counterGrid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  gap:9px;
+  gap:8px;
 }
 
 .counterCard{
   position:relative;
-  padding:8px;
+  padding:7px;
+  border-radius:12px;
   border:1px solid var(--line);
-  border-radius:14px;
-  background:rgba(255,255,255,.035);
+  background:rgba(255,255,255,.03);
 }
 
 .counterCard img{
+  display:block;
   width:100%;
-  aspect-ratio:1.65;
+  aspect-ratio:1.6;
   object-fit:cover;
-  border-radius:8px;
+  border-radius:7px;
 }
 
-.rank{
+.counterRank{
   position:absolute;
-  top:12px;
-  left:12px;
+  top:10px;
+  left:10px;
   padding:3px 5px;
   border-radius:5px;
-  background:rgba(0,0,0,.8);
+  background:rgba(0,0,0,.78);
+  font-size:7px;
+  font-weight:1000;
+}
+
+.counterCard h3{
+  margin:6px 0 0;
+  font-size:10px;
+}
+
+.adv{
+  margin-top:4px;
+  color:var(--green);
+  font-size:9px;
+  font-weight:900;
+}
+
+.games{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:7px;
+}
+
+.why{
+  margin-top:6px;
+  color:#aab4c4;
+  font-size:8px;
+  line-height:1.4;
+}
+
+/* =========================
+   META
+========================= */
+
+.metaHeader{
+  padding:13px;
+  margin-bottom:11px;
+}
+
+.metaTabs{
+  display:flex;
+  gap:5px;
+  overflow:auto;
+  margin-top:9px;
+}
+
+.metaTab{
+  flex:none;
+  padding:8px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  color:var(--muted);
   font-size:8px;
   font-weight:900;
 }
 
-.counterName{
-  margin-top:6px;
+.metaTab.active{
+  color:white;
+  border-color:rgba(139,92,246,.5);
+  background:rgba(139,92,246,.15);
+}
+
+.metaGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+
+.metaCard{
+  padding:10px;
+}
+
+.metaCard h3{
+  margin:0 0 8px;
   font-size:11px;
+}
+
+.metaHero{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:6px;
+  padding:6px;
+  border-radius:9px;
+  background:rgba(255,255,255,.03);
+}
+
+.metaHero img{
+  width:53px;
+  height:35px;
+  object-fit:cover;
+  border-radius:6px;
+}
+
+.metaHeroMain{
+  min-width:0;
+  flex:1;
+}
+
+.metaHeroName{
+  font-size:9px;
   font-weight:900;
 }
 
-.counterNumber{
-  margin-top:4px;
-  font-size:10px;
-  color:var(--green);
-  font-weight:900;
-}
-
-.counterGames{
+.metaStats{
   margin-top:2px;
+  color:var(--muted);
+  font-size:7px;
+}
+
+.rating{
+  color:var(--yellow);
+  font-size:9px;
+  font-weight:900;
+}
+
+/* =========================
+   PRO DRAFT
+========================= */
+
+.proPanel{
+  padding:12px;
+}
+
+.proInfo{
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.5;
+  margin-bottom:10px;
+}
+
+.proFrame{
+  width:100%;
+  height:720px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#080c13;
+}
+
+/* =========================
+   RESULTS
+========================= */
+
+.resultHeader{
+  padding:14px;
+  margin-bottom:11px;
+}
+
+.resultHeader h2{
+  margin:0;
+  font-size:18px;
+}
+
+.resultHeader p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.resultCards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:11px;
+}
+
+.resultCard{
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:rgba(255,255,255,.03);
+}
+
+.resultCard b{
+  display:block;
+  font-size:15px;
+}
+
+.resultCard span{
+  display:block;
+  margin-top:3px;
   color:var(--muted);
   font-size:8px;
 }
 
-.counterWhy{
-  margin-top:6px;
-  color:#aeb7c7;
-  font-size:9px;
-  line-height:1.35;
+.matrixPanel{
+  padding:11px;
+  margin-top:11px;
+  overflow:auto;
 }
 
-/* DETAIL */
-
-.detail{
-  margin-top:12px;
-  padding:13px;
+.matrix{
+  width:100%;
+  min-width:650px;
+  border-collapse:collapse;
 }
 
-.detailTitle{
+.matrix th,
+.matrix td{
+  border:1px solid var(--line);
+  padding:7px;
+  text-align:center;
+  font-size:8px;
+}
+
+.matrix th{
+  background:rgba(255,255,255,.035);
+  color:var(--muted);
+}
+
+.matrix td.good{
+  color:#9af1b4;
+  background:rgba(74,222,128,.07);
+}
+
+.matrix td.bad{
+  color:#ffb0bd;
+  background:rgba(251,113,133,.07);
+}
+
+.matrix td.neutral{
+  color:var(--muted);
+}
+
+.matrixHero{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+
+.matrixHero img{
+  width:38px;
+  height:25px;
+  object-fit:cover;
+  border-radius:5px;
+}
+
+.insight{
+  margin-top:11px;
+  padding:11px;
+  border-radius:11px;
+  background:rgba(139,92,246,.07);
+  border:1px solid rgba(139,92,246,.15);
+}
+
+.insight h3{
   margin:0 0 6px;
-  font-size:13px;
+  font-size:11px;
 }
 
-.detailText{
-  color:#aeb7c7;
-  font-size:10px;
+.insight p{
+  margin:4px 0;
+  color:#abb5c5;
+  font-size:8px;
   line-height:1.5;
 }
 
-/* BOTTOM */
+/* =========================
+   MOBILE NAV
+========================= */
 
-.bottom{
+.bottomNav{
   display:none;
 }
 
-/* EMPTY / LOADING */
-
-.empty{
-  grid-column:1/-1;
-  padding:28px;
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-}
-
-.loading{
-  padding:35px;
-  text-align:center;
-  color:var(--muted);
-}
-
-.spinner{
-  width:25px;
-  height:25px;
-  margin:0 auto 10px;
-  border:3px solid rgba(255,255,255,.08);
-  border-top-color:var(--purple);
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-/* MOBILE */
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media(max-width:1100px){
 
   .draftLayout{
-    grid-template-columns:185px minmax(0,1fr);
+    grid-template-columns:190px minmax(0,1fr);
   }
 
-  .enemy{
+  .enemySide{
     grid-column:1/-1;
   }
 
   .heroGrid{
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:repeat(6,1fr);
   }
 
   .counterGrid{
@@ -767,15 +1055,18 @@ button{
   }
 
   .app{
-    padding:9px;
+    padding:8px;
   }
 
-  .headerRight .status{
+  .header{
+    margin-bottom:8px;
+  }
+
+  .status{
     display:none;
   }
 
   .telegram{
-    font-size:9px;
     padding:8px 9px;
   }
 
@@ -790,112 +1081,116 @@ button{
   .side{
     display:grid;
     grid-template-columns:repeat(5,1fr);
-    gap:5px;
-    padding:8px;
-    margin-bottom:9px;
+    gap:4px;
+    padding:7px;
+    margin-bottom:8px;
   }
 
-  .side .sectionTitle{
+  .side .titleRow{
     grid-column:1/-1;
   }
 
-  .pos{
+  .positionCard{
     display:block;
-    padding:5px;
-    min-height:70px;
+    min-height:68px;
+    padding:4px;
     text-align:center;
   }
 
-  .posNum{
-    width:24px;
-    height:21px;
+  .posNumber{
+    width:22px;
+    height:20px;
     margin:auto;
     font-size:8px;
   }
 
-  .pos img{
+  .positionCard img{
     width:100%;
-    height:31px;
-    margin-top:3px;
+    height:30px;
+    margin-top:2px;
   }
 
-  .posName{
+  .posText{
     display:block;
-    margin-top:3px;
+    margin-top:2px;
     font-size:7px;
   }
 
-  .draftStatus{
-    padding:12px;
+  .removeTiny{
+    position:absolute;
+    display:none;
   }
 
-  .recommendations{
+  .metrics{
+    grid-template-columns:repeat(5,90px);
+    overflow:auto;
+  }
+
+  .recommendGrid{
     grid-template-columns:repeat(2,1fr);
   }
 
   .heroGrid{
     grid-template-columns:repeat(4,1fr);
-    max-height:420px;
+    max-height:430px;
   }
 
   .counterLayout{
     display:block;
   }
 
-  .pickPanel{
-    margin-bottom:10px;
+  .picker{
+    margin-bottom:9px;
   }
 
   .pickerGrid{
-    max-height:250px;
+    max-height:230px;
   }
 
   .counterGrid{
     grid-template-columns:repeat(2,1fr);
   }
 
-  .counterHero img{
-    width:75px;
-    height:52px;
+  .metaGrid{
+    grid-template-columns:1fr;
   }
 
-  .counterHero h2{
-    font-size:17px;
+  .resultCards{
+    grid-template-columns:repeat(2,1fr);
   }
 
-  .change{
-    padding:8px;
+  .proFrame{
+    height:650px;
   }
 
-  .bottom{
+  .bottomNav{
     position:fixed;
     z-index:100;
     display:flex;
-    left:8px;
-    right:8px;
-    bottom:8px;
+    left:7px;
+    right:7px;
+    bottom:7px;
     padding:5px;
-    padding-bottom:max(5px,env(safe-area-inset-bottom));
     border:1px solid var(--line);
     border-radius:17px;
-    background:rgba(8,11,18,.94);
+    background:rgba(7,10,16,.94);
     backdrop-filter:blur(20px);
-    box-shadow:0 15px 40px rgba(0,0,0,.5);
+    box-shadow:0 20px 50px rgba(0,0,0,.5);
   }
 
-  .bottom button{
+  .bottomNav button{
     flex:1;
-    padding:9px;
+    padding:8px 4px;
     border-radius:11px;
     background:transparent;
     color:var(--muted);
-    font-size:9px;
+    font-size:8px;
     font-weight:900;
   }
 
-  .bottom button.active{
+  .bottomNav button.active{
     color:white;
-    background:rgba(139,92,246,.18);
+    background:rgba(139,92,246,.16);
   }
 
 }
@@ -914,12 +1209,12 @@ button{
 
     <div>
       <h1>D2 COUNTER PICKER</h1>
-      <p>DRAFT • COUNTERS • SYNERGY • META</p>
+      <p>DRAFT INTELLIGENCE • 7.41e • D2PT • MATCHUPS</p>
     </div>
 
   </div>
 
-  <div class="headerRight">
+  <div class="headerActions">
 
     <a
       class="telegram"
@@ -927,12 +1222,12 @@ button{
       target="_blank"
       rel="noopener"
     >
-      ✈ TELEGRAM
+      ✈ @painiso
     </a>
 
     <div class="status">
-      <span class="dot"></span>
-      <span id="statusText">Loading...</span>
+      <span class="statusDot"></span>
+      <span id="statusText">Starting</span>
     </div>
 
   </div>
@@ -947,21 +1242,42 @@ button{
     class="active"
     onclick="showView('draft')"
   >
-    ⚔ DRAFT ASSISTANT
+    ⚔ DRAFT
   </button>
 
   <button
     id="navCounter"
     onclick="showView('counter')"
   >
-    ◈ COUNTER FINDER
+    ◈ COUNTERS
+  </button>
+
+  <button
+    id="navMeta"
+    onclick="showView('meta')"
+  >
+    ◆ META
+  </button>
+
+  <button
+    id="navPro"
+    onclick="showView('pro')"
+  >
+    ♛ PRO DRAFTS
+  </button>
+
+  <button
+    id="navResult"
+    onclick="showView('result')"
+  >
+    ◉ RESULT
   </button>
 
 </nav>
 
 
 <!-- =====================================================
-     DRAFT
+     DRAFT VIEW
 ===================================================== -->
 
 <section
@@ -972,103 +1288,135 @@ button{
 <div class="draftLayout">
 
 
-<!-- YOUR TEAM -->
-
 <aside class="card side">
 
-  <div class="sectionTitle">
+  <div class="titleRow">
     <h2>YOUR TEAM</h2>
-    <span>1–5</span>
+    <span>POSITION</span>
   </div>
 
 
-  <button class="pos" onclick="choosePosition(1)">
-    <div class="posNum">1</div>
+  <button
+    id="pos1"
+    class="positionCard"
+    onclick="choosePosition(1)"
+  >
+    <div class="posNumber">1</div>
     <div id="posImg1"></div>
-    <span id="posName1" class="posName emptyName">
-      PICK
-    </span>
+    <span id="posText1" class="posText empty">PICK</span>
   </button>
 
 
-  <button class="pos" onclick="choosePosition(2)">
-    <div class="posNum">2</div>
+  <button
+    id="pos2"
+    class="positionCard"
+    onclick="choosePosition(2)"
+  >
+    <div class="posNumber">2</div>
     <div id="posImg2"></div>
-    <span id="posName2" class="posName emptyName">
-      PICK
-    </span>
+    <span id="posText2" class="posText empty">PICK</span>
   </button>
 
 
-  <button class="pos" onclick="choosePosition(3)">
-    <div class="posNum">3</div>
+  <button
+    id="pos3"
+    class="positionCard"
+    onclick="choosePosition(3)"
+  >
+    <div class="posNumber">3</div>
     <div id="posImg3"></div>
-    <span id="posName3" class="posName emptyName">
-      PICK
-    </span>
+    <span id="posText3" class="posText empty">PICK</span>
   </button>
 
 
-  <button class="pos" onclick="choosePosition(4)">
-    <div class="posNum">4</div>
+  <button
+    id="pos4"
+    class="positionCard"
+    onclick="choosePosition(4)"
+  >
+    <div class="posNumber">4</div>
     <div id="posImg4"></div>
-    <span id="posName4" class="posName emptyName">
-      PICK
-    </span>
+    <span id="posText4" class="posText empty">PICK</span>
   </button>
 
 
-  <button class="pos" onclick="choosePosition(5)">
-    <div class="posNum">5</div>
+  <button
+    id="pos5"
+    class="positionCard"
+    onclick="choosePosition(5)"
+  >
+    <div class="posNumber">5</div>
     <div id="posImg5"></div>
-    <span id="posName5" class="posName emptyName">
-      PICK
-    </span>
+    <span id="posText5" class="posText empty">PICK</span>
   </button>
+
+
+  <div class="finishBox">
+
+    <button
+      class="finishBtn"
+      onclick="finishDraft()"
+    >
+      FINISH DRAFT →
+    </button>
+
+  </div>
 
 </aside>
 
 
-<!-- CENTER -->
-
-<main class="center">
+<main>
 
 
-<section class="card draftStatus">
+<section class="card draftHeader">
 
-  <div class="draftHeadline">
+  <div class="draftTop">
 
-    <h2 id="draftTitle">
-      PICK YOUR FIRST HERO
-    </h2>
+    <div>
+      <h2 id="draftTitle">
+        SELECT POSITION
+      </h2>
 
-    <span id="draftHint">
-      Meta + synergy + counters
-    </span>
+      <p id="draftSubtitle">
+        D2PT meta + matchup + synergy + draft quality
+      </p>
+    </div>
+
+    <div
+      id="phaseBadge"
+      class="phaseBadge"
+    >
+      READY
+    </div>
 
   </div>
 
 
-  <div class="scoreRow">
+  <div class="metrics">
 
-    <div class="score">
-      <b id="scoreMeta">—</b>
-      <small>META</small>
+    <div class="metric">
+      <b id="mMeta">—</b>
+      <span>META</span>
     </div>
 
-    <div class="score">
-      <b id="scoreSynergy">—</b>
-      <small>SYNERGY</small>
+    <div class="metric">
+      <b id="mRole">—</b>
+      <span>ROLE FIT</span>
     </div>
 
-    <div class="score">
-      <b id="scoreCounter">—</b>
-      <small>COUNTER</small>
+    <div class="metric">
+      <b id="mSyn">—</b>
+      <span>SYNERGY</span>
     </div>
 
-    <div class="score">
-      <b id="scoreRole">—</b>
-      <small>ROLE FIT</small>
+    <div class="metric">
+      <b id="mCtr">—</b>
+      <span>COUNTER</span>
+    </div>
+
+    <div class="metric">
+      <b id="mRisk">—</b>
+      <span>RISK</span>
     </div>
 
   </div>
@@ -1076,20 +1424,20 @@ button{
 </section>
 
 
-<section class="card" style="padding:13px">
+<section class="card recommendPanel">
 
-  <div class="sectionTitle">
+  <div class="titleRow">
     <h2>BEST NEXT PICKS</h2>
-    <span id="recommendInfo">—</span>
+    <span id="recommendInfo">position-aware</span>
   </div>
 
   <div
     id="recommendations"
-    class="recommendations"
+    class="recommendGrid"
   >
 
-    <div class="empty">
-      Choose a position to start the draft.
+    <div class="emptyBox">
+      Выбери позицию 1–5.
     </div>
 
   </div>
@@ -1099,53 +1447,53 @@ button{
 
 <section class="card heroPanel">
 
-  <div class="sectionTitle">
+  <div class="titleRow">
     <h2>HERO POOL</h2>
-    <span id="heroCount">—</span>
+    <span id="heroCount">loading...</span>
   </div>
 
 
-  <div class="toolbar">
-
-    <input
-      id="heroSearch"
-      class="search"
-      placeholder="Search hero..."
-      oninput="renderHeroGrid()"
-    >
-
-  </div>
+  <input
+    id="heroSearch"
+    class="search"
+    placeholder="Поиск героя..."
+    oninput="renderHeroGrid()"
+  >
 
 
   <div class="filters">
 
     <button
-      class="active"
-      onclick="setAttributeFilter('all',this)"
+      class="filter active"
+      onclick="setAttr('all',this)"
     >
       ALL
     </button>
 
     <button
-      onclick="setAttributeFilter('str',this)"
+      class="filter"
+      onclick="setAttr('str',this)"
     >
       STR
     </button>
 
     <button
-      onclick="setAttributeFilter('agi',this)"
+      class="filter"
+      onclick="setAttr('agi',this)"
     >
       AGI
     </button>
 
     <button
-      onclick="setAttributeFilter('int',this)"
+      class="filter"
+      onclick="setAttr('int',this)"
     >
       INT
     </button>
 
     <button
-      onclick="setAttributeFilter('uni',this)"
+      class="filter"
+      onclick="setAttr('uni',this)"
     >
       UNIVERSAL
     </button>
@@ -1163,11 +1511,9 @@ button{
 </main>
 
 
-<!-- ENEMY -->
+<aside class="card enemySide">
 
-<aside class="card enemy">
-
-  <div class="sectionTitle">
+  <div class="titleRow">
     <h2>ENEMY TEAM</h2>
     <span id="enemyCount">0 / 5</span>
   </div>
@@ -1175,9 +1521,10 @@ button{
 
   <div id="enemyList">
 
-    <div class="enemyBox">
-      Выбери героя из Hero Pool,
-      чтобы добавить его врагом.
+    <div class="emptyBox">
+      После выбора позиции можно нажимать
+      героев в Hero Pool ещё раз,
+      чтобы добавить их врагом.
     </div>
 
   </div>
@@ -1190,14 +1537,13 @@ button{
 
 
 <!-- =====================================================
-     COUNTER
+     COUNTER VIEW
 ===================================================== -->
 
 <section
   id="counterView"
   class="view"
 >
-
 
 <section class="card counterHeader">
 
@@ -1216,16 +1562,16 @@ button{
       </h2>
 
       <p id="counterInfo">
-        Реальные matchup-данные
+        Matchup statistics
       </p>
 
     </div>
 
     <button
-      class="change"
-      onclick="toggleCounterPicker()"
+      class="smallBtn"
+      onclick="refreshCounter()"
     >
-      CHANGE
+      ↻ REFRESH
     </button>
 
   </div>
@@ -1236,19 +1582,17 @@ button{
 <div class="counterLayout">
 
 
-<section
-  id="counterPicker"
-  class="card pickPanel"
->
+<section class="card picker">
 
-  <h3 style="margin:0 0 9px;font-size:13px">
-    SELECT HERO
-  </h3>
+  <div class="titleRow">
+    <h2>HERO</h2>
+    <span>FAST SEARCH</span>
+  </div>
 
   <input
     id="counterSearch"
     class="search"
-    placeholder="Search hero..."
+    placeholder="Например: Axe"
     oninput="renderCounterPicker()"
   >
 
@@ -1260,15 +1604,18 @@ button{
 </section>
 
 
-<section class="card pickPanel">
+<section class="card counterPanel">
 
-  <div class="sectionTitle">
+  <div class="titleRow">
 
     <h2>
       BEST COUNTERS
     </h2>
 
-    <span id="counterSource">
+    <span
+      id="counterSource"
+      class="sourceBadge"
+    >
       —
     </span>
 
@@ -1277,8 +1624,8 @@ button{
 
   <div id="counterResults">
 
-    <div class="empty">
-      Choose a hero.
+    <div class="emptyBox">
+      Выбери героя.
     </div>
 
   </div>
@@ -1289,12 +1636,226 @@ button{
 
 </section>
 
+
+<!-- =====================================================
+     META
+===================================================== -->
+
+<section
+  id="metaView"
+  class="view"
+>
+
+<section class="card metaHeader">
+
+  <div class="titleRow">
+
+    <div>
+      <h2>D2PT META</h2>
+      <span>
+        7000+ MMR • current patch • position-aware
+      </span>
+    </div>
+
+    <a
+      class="smallBtn"
+      href="https://dota2protracker.com/meta"
+      target="_blank"
+      rel="noopener"
+      style="text-decoration:none"
+    >
+      OPEN D2PT
+    </a>
+
+  </div>
+
+
+  <div class="metaTabs">
+
+    <button
+      class="metaTab active"
+      onclick="showMetaPosition(1,this)"
+    >
+      CARRY
+    </button>
+
+    <button
+      class="metaTab"
+      onclick="showMetaPosition(2,this)"
+    >
+      MID
+    </button>
+
+    <button
+      class="metaTab"
+      onclick="showMetaPosition(3,this)"
+    >
+      OFFLANE
+    </button>
+
+    <button
+      class="metaTab"
+      onclick="showMetaPosition(4,this)"
+    >
+      SUPPORT
+    </button>
+
+    <button
+      class="metaTab"
+      onclick="showMetaPosition(5,this)"
+    >
+      HARD SUPPORT
+    </button>
+
+  </div>
+
+</section>
+
+
+<div
+  id="metaGrid"
+  class="metaGrid"
+></div>
+
+</section>
+
+
+<!-- =====================================================
+     PRO DRAFTS
+===================================================== -->
+
+<section
+  id="proView"
+  class="view"
+>
+
+<section class="card proPanel">
+
+  <div class="titleRow">
+
+    <h2>PRO / HIGH MMR DRAFTS</h2>
+
+    <a
+      class="smallBtn"
+      href="https://dota2protracker.com/drafter"
+      target="_blank"
+      rel="noopener"
+      style="text-decoration:none"
+    >
+      D2PT DRAFTER
+    </a>
+
+  </div>
+
+  <div class="proInfo">
+
+    Здесь используется тот же источник,
+    который отслеживает профессиональные и
+    7000+ MMR матчи. D2PT отдельно учитывает
+    synergy, matchup и lane analysis.
+    Эта вкладка нужна, чтобы видеть реальные
+    драфты, а не выдуманные «комбо».
+
+  </div>
+
+
+  <iframe
+    class="proFrame"
+    src="https://dota2protracker.com/drafter"
+    loading="lazy"
+    referrerpolicy="no-referrer"
+  ></iframe>
+
+</section>
+
+</section>
+
+
+<!-- =====================================================
+     FINISHED DRAFT
+===================================================== -->
+
+<section
+  id="resultView"
+  class="view"
+>
+
+<section class="card resultHeader">
+
+  <h2>DRAFT ANALYSIS</h2>
+
+  <p>
+    Полный разбор после того, как обе команды
+    собраны.
+  </p>
+
+
+  <div class="resultCards">
+
+    <div class="resultCard">
+      <b id="resultSynergy">—</b>
+      <span>TEAM SYNERGY</span>
+    </div>
+
+    <div class="resultCard">
+      <b id="resultCounter">—</b>
+      <span>COUNTER SCORE</span>
+    </div>
+
+    <div class="resultCard">
+      <b id="resultLane">—</b>
+      <span>LANE BALANCE</span>
+    </div>
+
+    <div class="resultCard">
+      <b id="resultDraft">—</b>
+      <span>DRAFT QUALITY</span>
+    </div>
+
+  </div>
+
+
+  <div
+    id="resultInsight"
+    class="insight"
+  ></div>
+
+</section>
+
+
+<section class="card matrixPanel">
+
+  <div class="titleRow">
+    <h2>SYNERGY MATRIX</h2>
+    <span>YOUR TEAM</span>
+  </div>
+
+  <div id="synergyMatrix"></div>
+
+</section>
+
+
+<section class="card matrixPanel">
+
+  <div class="titleRow">
+    <h2>COUNTER MATRIX</h2>
+    <span>YOUR TEAM → ENEMY</span>
+  </div>
+
+  <div id="counterMatrix"></div>
+
+</section>
+
+</section>
+
 </div>
 
 
-<!-- MOBILE NAV -->
+<!-- =====================================================
+     MOBILE NAV
+===================================================== -->
 
-<nav class="bottom">
+<nav class="bottomNav">
 
   <button
     id="bottomDraft"
@@ -1311,6 +1872,20 @@ button{
     ◈<br>COUNTERS
   </button>
 
+  <button
+    id="bottomMeta"
+    onclick="showView('meta')"
+  >
+    ◆<br>META
+  </button>
+
+  <button
+    id="bottomResult"
+    onclick="showView('result')"
+  >
+    ◉<br>RESULT
+  </button>
+
 </nav>
 
 
@@ -1320,29 +1895,32 @@ button{
    CONFIG
 ========================================================= */
 
-const OPENDOTA =
+const OD =
   "https://api.opendota.com/api";
 
-const HERO_IMAGE =
+const IMG =
   "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/";
 
-const D2PT =
+const D2PT_META =
   "https://dota2protracker.com/meta";
 
 const DOTABUFF =
   "https://www.dotabuff.com/heroes/";
 
-const PROXY_LIST = [
+const PROXIES = [
 
-  url =>
+  u =>
     "https://api.allorigins.win/raw?url=" +
-    encodeURIComponent(url),
+    encodeURIComponent(u),
 
-  url =>
+  u =>
     "https://api.codetabs.com/v1/proxy?quest=" +
-    encodeURIComponent(url)
+    encodeURIComponent(u)
 
 ];
+
+const CACHE_TIME =
+  1000 * 60 * 30;
 
 
 /* =========================================================
@@ -1363,13 +1941,229 @@ let team = {
 let enemies = [];
 
 let selectedPosition = null;
-let selectedAttribute = "all";
+
+let selectedAttr = "all";
 
 let counterHero = null;
 
 let matchupCache = {};
-let metaCache = {};
-let synergyCache = {};
+
+let d2ptMeta = {
+  1:{},
+  2:{},
+  3:{},
+  4:{},
+  5:{}
+};
+
+let currentMetaPosition = 1;
+
+
+/* =========================================================
+   POSITION META
+========================================================= */
+
+/*
+  This is a SAFETY NET.
+
+  The live D2PT meta is loaded first.
+  These values are only used if D2PT cannot be reached.
+
+  Crucially:
+  Mirana is NOT allowed as carry here.
+*/
+
+const FALLBACK_POSITIONS = {
+
+  1:[
+    "Phantom Lancer",
+    "Lifestealer",
+    "Necrophos",
+    "Spectre",
+    "Windranger",
+    "Slark",
+    "Juggernaut",
+    "Sven",
+    "Luna",
+    "Faceless Void",
+    "Ursa",
+    "Drow Ranger"
+  ],
+
+  2:[
+    "Invoker",
+    "Keeper of the Light",
+    "Earth Spirit",
+    "Outworld Destroyer",
+    "Arc Warden",
+    "Ember Spirit",
+    "Tinker",
+    "Puck",
+    "Storm Spirit",
+    "Void Spirit",
+    "Lina",
+    "Queen of Pain"
+  ],
+
+  3:[
+    "Enigma",
+    "Dark Seer",
+    "Pudge",
+    "Night Stalker",
+    "Axe",
+    "Doom",
+    "Brewmaster",
+    "Dawnbreaker",
+    "Mars",
+    "Centaur Warrunner",
+    "Underlord",
+    "Timbersaw"
+  ],
+
+  4:[
+    "Bounty Hunter",
+    "Spirit Breaker",
+    "Rubick",
+    "Mirana",
+    "Nyx Assassin",
+    "Pudge",
+    "Clockwerk",
+    "Techies",
+    "Tusk",
+    "Earth Spirit",
+    "Hoodwink",
+    "Lion"
+  ],
+
+  5:[
+    "Treant Protector",
+    "Oracle",
+    "Winter Wyvern",
+    "Bane",
+    "Bounty Hunter",
+    "Lich",
+    "Dazzle",
+    "Disruptor",
+    "Warlock",
+    "Shadow Demon",
+    "Jakiro",
+    "Witch Doctor"
+  ]
+
+};
+
+
+/* =========================================================
+   PRO-STYLE SYNERGY
+========================================================= */
+
+/*
+  These are not pretending to be "live winrates".
+
+  They are draft-combo priors:
+  heroes that repeatedly make sense together because
+  their spells, timings or team-fight roles complement
+  one another.
+
+  Live D2PT matchup/meta data has higher priority.
+*/
+
+const PRO_SYNERGY = {
+
+  "Magnus|Faceless Void":18,
+  "Faceless Void|Magnus":18,
+
+  "Magnus|Phantom Lancer":16,
+  "Phantom Lancer|Magnus":16,
+
+  "Dark Seer|Juggernaut":17,
+  "Juggernaut|Dark Seer":17,
+
+  "Dark Seer|Luna":14,
+  "Luna|Dark Seer":14,
+
+  "Mars|Snapfire":17,
+  "Snapfire|Mars":17,
+
+  "Mars|Phoenix":14,
+  "Phoenix|Mars":14,
+
+  "Enigma|Faceless Void":17,
+  "Faceless Void|Enigma":17,
+
+  "Tidehunter|Disruptor":14,
+  "Disruptor|Tidehunter":14,
+
+  "Tidehunter|Luna":13,
+  "Luna|Tidehunter":13,
+
+  "Earthshaker|Juggernaut":11,
+  "Juggernaut|Earthshaker":11,
+
+  "Grimstroke|Phantom Assassin":14,
+  "Phantom Assassin|Grimstroke":14,
+
+  "Grimstroke|Doom":12,
+  "Doom|Grimstroke":12,
+
+  "Io|Tiny":18,
+  "Tiny|Io":18,
+
+  "Io|Luna":13,
+  "Luna|Io":13,
+
+  "Oracle|Huskar":17,
+  "Huskar|Oracle":17,
+
+  "Shadow Demon|Luna":12,
+  "Luna|Shadow Demon":12,
+
+  "Disruptor|Faceless Void":13,
+  "Faceless Void|Disruptor":13,
+
+  "Vengeful Spirit|Drow Ranger":14,
+  "Drow Ranger|Vengeful Spirit":14,
+
+  "Vengeful Spirit|Medusa":12,
+  "Medusa|Vengeful Spirit":12,
+
+  "Chen|Beastmaster":11,
+  "Beastmaster|Chen":11,
+
+  "Batrider|Snapfire":13,
+  "Snapfire|Batrider":13,
+
+  "Puck|Mars":11,
+  "Mars|Puck":11,
+
+  "Invoker|Tidehunter":12,
+  "Tidehunter|Invoker":12
+
+};
+
+
+/* =========================================================
+   KNOWN ANTI-SYNERGY
+========================================================= */
+
+const ANTI_SYNERGY = {
+
+  "Anti-Mage|Medusa":-12,
+  "Medusa|Anti-Mage":-12,
+
+  "Meepo|Lone Druid":-10,
+  "Lone Druid|Meepo":-10,
+
+  "Techies|Tinker":-7,
+  "Tinker|Techies":-7,
+
+  "Sniper|Pudge":-5,
+  "Pudge|Sniper":-5,
+
+  "Spectre|Anti-Mage":-10,
+  "Anti-Mage|Spectre":-10
+
+};
 
 
 /* =========================================================
@@ -1378,55 +2172,124 @@ let synergyCache = {};
 
 document.addEventListener(
   "DOMContentLoaded",
-  async () => {
+  boot
+);
 
-    status("Loading hero database...");
 
-    await loadHeroes();
+async function boot(){
 
-    renderHeroGrid();
-    renderCounterPicker();
-    renderTeam();
-    renderEnemies();
+  status(
+    "Loading heroes..."
+  );
+
+  await loadHeroes();
+
+  renderHeroGrid();
+  renderCounterPicker();
+  renderTeam();
+  renderEnemies();
+
+  /*
+    Load D2PT position meta in parallel.
+    This is cached for 30 minutes.
+  */
+
+  await loadAllMeta();
+
+  renderRecommendations();
+
+  /*
+    Default Counter hero.
+  */
+
+  const brood =
+    heroes.find(
+      h =>
+        h.localized_name ===
+        "Broodmother"
+    );
+
+  if(brood){
+
+    counterHero = brood;
+
+    updateCounterHeader();
 
     /*
-      Start Counter Finder with Broodmother only as a
-      default example. It is NOT a special counter database.
+      Do NOT block boot on counter search.
     */
 
-    const first =
-      heroes.find(
-        h => h.localized_name === "Broodmother"
-      ) || heroes[0];
-
-    if(first){
-
-      await selectCounterHero(first);
-
-    }
-
-    /*
-      Load D2PT in background.
-    */
-
-    loadD2PTMeta();
+    loadCounters(
+      brood,
+      true
+    );
 
   }
-);
+
+  showMetaPosition(
+    1,
+    document.querySelector(
+      ".metaTab"
+    )
+  );
+
+  status(
+    "D2PT + matchup ready"
+  );
+
+}
 
 
 /* =========================================================
    NETWORK
 ========================================================= */
 
-async function json(url){
+async function getJSON(url){
 
-  const controller =
+  const c =
     new AbortController();
 
-  const timeout =
+  const t =
     setTimeout(
-      () => controller.abort(),
+      () => c.abort(),
+      12000
+    );
+
+  try{
+
+    const r =
+      await fetch(
+        url,
+        {
+          signal:c.signal,
+          cache:"no-store"
+        }
+      );
+
+    if(!r.ok)
+      throw new Error(
+        "HTTP " + r.status
+      );
+
+    return await r.json();
+
+  }finally{
+
+    clearTimeout(t);
+
+  }
+
+}
+
+
+async function getText(url){
+
+  const c =
+    new AbortController();
+
+  const t =
+    setTimeout(
+      () => c.abort(),
       14000
     );
 
@@ -1436,93 +2299,60 @@ async function json(url){
       await fetch(
         url,
         {
-          signal:controller.signal,
+          signal:c.signal,
           cache:"no-store"
         }
       );
 
     if(!r.ok)
-      throw new Error("HTTP " + r.status);
-
-    return await r.json();
-
-  }finally{
-
-    clearTimeout(timeout);
-
-  }
-
-}
-
-
-async function text(url){
-
-  const controller =
-    new AbortController();
-
-  const timeout =
-    setTimeout(
-      () => controller.abort(),
-      15000
-    );
-
-  try{
-
-    const r =
-      await fetch(
-        url,
-        {
-          signal:controller.signal,
-          cache:"no-store"
-        }
+      throw new Error(
+        "HTTP " + r.status
       );
-
-    if(!r.ok)
-      throw new Error("HTTP " + r.status);
 
     return await r.text();
 
   }finally{
 
-    clearTimeout(timeout);
+    clearTimeout(t);
 
   }
 
 }
 
 
-/*
-  Direct request first.
-  If CORS blocks it, use public proxy.
-*/
-
-async function getTextWithFallback(url){
+async function getTextFallback(url){
 
   try{
 
-    return await text(url);
+    return await getText(
+      url
+    );
 
-  }catch(e){
+  }catch(e){}
 
-    for(const proxy of PROXY_LIST){
+  for(
+    const proxy of PROXIES
+  ){
 
-      try{
+    try{
 
-        return await text(proxy(url));
+      return await getText(
+        proxy(url)
+      );
 
-      }catch(err){}
-
-    }
+    }catch(e){}
 
   }
 
-  throw new Error("All sources failed");
+  throw new Error(
+    "Source unavailable"
+  );
 
 }
 
 
 /* =========================================================
-   HEROES
+   HERO DATABASE
 ========================================================= */
 
 async function loadHeroes(){
@@ -1530,8 +2360,8 @@ async function loadHeroes(){
   try{
 
     const data =
-      await json(
-        OPENDOTA + "/heroStats"
+      await getJSON(
+        OD + "/heroStats"
       );
 
     heroes =
@@ -1543,138 +2373,40 @@ async function loadHeroes(){
         )
         .map(
           h => ({
+
             id:h.id,
+
             name:h.name,
-            localized_name:h.localized_name,
-            primary_attr:h.primary_attr,
-            roles:h.roles || [],
-            attack_type:h.attack_type || ""
+
+            localized_name:
+              h.localized_name,
+
+            primary_attr:
+              h.primary_attr,
+
+            roles:
+              h.roles || []
+
           })
         );
 
     heroMap = {};
 
     heroes.forEach(
-      h => heroMap[h.id] = h
+      h =>
+        heroMap[h.id] = h
     );
 
     document.getElementById(
       "heroCount"
     ).textContent =
-      heroes.length + " heroes";
-
-    status("OpenDota + D2PT");
-
-  }catch(e){
-
-    console.error(e);
-
-    status("Hero API error");
-
-    document.getElementById(
-      "heroGrid"
-    ).innerHTML = `
-      <div class="empty">
-        Не удалось загрузить список героев.
-        <br><br>
-        Обнови страницу.
-      </div>
-    `;
-
-  }
-
-}
-
-
-/* =========================================================
-   D2PT META
-========================================================= */
-
-async function loadD2PTMeta(){
-
-  try{
-
-    const html =
-      await getTextWithFallback(
-        D2PT
-      );
-
-    /*
-      D2PT pages are HTML rather than a stable public JSON API.
-      We extract hero names and nearby ratings/WR when available.
-
-      If their HTML changes, the draft still works without
-      D2PT data.
-    */
-
-    const lower =
-      html.toLowerCase();
-
-    const meta = {};
-
-    heroes.forEach(hero => {
-
-      const name =
-        hero.localized_name;
-
-      const pos =
-        lower.indexOf(
-          name.toLowerCase()
-        );
-
-      if(pos === -1)
-        return;
-
-      const fragment =
-        html.substring(
-          Math.max(0,pos-150),
-          pos+500
-        );
-
-      const nums =
-        fragment.match(
-          /(\d{1,2}(?:\.\d+)?)\s*%/g
-        );
-
-      const rating =
-        fragment.match(
-          /(\d{1,3})\s*\/\s*100/
-        );
-
-      meta[hero.id] = {
-
-        winRate:
-          nums && nums.length
-            ? parseFloat(
-                nums[0]
-                  .replace("%","")
-              )
-            : 50,
-
-        rating:
-          rating
-            ? parseFloat(rating[1])
-            : 50
-
-      };
-
-    });
-
-    metaCache = meta;
-
-    status("D2PT Meta loaded");
-
-    renderRecommendations();
+      heroes.length +
+      " heroes";
 
   }catch(e){
-
-    console.warn(
-      "D2PT unavailable",
-      e
-    );
 
     status(
-      "OpenDota • D2PT fallback"
+      "Hero API unavailable"
     );
 
   }
@@ -1683,24 +2415,27 @@ async function loadD2PTMeta(){
 
 
 /* =========================================================
-   HERO IMAGE
+   IMAGE
 ========================================================= */
 
-function image(hero){
+function heroImage(hero){
 
   if(!hero)
     return "";
 
-  return HERO_IMAGE +
+  return IMG +
     hero.name
-      .replace("npc_dota_hero_","") +
+      .replace(
+        "npc_dota_hero_",
+        ""
+      ) +
     ".png";
 
 }
 
 
 /* =========================================================
-   ATTRIBUTES
+   ATTR
 ========================================================= */
 
 function attrClass(attr){
@@ -1719,105 +2454,119 @@ function attrClass(attr){
 }
 
 
-/* =========================================================
-   HERO GRID
-========================================================= */
+function setAttr(attr,button){
 
-function setAttributeFilter(attr,btn){
-
-  selectedAttribute = attr;
+  selectedAttr =
+    attr;
 
   document
-    .querySelectorAll(".filters button")
+    .querySelectorAll(
+      ".filter"
+    )
     .forEach(
-      b => b.classList.remove("active")
+      x =>
+        x.classList.remove(
+          "active"
+        )
     );
 
-  btn.classList.add("active");
+  button.classList.add(
+    "active"
+  );
 
   renderHeroGrid();
 
 }
 
 
+/* =========================================================
+   HERO GRID
+========================================================= */
+
 function renderHeroGrid(){
 
-  const grid =
+  const box =
     document.getElementById(
       "heroGrid"
     );
 
-  if(!grid)
+  if(!box)
     return;
 
   const query =
     (
       document.getElementById(
         "heroSearch"
-      )?.value || ""
+      )?.value ||
+      ""
     )
       .toLowerCase()
       .trim();
 
   const list =
-    heroes.filter(hero => {
+    heroes.filter(
+      hero => {
 
-      const attrOK =
-        selectedAttribute === "all" ||
-        (
-          selectedAttribute === "uni" &&
-          hero.primary_attr === "all"
-        ) ||
-        hero.primary_attr === selectedAttribute;
+        const attrOK =
+          selectedAttr === "all" ||
+          (
+            selectedAttr === "uni" &&
+            hero.primary_attr === "all"
+          ) ||
+          hero.primary_attr ===
+            selectedAttr;
 
-      const searchOK =
-        !query ||
-        hero.localized_name
-          .toLowerCase()
-          .includes(query);
+        const searchOK =
+          !query ||
+          hero.localized_name
+            .toLowerCase()
+            .includes(query);
 
-      return attrOK && searchOK;
+        return (
+          attrOK &&
+          searchOK
+        );
 
-    });
+      }
+    );
 
-  grid.innerHTML =
+  box.innerHTML =
     list
-      .map(hero => {
+      .map(
+        hero => `
 
-        return `
           <div
             class="hero"
-            onclick="heroClicked(${hero.id})"
+            onclick="heroClick(${hero.id})"
           >
 
             <span
-              class="attr ${attrClass(hero.primary_attr)}"
+              class="attrDot ${attrClass(hero.primary_attr)}"
             ></span>
 
             <img
-              src="${image(hero)}"
+              src="${heroImage(hero)}"
               loading="lazy"
-              onerror="this.style.opacity=.25"
             >
 
             <div class="heroName">
-              ${escape(hero.localized_name)}
+              ${esc(hero.localized_name)}
             </div>
 
           </div>
-        `;
 
-      })
+        `
+      )
       .join("");
 
 }
 
 
 /* =========================================================
-   DRAFT HERO CLICK
+   HERO CLICK
 ========================================================= */
 
-function heroClicked(id){
+function heroClick(id){
 
   const hero =
     heroMap[id];
@@ -1827,32 +2576,33 @@ function heroClicked(id){
 
 
   /*
-    If user is currently selecting a position,
-    put hero there.
+    First click while selecting a position:
+    pick for OUR team.
   */
 
   if(selectedPosition){
 
-    /*
-      Do not allow duplicate hero.
-    */
-
-    if(isUsed(hero.id)){
-
-      selectedPosition = null;
+    if(
+      isUsed(
+        hero.id
+      )
+    ){
 
       alert(
-        "Этот герой уже выбран."
+        "Этот герой уже находится в драфте."
       );
 
       return;
 
     }
 
-    team[selectedPosition] =
+    team[
+      selectedPosition
+    ] =
       hero;
 
-    selectedPosition = null;
+    selectedPosition =
+      null;
 
     renderTeam();
     renderRecommendations();
@@ -1863,28 +2613,32 @@ function heroClicked(id){
 
 
   /*
-    Otherwise add to enemy team.
+    If no position selected:
+    add to enemy.
   */
 
   if(
-    isUsed(hero.id)
-  ){
-
+    isUsed(
+      hero.id
+    )
+  )
     return;
 
-  }
-
-  if(enemies.length >= 5){
+  if(
+    enemies.length >= 5
+  ){
 
     alert(
-      "В команде уже 5 врагов."
+      "У врага уже 5 героев."
     );
 
     return;
 
   }
 
-  enemies.push(hero);
+  enemies.push(
+    hero
+  );
 
   renderEnemies();
   renderRecommendations();
@@ -1898,46 +2652,54 @@ function heroClicked(id){
 
 function choosePosition(pos){
 
-  selectedPosition = pos;
+  selectedPosition =
+    pos;
+
+  document
+    .querySelectorAll(
+      ".positionCard"
+    )
+    .forEach(
+      x =>
+        x.classList.remove(
+          "selected"
+        )
+    );
+
+  document.getElementById(
+    "pos"+pos
+  ).classList.add(
+    "selected"
+  );
 
   document.getElementById(
     "draftTitle"
   ).textContent =
-    "CHOOSE HERO FOR POSITION " + pos;
+    "PICK POSITION " + pos;
 
   document.getElementById(
-    "draftHint"
+    "draftSubtitle"
   ).textContent =
-    "Нажми на героя ниже";
+    "D2PT role meta will dominate the recommendation";
 
   document.getElementById(
-    "heroSearch"
-  ).focus();
+    "phaseBadge"
+  ).textContent =
+    "POS " + pos;
 
-}
-
-
-function isUsed(id){
-
-  return Object
-    .values(team)
-    .some(
-      h => h && h.id === id
-    ) ||
-    enemies.some(
-      h => h.id === id
-    );
+  renderRecommendations();
 
 }
 
 
 /* =========================================================
-   REMOVE TEAM HERO
+   REMOVE
 ========================================================= */
 
-function removeTeamHero(pos){
+function removeTeam(pos){
 
-  team[pos] = null;
+  team[pos] =
+    null;
 
   renderTeam();
   renderRecommendations();
@@ -1959,58 +2721,89 @@ function removeEnemy(index){
 
 
 /* =========================================================
-   RENDER TEAM
+   USED
+========================================================= */
+
+function isUsed(id){
+
+  return (
+    Object
+      .values(team)
+      .some(
+        h =>
+          h &&
+          h.id === id
+      ) ||
+    enemies.some(
+      h =>
+        h.id === id
+    )
+  );
+
+}
+
+
+/* =========================================================
+   TEAM RENDER
 ========================================================= */
 
 function renderTeam(){
 
-  for(let p=1;p<=5;p++){
+  for(
+    let pos=1;
+    pos<=5;
+    pos++
+  ){
 
     const hero =
-      team[p];
+      team[pos];
 
-    const imgBox =
+    const img =
       document.getElementById(
-        "posImg"+p
+        "posImg"+pos
       );
 
-    const nameBox =
+    const name =
       document.getElementById(
-        "posName"+p
+        "posText"+pos
       );
 
     if(hero){
 
-      imgBox.innerHTML =
-        `<img src="${image(hero)}">`;
+      img.innerHTML = `
+        <img
+          src="${heroImage(hero)}"
+        >
+      `;
 
-      nameBox.innerHTML =
-        `
-          ${escape(hero.localized_name)}
-          <button
-            onclick="event.stopPropagation();removeTeamHero(${p})"
-            style="
-              margin-left:4px;
-              color:#fb7185;
-              background:none;
-              font-size:11px;
-            "
-          >×</button>
-        `;
+      name.innerHTML = `
+        ${esc(hero.localized_name)}
 
-      nameBox.classList.remove(
-        "emptyName"
+        <button
+          class="removeTiny"
+          onclick="
+            event.stopPropagation();
+            removeTeam(${pos})
+          "
+        >
+          ×
+        </button>
+      `;
+
+      name.classList.remove(
+        "empty"
       );
 
     }else{
 
-      imgBox.innerHTML = "";
+      img.innerHTML =
+        "";
 
-      nameBox.textContent =
+      name.textContent =
         "PICK";
 
-      nameBox.classList.add(
-        "emptyName"
+      name.classList.add(
+        "empty"
       );
 
     }
@@ -2021,7 +2814,7 @@ function renderTeam(){
 
 
 /* =========================================================
-   ENEMIES
+   ENEMY RENDER
 ========================================================= */
 
 function renderEnemies(){
@@ -2034,13 +2827,14 @@ function renderEnemies(){
   document.getElementById(
     "enemyCount"
   ).textContent =
-    enemies.length + " / 5";
+    enemies.length +
+    " / 5";
 
   if(!enemies.length){
 
     box.innerHTML = `
-      <div class="enemyBox">
-        Выбери героя из Hero Pool,
+      <div class="emptyBox">
+        Выбери героя без активной позиции,
         чтобы добавить его врагом.
       </div>
     `;
@@ -2054,18 +2848,18 @@ function renderEnemies(){
       .map(
         (hero,i) => `
 
-          <div class="enemyItem">
+          <div class="enemyHero">
 
             <img
-              src="${image(hero)}"
+              src="${heroImage(hero)}"
             >
 
             <span>
-              ${escape(hero.localized_name)}
+              ${esc(hero.localized_name)}
             </span>
 
             <button
-              class="remove"
+              class="removeTiny"
               onclick="removeEnemy(${i})"
             >
               ×
@@ -2081,7 +2875,783 @@ function renderEnemies(){
 
 
 /* =========================================================
-   DRAFT ENGINE
+   D2PT META
+========================================================= */
+
+async function loadAllMeta(){
+
+  /*
+    Cache first.
+  */
+
+  const cached =
+    readCache(
+      "d2pt-meta-v3"
+    );
+
+  if(cached){
+
+    d2ptMeta =
+      cached;
+
+    return;
+
+  }
+
+
+  status(
+    "Loading D2PT role meta..."
+  );
+
+
+  const positions =
+    [1,2,3,4,5];
+
+  const results =
+    await Promise.all(
+      positions.map(
+        pos =>
+          loadPositionMeta(
+            pos
+          )
+      )
+    );
+
+  results.forEach(
+    (data,i) => {
+
+      if(
+        data &&
+        Object.keys(
+          data
+        ).length
+      ){
+
+        d2ptMeta[
+          i+1
+        ] =
+          data;
+
+      }else{
+
+        /*
+          fallback
+        */
+
+        d2ptMeta[
+          i+1
+        ] =
+          {};
+
+        FALLBACK_POSITIONS[
+          i+1
+        ].forEach(
+          (name,index) => {
+
+            const hero =
+              heroes.find(
+                h =>
+                  h.localized_name ===
+                  name
+              );
+
+            if(hero){
+
+              d2ptMeta[
+                i+1
+              ][hero.id] = {
+
+                rating:
+                  Math.max(
+                    40,
+                    95 -
+                    index*4
+                  ),
+
+                winRate:50,
+
+                matches:
+                  0,
+
+                tier:
+                  index < 2
+                    ? "S"
+                    : index < 5
+                      ? "A"
+                      : "B",
+
+                source:
+                  "fallback"
+
+              };
+
+            }
+
+          }
+        );
+
+      }
+
+    }
+  );
+
+
+  writeCache(
+    "d2pt-meta-v3",
+    d2ptMeta
+  );
+
+}
+
+
+/*
+  D2PT has separate pages:
+
+  /meta?position=pos+1
+  /meta?position=pos+2
+  ...
+*/
+
+async function loadPositionMeta(pos){
+
+  try{
+
+    const url =
+      D2PT_META +
+      "?position=pos+" +
+      pos;
+
+    const html =
+      await getTextFallback(
+        url
+      );
+
+    return parseD2PT(
+      html
+    );
+
+  }catch(e){
+
+    return {};
+
+  }
+
+}
+
+
+/*
+  Parse the visible D2PT hero links.
+
+  We deliberately require the hero name to match our
+  actual hero database, preventing random text from
+  becoming a "hero".
+*/
+
+function parseD2PT(html){
+
+  const parser =
+    new DOMParser();
+
+  const doc =
+    parser.parseFromString(
+      html,
+      "text/html"
+    );
+
+  const data = {};
+
+  const links =
+    Array.from(
+      doc.querySelectorAll(
+        "a"
+      )
+    );
+
+  links.forEach(
+    link => {
+
+      const text =
+        link.textContent
+          .replace(
+            /\s+/g,
+            " "
+          )
+          .trim();
+
+      const hero =
+        heroes.find(
+          h =>
+            h.localized_name
+              .toLowerCase() ===
+            text.toLowerCase()
+        );
+
+      if(!hero)
+        return;
+
+
+      /*
+        Search the closest useful container.
+      */
+
+      let parent =
+        link.parentElement;
+
+      let content =
+        "";
+
+      for(
+        let i=0;
+        i<5 &&
+        parent;
+        i++,
+        parent=parent.parentElement
+      ){
+
+        const txt =
+          parent.textContent
+            .replace(
+              /\s+/g,
+              " "
+            );
+
+        if(
+          txt.includes(
+            "%"
+          ) &&
+          txt.match(
+            /\d{1,2}\s*\/\s*100/
+          )
+        ){
+
+          content =
+            txt;
+
+          break;
+
+        }
+
+      }
+
+      if(!content)
+        return;
+
+
+      const ratingMatch =
+        content.match(
+          /(\d{1,3})\s*\/\s*100/
+        );
+
+      const wrMatches =
+        content.match(
+          /(\d{1,2}(?:\.\d+)?)%/g
+        );
+
+      const matchesMatch =
+        content.match(
+          /(\d{2,5}(?:,\d{3})?)/
+        );
+
+      if(!ratingMatch)
+        return;
+
+      data[
+        hero.id
+      ] = {
+
+        rating:
+          Number(
+            ratingMatch[1]
+          ),
+
+        winRate:
+          wrMatches &&
+          wrMatches.length
+            ? parseFloat(
+                wrMatches[0]
+              )
+            : 50,
+
+        matches:
+          matchesMatch
+            ? parseInt(
+                matchesMatch[1]
+                  .replace(
+                    /,/g,
+                    ""
+                  )
+              )
+            : 0,
+
+        tier:
+          content.match(
+            /\b[SABCDE]\b/
+          )?.[0] ||
+          "—",
+
+        source:
+          "D2PT"
+
+      };
+
+    }
+  );
+
+  return data;
+
+}
+
+
+/* =========================================================
+   POSITIONAL QUALITY
+========================================================= */
+
+function roleScore(hero,pos){
+
+  const data =
+    d2ptMeta[
+      pos
+    ]?.[
+      hero.id
+    ];
+
+  /*
+    D2PT knows the hero for this exact role.
+  */
+
+  if(data){
+
+    return clamp(
+      data.rating,
+      0,
+      100
+    );
+
+  }
+
+  /*
+    If D2PT does not have the hero in that role,
+    punish it hard.
+
+    This is what prevents things such as:
+    Mirana carry simply because Mirana has a high
+    general support rating.
+  */
+
+  return 18;
+
+}
+
+
+/* =========================================================
+   META SCORE
+========================================================= */
+
+function metaScore(hero,pos){
+
+  const data =
+    d2ptMeta[
+      pos
+    ]?.[
+      hero.id
+    ];
+
+  if(!data)
+    return 18;
+
+  return clamp(
+    data.rating,
+    0,
+    100
+  );
+
+}
+
+
+/* =========================================================
+   SYNERGY
+========================================================= */
+
+function pairKey(a,b){
+
+  return (
+    a.localized_name +
+    "|" +
+    b.localized_name
+  );
+
+}
+
+
+function synergyWithTeam(hero){
+
+  const allies =
+    Object
+      .values(team)
+      .filter(Boolean);
+
+  if(!allies.length)
+    return 50;
+
+  let score =
+    50;
+
+  allies.forEach(
+    ally => {
+
+      const key =
+        pairKey(
+          hero,
+          ally
+        );
+
+      const reverse =
+        pairKey(
+          ally,
+          hero
+        );
+
+      if(
+        PRO_SYNERGY[key]
+      ){
+
+        score +=
+          PRO_SYNERGY[key];
+
+      }else if(
+        PRO_SYNERGY[reverse]
+      ){
+
+        score +=
+          PRO_SYNERGY[reverse];
+
+      }
+
+      if(
+        ANTI_SYNERGY[key]
+      ){
+
+        score +=
+          ANTI_SYNERGY[key];
+
+      }else if(
+        ANTI_SYNERGY[reverse]
+      ){
+
+        score +=
+          ANTI_SYNERGY[reverse];
+
+      }
+
+    }
+  );
+
+
+  /*
+    Role balance.
+
+    We do NOT want five greedy cores.
+  */
+
+  const allySupports =
+    allies.filter(
+      h =>
+        h.roles.some(
+          r =>
+            r.toLowerCase() ===
+            "support"
+        )
+    ).length;
+
+  if(
+    allySupports < 2 &&
+    hero.roles.some(
+      r =>
+        r.toLowerCase() ===
+        "support"
+    )
+  ){
+
+    score += 8;
+
+  }
+
+  if(
+    allySupports >= 2 &&
+    hero.roles.some(
+      r =>
+        r.toLowerCase() ===
+        "carry"
+    )
+  ){
+
+    score += 6;
+
+  }
+
+
+  return clamp(
+    score,
+    0,
+    100
+  );
+
+}
+
+
+/* =========================================================
+   COUNTER SCORE
+========================================================= */
+
+function counterScore(hero){
+
+  if(!enemies.length)
+    return 50;
+
+  let total =
+    50;
+
+  let count =
+    0;
+
+  enemies.forEach(
+    enemy => {
+
+      const data =
+        matchupCache[
+          enemy.id
+        ];
+
+      if(!data)
+        return;
+
+      const row =
+        data.find(
+          x =>
+            x.opponentId ===
+            hero.id
+        );
+
+      if(!row)
+        return;
+
+      /*
+        Positive advantage for the candidate.
+      */
+
+      total +=
+        row.advantage *
+        4;
+
+      count++;
+
+    }
+  );
+
+  if(!count)
+    return 50;
+
+  return clamp(
+    total,
+    0,
+    100
+  );
+
+}
+
+
+/* =========================================================
+   BAD HERO PROTECTION
+========================================================= */
+
+function qualityPenalty(hero,pos){
+
+  const meta =
+    d2ptMeta[
+      pos
+    ]?.[
+      hero.id
+    ];
+
+  if(!meta)
+    return 30;
+
+  /*
+    D/E tier heroes are not automatically banned,
+    but they need a strong matchup to compensate.
+  */
+
+  if(
+    meta.tier === "E"
+  )
+    return 25;
+
+  if(
+    meta.tier === "D"
+  )
+    return 15;
+
+  return 0;
+
+}
+
+
+/* =========================================================
+   EVALUATE HERO
+========================================================= */
+
+function evaluateHero(hero,pos){
+
+  const role =
+    roleScore(
+      hero,
+      pos
+    );
+
+  const meta =
+    metaScore(
+      hero,
+      pos
+    );
+
+  const syn =
+    synergyWithTeam(
+      hero
+    );
+
+  const ctr =
+    counterScore(
+      hero
+    );
+
+  const penalty =
+    qualityPenalty(
+      hero,
+      pos
+    );
+
+
+  /*
+    IMPORTANT:
+
+    Role + Meta are intentionally the largest factors.
+
+    A statistically nice counter should NOT make a
+    terrible position pick suddenly become #1.
+  */
+
+  let score =
+    role * .30 +
+    meta * .30 +
+    syn * .17 +
+    ctr * .23 -
+    penalty;
+
+
+  /*
+    If candidate is not a real D2PT hero for this role,
+    don't allow matchup data to rescue it.
+  */
+
+  if(role < 30){
+
+    score *=
+      .55;
+
+  }
+
+
+  let reasons = [];
+
+
+  if(role >= 80)
+    reasons.push(
+      "сильный pick именно на этой позиции"
+    );
+  else if(role >= 60)
+    reasons.push(
+      "нормально вписывается в эту позицию"
+    );
+  else if(role < 30)
+    reasons.push(
+      "слабый positional fit"
+    );
+
+
+  if(meta >= 75)
+    reasons.push(
+      "высокий D2PT meta-рейтинг"
+    );
+  else if(meta >= 60)
+    reasons.push(
+      "есть положительный meta-сигнал"
+    );
+  else if(meta < 30)
+    reasons.push(
+      "низкий приоритет в текущей мете"
+    );
+
+
+  if(syn >= 70)
+    reasons.push(
+      "сильная синергия с союзниками"
+    );
+
+
+  if(ctr >= 70)
+    reasons.push(
+      "хорошие ответы на показанных врагов"
+    );
+
+
+  if(
+    penalty >= 15
+  ){
+
+    reasons.push(
+      "герой проседает по tier"
+    );
+
+  }
+
+
+  if(!reasons.length){
+
+    reasons.push(
+      "сбалансированный, но не идеальный выбор"
+    );
+
+  }
+
+
+  return {
+
+    hero,
+
+    score,
+
+    role,
+
+    meta,
+
+    syn,
+
+    ctr,
+
+    penalty,
+
+    reason:
+      reasons.join(
+        " • "
+      )
+
+  };
+
+}
+
+
+/* =========================================================
+   RECOMMENDATIONS
 ========================================================= */
 
 function renderRecommendations(){
@@ -2094,44 +3664,59 @@ function renderRecommendations(){
   if(!heroes.length)
     return;
 
+
   /*
-    Find next empty position.
+    First free position.
   */
 
-  let pos = null;
+  let pos =
+    selectedPosition;
 
-  for(let p=1;p<=5;p++){
+  if(!pos){
 
-    if(!team[p]){
+    for(
+      let p=1;
+      p<=5;
+      p++
+    ){
 
-      pos = p;
-      break;
+      if(
+        !team[p]
+      ){
+
+        pos =
+          p;
+
+        break;
+
+      }
 
     }
 
   }
 
+
   if(!pos){
 
     box.innerHTML = `
-      <div class="empty">
-        Ваша команда собрана.
+      <div class="emptyBox">
+        Все позиции заполнены.
+        Нажми FINISH DRAFT.
       </div>
     `;
-
-    document.getElementById(
-      "draftTitle"
-    ).textContent =
-      "DRAFT COMPLETE";
 
     return;
 
   }
 
+
   const candidates =
     heroes
       .filter(
-        h => !isUsed(h.id)
+        hero =>
+          !isUsed(
+            hero.id
+          )
       )
       .map(
         hero =>
@@ -2140,472 +3725,100 @@ function renderRecommendations(){
             pos
           )
       )
+      .filter(
+        x =>
+          x.role >= 30
+      )
       .sort(
         (a,b) =>
-          b.score-a.score
+          b.score -
+          a.score
       )
-      .slice(0,4);
+      .slice(
+        0,
+        8
+      );
 
-  document.getElementById(
-    "draftTitle"
-  ).textContent =
-    "BEST PICK FOR POSITION " + pos;
 
   document.getElementById(
     "recommendInfo"
   ).textContent =
-    "Meta + Synergy + Counter";
+    "Pos " +
+    pos +
+    " • D2PT weighted";
+
 
   box.innerHTML =
     candidates
       .map(
-        x => {
+        (x,i) => `
 
-          return `
-            <div
-              class="rec"
-              onclick="pickRecommended(${x.hero.id},${pos})"
+          <div
+            class="rec ${i===0?"best":""}"
+            onclick="
+              recommendedPick(
+                ${x.hero.id},
+                ${pos}
+              )
+            "
+          >
+
+            <img
+              src="${heroImage(x.hero)}"
             >
 
-              <img
-                src="${image(x.hero)}"
-              >
+            <div class="recName">
+              ${esc(
+                x.hero.localized_name
+              )}
+            </div>
 
-              <div class="recName">
-                ${escape(x.hero.localized_name)}
-              </div>
+            <div class="recScore">
+              ${Math.round(x.score)}/100
+            </div>
 
-              <div class="tags">
+            <div class="recTags">
 
-                <span class="tag meta">
-                  META ${Math.round(x.meta)}
-                </span>
+              <span class="tag meta">
+                META ${Math.round(x.meta)}
+              </span>
 
-                <span class="tag synergy">
-                  SYN ${Math.round(x.synergy)}
-                </span>
+              <span class="tag good">
+                ROLE ${Math.round(x.role)}
+              </span>
 
-                <span class="tag counter">
-                  CTR ${Math.round(x.counter)}
-                </span>
+              <span class="tag good">
+                SYN ${Math.round(x.syn)}
+              </span>
 
-              </div>
-
-              <div class="reason">
-                ${escape(x.reason)}
-              </div>
+              <span class="tag">
+                CTR ${Math.round(x.ctr)}
+              </span>
 
             </div>
-          `;
 
-        }
+            <div class="recReason">
+              ${esc(x.reason)}
+            </div>
+
+          </div>
+
+        `
       )
       .join("");
 
-}
 
-
-/* =========================================================
-   HERO EVALUATION
-========================================================= */
-
-function evaluateHero(hero,pos){
-
-  let role =
-    roleFit(
-      hero,
-      pos
-    );
-
-  let meta =
-    metaScore(
-      hero,
-      pos
-    );
-
-  let synergy =
-    synergyScore(
-      hero
-    );
-
-  let counter =
-    counterScore(
-      hero
-    );
-
-  /*
-    Weighted final score.
-  */
-
-  let score =
-    role * .27 +
-    meta * .28 +
-    synergy * .20 +
-    counter * .25;
-
-
-  let reasons = [];
-
-  if(role >= 75)
-    reasons.push(
-      "идеально подходит под позицию"
-    );
-  else if(role >= 55)
-    reasons.push(
-      "хорошо подходит по роли"
-    );
-
-  if(meta >= 75)
-    reasons.push(
-      "сильный герой текущей меты D2PT"
-    );
-  else if(meta >= 60)
-    reasons.push(
-      "имеет хороший meta-сигнал"
-    );
-
-  if(synergy >= 70)
-    reasons.push(
-      "хорошо сочетается с вашей командой"
-    );
-
-  if(counter >= 70)
-    reasons.push(
-      "хорошо отвечает на уже показанных врагов"
-    );
-
-  if(!reasons.length)
-    reasons.push(
-      "сбалансированный выбор для текущего драфта"
-    );
-
-  return {
-
-    hero,
-
-    score,
-
-    role,
-    meta,
-    synergy,
-    counter,
-
-    reason:
-      reasons.join(" • ")
-
-  };
-
-}
-
-
-/* =========================================================
-   ROLE FIT
-========================================================= */
-
-function roleFit(hero,pos){
-
-  const roles =
-    hero.roles
-      .map(
-        r => r.toLowerCase()
-      );
-
-  let score = 35;
-
-  if(pos === 1){
-
-    if(roles.includes("carry"))
-      score += 55;
-
-    if(roles.includes("escape"))
-      score += 10;
-
-  }
-
-  if(pos === 2){
-
-    if(roles.includes("nuker"))
-      score += 45;
-
-    if(roles.includes("escape"))
-      score += 20;
-
-  }
-
-  if(pos === 3){
-
-    if(roles.includes("durable"))
-      score += 45;
-
-    if(roles.includes("initiator"))
-      score += 25;
-
-  }
-
-  if(pos === 4){
-
-    if(roles.includes("support"))
-      score += 40;
-
-    if(roles.includes("disabler"))
-      score += 25;
-
-    if(roles.includes("nuker"))
-      score += 10;
-
-  }
-
-  if(pos === 5){
-
-    if(roles.includes("support"))
-      score += 50;
-
-    if(roles.includes("disabler"))
-      score += 20;
-
-  }
-
-  return Math.min(
-    100,
-    score
+  updateDraftMetrics(
+    candidates[0]
   );
 
 }
 
 
-/* =========================================================
-   META SCORE
-========================================================= */
-
-function metaScore(hero,pos){
-
-  const data =
-    metaCache[hero.id];
-
-  if(!data)
-    return 50;
-
-  /*
-    D2PT rating gets the main weight.
-  */
-
-  let score =
-    data.rating;
-
-  /*
-    Small WR adjustment.
-  */
-
-  score +=
-    (data.winRate - 50) * 2;
-
-  return clamp(
-    score,
-    0,
-    100
-  );
-
-}
-
-
-/* =========================================================
-   SYNERGY
-========================================================= */
-
-function synergyScore(hero){
-
-  if(!Object.values(team).some(Boolean))
-    return 50;
-
-  let score = 45;
-
-  const allies =
-    Object
-      .values(team)
-      .filter(Boolean);
-
-  allies.forEach(
-    ally => {
-
-      const a =
-        ally.localized_name
-          .toLowerCase();
-
-      const h =
-        hero.localized_name
-          .toLowerCase();
-
-      /*
-        Known strong conceptual combos.
-        These supplement statistical data.
-      */
-
-      const combo =
-        {
-
-          "dark seer|juggernaut":18,
-          "juggernaut|dark seer":18,
-
-          "magnus|phantom lancer":17,
-          "phantom lancer|magnus":17,
-
-          "magnus|faceless void":18,
-          "faceless void|magnus":18,
-
-          "enigma|faceless void":16,
-          "faceless void|enigma":16,
-
-          "mars|snapfire":16,
-          "snapfire|mars":16,
-
-          "mars|invoker":10,
-          "invoker|mars":10,
-
-          "tidehunter|disruptor":14,
-          "disruptor|tidehunter":14,
-
-          "earthshaker|juggernaut":10,
-          "juggernaut|earthshaker":10,
-
-          "venomancer|faceless void":12,
-          "faceless void|venomancer":12,
-
-          "grimstroke|phantom assassin":12,
-          "phantom assassin|grimstroke":12,
-
-          "io|tiny":16,
-          "tiny|io":16,
-
-          "io|luna":12,
-          "luna|io":12,
-
-          "oracle|huskar":13,
-          "huskar|oracle":13,
-
-          "shadow demon|luna":11,
-          "luna|shadow demon":11
-
-        };
-
-      const key =
-        a + "|" + h;
-
-      if(combo[key])
-        score += combo[key];
-
-    }
-  );
-
-  /*
-    Basic role balance.
-
-    If team has no support, support heroes get more
-    synergy value. If there are already 3 supports,
-    carry/offlane/mid get a small bonus.
-  */
-
-  const supportCount =
-    allies.filter(
-      x =>
-        x.roles.includes("Support") ||
-        x.roles.includes("support")
-    ).length;
-
-  const roles =
-    hero.roles.map(
-      r => r.toLowerCase()
-    );
-
-  if(
-    supportCount < 2 &&
-    roles.includes("support")
-  )
-    score += 12;
-
-  if(
-    supportCount >= 2 &&
-    roles.includes("carry")
-  )
-    score += 7;
-
-  return clamp(
-    score,
-    0,
-    100
-  );
-
-}
-
-
-/* =========================================================
-   COUNTER SCORE FOR DRAFT
-========================================================= */
-
-function counterScore(hero){
-
-  if(!enemies.length)
-    return 50;
-
-  /*
-    If we have already loaded Dotabuff/OpenDota matchups
-    for the enemy, use those numbers.
-
-    Otherwise use a mechanical fallback.
-  */
-
-  let values = [];
-
-  enemies.forEach(
-    enemy => {
-
-      const data =
-        matchupCache[enemy.id];
-
-      if(data){
-
-        const row =
-          data.find(
-            x =>
-              x.opponentId === hero.id
-          );
-
-        if(row){
-
-          values.push(
-            50 +
-            row.advantage * 7
-          );
-
-        }
-
-      }
-
-    }
-  );
-
-  if(values.length){
-
-    return clamp(
-      values.reduce(
-        (a,b)=>a+b,
-        0
-      ) / values.length,
-      0,
-      100
-    );
-
-  }
-
-  return 50;
-
-}
-
-
-/* =========================================================
-   PICK RECOMMENDED
-========================================================= */
-
-function pickRecommended(id,pos){
+function recommendedPick(
+  id,
+  pos
+){
 
   const hero =
     heroMap[id];
@@ -2613,7 +3826,9 @@ function pickRecommended(id,pos){
   if(!hero)
     return;
 
-  if(isUsed(id))
+  if(
+    isUsed(id)
+  )
     return;
 
   team[pos] =
@@ -2622,6 +3837,17 @@ function pickRecommended(id,pos){
   selectedPosition =
     null;
 
+  document
+    .querySelectorAll(
+      ".positionCard"
+    )
+    .forEach(
+      x =>
+        x.classList.remove(
+          "selected"
+        )
+    );
+
   renderTeam();
   renderRecommendations();
 
@@ -2629,30 +3855,72 @@ function pickRecommended(id,pos){
 
 
 /* =========================================================
-   COUNTER FINDER
+   DRAFT METRICS
 ========================================================= */
 
-function toggleCounterPicker(){
+function updateDraftMetrics(x){
 
-  const el =
-    document.getElementById(
-      "counterPicker"
+  if(!x){
+
+    [
+      "mMeta",
+      "mRole",
+      "mSyn",
+      "mCtr",
+      "mRisk"
+    ].forEach(
+      id =>
+        document.getElementById(
+          id
+        ).textContent =
+          "—"
     );
 
-  if(
-    el.style.display === "none"
-  ){
-
-    el.style.display = "";
-
-  }else{
-
-    el.style.display = "none";
+    return;
 
   }
 
+  document.getElementById(
+    "mMeta"
+  ).textContent =
+    Math.round(
+      x.meta
+    );
+
+  document.getElementById(
+    "mRole"
+  ).textContent =
+    Math.round(
+      x.role
+    );
+
+  document.getElementById(
+    "mSyn"
+  ).textContent =
+    Math.round(
+      x.syn
+    );
+
+  document.getElementById(
+    "mCtr"
+  ).textContent =
+    Math.round(
+      x.ctr
+    );
+
+  document.getElementById(
+    "mRisk"
+  ).textContent =
+    x.penalty
+      ? "HIGH"
+      : "LOW";
+
 }
 
+
+/* =========================================================
+   COUNTER PICKER
+========================================================= */
 
 function renderCounterPicker(){
 
@@ -2668,36 +3936,46 @@ function renderCounterPicker(){
     (
       document.getElementById(
         "counterSearch"
-      )?.value || ""
+      )?.value ||
+      ""
     )
       .toLowerCase()
       .trim();
 
   const list =
     heroes.filter(
-      hero =>
+      h =>
         !query ||
-        hero.localized_name
+        h.localized_name
           .toLowerCase()
-          .includes(query)
+          .includes(
+            query
+          )
     );
+
 
   box.innerHTML =
     list
       .map(
-        hero => `
+        h => `
 
           <button
-            class="picker"
-            onclick="selectCounterHeroById(${hero.id})"
+            class="pickerHero"
+            onclick="
+              selectCounterHeroById(
+                ${h.id}
+              )
+            "
           >
 
             <img
-              src="${image(hero)}"
+              src="${heroImage(h)}"
             >
 
             <span>
-              ${escape(hero.localized_name)}
+              ${esc(
+                h.localized_name
+              )}
             </span>
 
           </button>
@@ -2714,33 +3992,100 @@ function selectCounterHeroById(id){
   const hero =
     heroMap[id];
 
-  if(hero)
-    selectCounterHero(hero);
-
-}
-
-
-async function selectCounterHero(hero){
+  if(!hero)
+    return;
 
   counterHero =
     hero;
 
-  document.getElementById(
-    "counterName"
-  ).textContent =
-    hero.localized_name;
+  updateCounterHeader();
 
-  document.getElementById(
-    "counterImg"
-  ).src =
-    image(hero);
+  loadCounters(
+    hero,
+    false
+  );
 
-  document.getElementById(
-    "counterInfo"
-  ).textContent =
-    "Загрузка статистики matchup...";
+}
 
-  await loadCounters(hero);
+
+/* =========================================================
+   COUNTER CACHE
+========================================================= */
+
+function counterCacheKey(hero){
+
+  return (
+    "counter-v5-" +
+    hero.id
+  );
+
+}
+
+
+function readCounterCache(hero){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        counterCacheKey(
+          hero
+        )
+      );
+
+    if(!raw)
+      return null;
+
+    const data =
+      JSON.parse(
+        raw
+      );
+
+    if(
+      Date.now() -
+      data.time >
+      CACHE_TIME
+    ){
+
+      localStorage.removeItem(
+        counterCacheKey(
+          hero
+        )
+      );
+
+      return null;
+
+    }
+
+    return data.value;
+
+  }catch(e){
+
+    return null;
+
+  }
+
+}
+
+
+function writeCounterCache(
+  hero,
+  value
+){
+
+  try{
+
+    localStorage.setItem(
+      counterCacheKey(
+        hero
+      ),
+      JSON.stringify({
+        time:Date.now(),
+        value
+      })
+    );
+
+  }catch(e){}
 
 }
 
@@ -2749,7 +4094,12 @@ async function selectCounterHero(hero){
    COUNTERS
 ========================================================= */
 
-async function loadCounters(hero){
+async function loadCounters(
+  hero,
+  silent
+){
+
+  updateCounterHeader();
 
   const box =
     document.getElementById(
@@ -2761,15 +4111,56 @@ async function loadCounters(hero){
       "counterSource"
     );
 
-  box.innerHTML = `
-    <div class="loading">
-      <div class="spinner"></div>
-      Ищу контрпики в открытых источниках...
-    </div>
-  `;
+
+  /*
+    CACHE = instant.
+  */
+
+  const cached =
+    readCounterCache(
+      hero
+    );
+
+  if(cached){
+
+    matchupCache[
+      hero.id
+    ] =
+      cached.data;
+
+    renderCounters(
+      hero,
+      cached.data,
+      cached.source +
+      " • cached"
+    );
+
+    /*
+      Silent background refresh.
+    */
+
+    refreshCounterBackground(
+      hero
+    );
+
+    return;
+
+  }
+
+
+  if(!silent){
+
+    box.innerHTML = `
+      <div class="emptyBox">
+        Loading matchup data...
+      </div>
+    `;
+
+  }
+
 
   source.textContent =
-    "loading";
+    "searching";
 
 
   /*
@@ -2779,26 +4170,38 @@ async function loadCounters(hero){
   try{
 
     const data =
-      await json(
-        OPENDOTA +
+      await getJSON(
+        OD +
         "/heroes/" +
         hero.id +
         "/matchups"
       );
 
-    const clean =
+    const normalized =
       normalizeOpenDota(
         data
       );
 
-    if(clean.length){
+    if(
+      normalized.length
+    ){
 
-      matchupCache[hero.id] =
-        clean;
+      matchupCache[
+        hero.id
+      ] =
+        normalized;
+
+      writeCounterCache(
+        hero,
+        {
+          source:"OpenDota",
+          data:normalized
+        }
+      );
 
       renderCounters(
         hero,
-        clean,
+        normalized,
         "OpenDota"
       );
 
@@ -2816,15 +4219,16 @@ async function loadCounters(hero){
 
 
   /*
-    2. Dotabuff
+    2. Dotabuff.
   */
 
   try{
 
     const html =
-      await getTextWithFallback(
+      await getTextFallback(
         DOTABUFF +
-        dotabuffSlug(hero)
+        slug(hero) +
+        "/counters"
       );
 
     const parsed =
@@ -2832,10 +4236,22 @@ async function loadCounters(hero){
         html
       );
 
-    if(parsed.length){
+    if(
+      parsed.length
+    ){
 
-      matchupCache[hero.id] =
+      matchupCache[
+        hero.id
+      ] =
         parsed;
+
+      writeCounterCache(
+        hero,
+        {
+          source:"Dotabuff",
+          data:parsed
+        }
+      );
 
       renderCounters(
         hero,
@@ -2850,23 +4266,24 @@ async function loadCounters(hero){
   }catch(e){
 
     console.warn(
-      "Dotabuff failed",
-      e
+      "Dotabuff failed"
     );
 
   }
 
 
   /*
-    3. Mechanical fallback.
-
-    This is NOT presented as statistical data.
+    3. Fallback.
   */
 
   const fallback =
-    mechanicalCounters(hero);
+    mechanicalCounter(
+      hero
+    );
 
-  if(fallback.length){
+  if(
+    fallback.length
+  ){
 
     renderCounters(
       hero,
@@ -2880,19 +4297,10 @@ async function loadCounters(hero){
 
 
   box.innerHTML = `
-    <div class="empty">
-
-      Не удалось получить статистику.
-
+    <div class="emptyBox">
+      Источник статистики временно недоступен.
       <br><br>
-
-      OpenDota и Dotabuff временно недоступны
-      из браузера.
-
-      <br><br>
-
-      Попробуй выбрать героя ещё раз.
-
+      Попробуй обновить через несколько секунд.
     </div>
   `;
 
@@ -2902,8 +4310,87 @@ async function loadCounters(hero){
 }
 
 
+/*
+  Cached result is shown immediately,
+  then updated in background.
+*/
+
+async function refreshCounterBackground(hero){
+
+  try{
+
+    const data =
+      await getJSON(
+        OD +
+        "/heroes/" +
+        hero.id +
+        "/matchups"
+      );
+
+    const normalized =
+      normalizeOpenDota(
+        data
+      );
+
+    if(
+      normalized.length
+    ){
+
+      matchupCache[
+        hero.id
+      ] =
+        normalized;
+
+      writeCounterCache(
+        hero,
+        {
+          source:"OpenDota",
+          data:normalized
+        }
+      );
+
+      if(
+        counterHero &&
+        counterHero.id ===
+        hero.id
+      ){
+
+        renderCounters(
+          hero,
+          normalized,
+          "OpenDota"
+        );
+
+      }
+
+    }
+
+  }catch(e){}
+
+}
+
+
+function refreshCounter(){
+
+  if(!counterHero)
+    return;
+
+  localStorage.removeItem(
+    counterCacheKey(
+      counterHero
+    )
+  );
+
+  loadCounters(
+    counterHero,
+    false
+  );
+
+}
+
+
 /* =========================================================
-   OPENDOTA NORMALIZATION
+   OPENDOTA PARSER
 ========================================================= */
 
 function normalizeOpenDota(data){
@@ -2913,13 +4400,13 @@ function normalizeOpenDota(data){
     .filter(
       x =>
         x.hero_id &&
-        x.games_played >= 50
+        x.games_played >= 30
     )
 
     .map(
       x => {
 
-        const winRate =
+        const wr =
           x.wins /
           x.games_played *
           100;
@@ -2936,10 +4423,10 @@ function normalizeOpenDota(data){
             x.wins,
 
           heroWinRate:
-            winRate,
+            wr,
 
           advantage:
-            50-winRate
+            50 - wr
 
         };
 
@@ -2947,13 +4434,14 @@ function normalizeOpenDota(data){
     )
 
     .sort(
-      (a,b)=>
-        b.advantage-a.advantage
+      (a,b) =>
+        b.advantage -
+        a.advantage
     )
 
     .slice(
       0,
-      10
+      12
     );
 
 }
@@ -2963,9 +4451,9 @@ function normalizeOpenDota(data){
    DOTABUFF
 ========================================================= */
 
-function dotabuffSlug(hero){
+function slug(hero){
 
-  const aliases = {
+  const special = {
 
     "Anti-Mage":
       "anti-mage",
@@ -2987,9 +4475,6 @@ function dotabuffSlug(hero){
 
     "Death Prophet":
       "death-prophet",
-
-    "Doom":
-      "doom",
 
     "Dragon Knight":
       "dragon-knight",
@@ -3066,9 +4551,6 @@ function dotabuffSlug(hero){
     "Underlord":
       "underlord",
 
-    "Ursa":
-      "ursa",
-
     "Vengeful Spirit":
       "vengeful-spirit",
 
@@ -3089,149 +4571,180 @@ function dotabuffSlug(hero){
 
   };
 
-  if(aliases[hero.localized_name])
-    return aliases[hero.localized_name];
+  if(
+    special[
+      hero.localized_name
+    ]
+  ){
+
+    return special[
+      hero.localized_name
+    ];
+
+  }
 
   return hero.localized_name
     .toLowerCase()
-    .replace(/'/g,"")
-    .replace(/[^a-z0-9]+/g,"-")
-    .replace(/^-|-$/g,"");
+    .replace(
+      /'/g,
+      ""
+    )
+    .replace(
+      /[^a-z0-9]+/g,
+      "-"
+    )
+    .replace(
+      /^-|-$/g,
+      ""
+    );
 
 }
 
 
-/* =========================================================
-   PARSE DOTABUFF
-========================================================= */
-
 function parseDotabuff(html){
 
-  const results = [];
+  const parser =
+    new DOMParser();
+
+  const doc =
+    parser.parseFromString(
+      html,
+      "text/html"
+    );
+
+  const result = [];
+
 
   /*
-    DOTABUFF exposes matchup tables in the page HTML.
-
-    We look for:
-      Hero name
-      disadvantage
-      hero win rate
-      matches
+    Search table rows instead of trying
+    to parse the entire HTML with one regex.
   */
 
-  const clean =
-    html
-      .replace(/<script[\s\S]*?<\/script>/gi," ")
-      .replace(/<style[\s\S]*?<\/style>/gi," ");
-
   const rows =
-    clean.match(
-      /<tr[\s\S]*?<\/tr>/gi
-    ) || [];
+    Array.from(
+      doc.querySelectorAll(
+        "tr"
+      )
+    );
+
 
   rows.forEach(
     row => {
 
       const cells =
-        (
-          row.match(
-            /<td[\s\S]*?<\/td>/gi
-          ) || []
+        Array.from(
+          row.querySelectorAll(
+            "td"
+          )
         )
           .map(
-            x =>
-              strip(
-                x
-              )
+            td =>
+              td.textContent
+                .replace(
+                  /\s+/g,
+                  " "
+                )
+                .trim()
           )
           .filter(Boolean);
 
-      if(cells.length < 3)
+      if(
+        cells.length <
+        2
+      )
         return;
 
-      const name =
+
+      const heroName =
         cells[0];
-
-      const numbers =
-        cells
-          .slice(1)
-          .join(" ");
-
-      const advantageMatch =
-        numbers.match(
-          /([+-]?\d+(?:\.\d+)?)%/
-        );
-
-      if(!advantageMatch)
-        return;
 
       const hero =
         heroes.find(
           h =>
             h.localized_name
               .toLowerCase() ===
-            name.toLowerCase()
+            heroName.toLowerCase()
         );
 
       if(!hero)
         return;
 
-      const wrMatch =
-        numbers.match(
-          /(\d+(?:\.\d+)?)%/
+
+      const all =
+        cells
+          .slice(1)
+          .join(" ");
+
+
+      /*
+        First percentage is normally
+        the matchup disadvantage.
+      */
+
+      const pct =
+        all.match(
+          /([+-]?\d+(?:\.\d+)?)%/
         );
 
-      const gamesMatch =
-        numbers.match(
-          /([\d,]{3,})/
+      if(!pct)
+        return;
+
+
+      const nums =
+        all.match(
+          /[\d,]{3,}/g
         );
 
-      const advantage =
-        parseFloat(
-          advantageMatch[1]
-        );
 
-      results.push({
+      result.push({
 
         opponentId:
           hero.id,
 
+        advantage:
+          parseFloat(
+            pct[1]
+          ),
+
         games:
-          gamesMatch
+          nums &&
+          nums.length
             ? parseInt(
-                gamesMatch[1]
-                  .replace(/,/g,"")
+                nums[
+                  nums.length-1
+                ].replace(
+                  /,/g,
+                  ""
+                )
               )
             : 0,
 
         wins:0,
 
-        heroWinRate:
-          wrMatch
-            ? parseFloat(
-                wrMatch[1]
-              )
-            : 50,
-
-        advantage
+        heroWinRate:0
 
       });
 
     }
   );
 
-  return results
+
+  return result
+
     .filter(
       x =>
         x.advantage > 0
     )
+
     .sort(
-      (a,b)=>
-        b.advantage-a.advantage
+      (a,b) =>
+        b.advantage -
+        a.advantage
     )
+
     .slice(
       0,
-      10
+      12
     );
 
 }
@@ -3241,84 +4754,118 @@ function parseDotabuff(html){
    MECHANICAL FALLBACK
 ========================================================= */
 
-function mechanicalCounters(hero){
+const MECHANICAL = {
 
-  const rules = {
+  "Broodmother":[
+    "Earthshaker",
+    "Sand King",
+    "Meepo",
+    "Necrophos"
+  ],
 
-    "Broodmother":[
-      "Earthshaker",
-      "Sand King",
-      "Meepo",
-      "Necrophos"
-    ],
+  "Phantom Lancer":[
+    "Axe",
+    "Earthshaker",
+    "Leshrac",
+    "Sven"
+  ],
 
-    "Phantom Lancer":[
-      "Axe",
-      "Earthshaker",
-      "Leshrac",
-      "Sven"
-    ],
+  "Naga Siren":[
+    "Axe",
+    "Earthshaker",
+    "Ember Spirit",
+    "Leshrac"
+  ],
 
-    "Naga Siren":[
-      "Axe",
-      "Earthshaker",
-      "Ember Spirit",
-      "Leshrac"
-    ],
+  "Terrorblade":[
+    "Axe",
+    "Necrophos",
+    "Winter Wyvern",
+    "Phantom Lancer"
+  ],
 
-    "Terrorblade":[
-      "Axe",
-      "Necrophos",
-      "Winter Wyvern",
-      "Phantom Lancer"
-    ],
+  "Meepo":[
+    "Earthshaker",
+    "Winter Wyvern",
+    "Axe",
+    "Sven"
+  ],
 
-    "Meepo":[
-      "Earthshaker",
-      "Winter Wyvern",
-      "Axe",
-      "Sven"
-    ],
+  "Templar Assassin":[
+    "Viper",
+    "Huskar",
+    "Batrider"
+  ],
 
-    "Templar Assassin":[
-      "Viper",
-      "Huskar",
-      "Batrider",
-      "Viper"
-    ],
+  "Anti-Mage":[
+    "Huskar",
+    "Meepo",
+    "Axe",
+    "Slardar",
+    "Troll Warlord"
+  ],
 
-    "Pudge":[
-      "Viper",
-      "Slark",
-      "Lifestealer",
-      "Necrophos"
-    ],
+  "Enigma":[
+    "Rubick",
+    "Bristleback",
+    "Medusa",
+    "Sniper",
+    "Wraith King"
+  ],
 
-    "Slark":[
-      "Bloodseeker",
-      "Legion Commander",
-      "Viper",
-      "Razor"
-    ],
+  "Bounty Hunter":[
+    "Naga Siren",
+    "Meepo",
+    "Beastmaster",
+    "Abaddon",
+    "Slark"
+  ],
 
-    "Riki":[
-      "Naga Siren",
-      "Underlord",
-      "Bloodseeker",
-      "Bristleback"
-    ],
+  "Mirana":[
+    "Chen",
+    "Puck",
+    "Meepo",
+    "Naga Siren",
+    "Bounty Hunter"
+  ],
 
-    "Puck":[
-      "Night Stalker",
-      "Broodmother",
-      "Dragon Knight",
-      "Huskar"
-    ]
+  "Riki":[
+    "Bloodseeker",
+    "Bounty Hunter",
+    "Naga Siren",
+    "Slark"
+  ],
 
-  };
+  "Puck":[
+    "Night Stalker",
+    "Batrider",
+    "Huskar",
+    "Silencer"
+  ],
+
+  "Rubick":[
+    "Huskar",
+    "Templar Assassin",
+    "Nature's Prophet",
+    "Batrider",
+    "Ursa"
+  ],
+
+  "Clockwerk":[
+    "Naga Siren",
+    "Phantom Lancer",
+    "Beastmaster",
+    "Terrorblade",
+    "Anti-Mage"
+  ]
+
+};
+
+
+function mechanicalCounter(hero){
 
   const names =
-    rules[
+    MECHANICAL[
       hero.localized_name
     ];
 
@@ -3326,37 +4873,76 @@ function mechanicalCounters(hero){
     return [];
 
   return names
+
     .map(
-      name =>
-        heroes.find(
-          h =>
-            h.localized_name === name
-        )
+      (name,i) => {
+
+        const h =
+          heroes.find(
+            x =>
+              x.localized_name ===
+              name
+          );
+
+        if(!h)
+          return null;
+
+        return {
+
+          opponentId:
+            h.id,
+
+          advantage:
+            7 -
+            i,
+
+          games:0,
+
+          wins:0,
+
+          heroWinRate:0
+
+        };
+
+      }
     )
-    .filter(Boolean)
-    .map(
-      (h,i) => ({
 
-        opponentId:
-          h.id,
-
-        games:0,
-
-        wins:0,
-
-        heroWinRate:0,
-
-        advantage:
-          7-i
-
-      })
-    );
+    .filter(Boolean);
 
 }
 
 
 /* =========================================================
-   RENDER COUNTERS
+   COUNTER HEADER
+========================================================= */
+
+function updateCounterHeader(){
+
+  if(!counterHero)
+    return;
+
+  document.getElementById(
+    "counterName"
+  ).textContent =
+    counterHero.localized_name;
+
+  document.getElementById(
+    "counterImg"
+  ).src =
+    heroImage(
+      counterHero
+    );
+
+  document.getElementById(
+    "counterInfo"
+  ).textContent =
+    "OpenDota → Dotabuff → mechanical fallback";
+
+}
+
+
+/* =========================================================
+   COUNTER RENDER
 ========================================================= */
 
 function renderCounters(
@@ -3365,97 +4951,83 @@ function renderCounters(
   source
 ){
 
-  document.getElementById(
-    "counterSource"
-  ).textContent =
-    source;
-
-  document.getElementById(
-    "counterInfo"
-  ).textContent =
-    source === "Mechanics fallback"
-      ? "Механические ответы • без статистики"
-      : "Текущая matchup-статистика • " + source;
-
   const box =
     document.getElementById(
       "counterResults"
     );
 
-  if(!data.length){
+  document.getElementById(
+    "counterSource"
+  ).textContent =
+    source;
 
-    box.innerHTML =
-      `<div class="empty">No data</div>`;
-
-    return;
-
-  }
 
   box.innerHTML = `
     <div class="counterGrid">
 
       ${
         data
-          .slice(0,10)
+          .slice(
+            0,
+            10
+          )
           .map(
             (row,i) => {
 
-              const opponent =
+              const hero =
                 heroMap[
                   row.opponentId
                 ];
 
-              if(!opponent)
+              if(!hero)
                 return "";
-
-              const reason =
-                counterExplanation(
-                  target,
-                  opponent
-                );
 
               return `
 
                 <div class="counterCard">
 
-                  <span class="rank">
+                  <span class="counterRank">
                     #${i+1}
                   </span>
 
                   <img
-                    src="${image(opponent)}"
+                    src="${heroImage(hero)}"
                   >
 
-                  <div class="counterName">
-                    ${escape(
-                      opponent.localized_name
+                  <h3>
+                    ${esc(
+                      hero.localized_name
                     )}
-                  </div>
+                  </h3>
 
-                  <div class="counterNumber">
-
+                  <div class="adv">
                     ${
                       row.advantage >= 0
                         ? "+"
                         : ""
-                    }${row.advantage.toFixed(2)}%
-
+                    }${Number(
+                      row.advantage
+                    ).toFixed(2)}%
                   </div>
 
-                  <div class="counterGames">
-
+                  <div class="games">
                     ${
                       row.games
                         ? format(
                             row.games
-                          ) + " matches"
-                        : "mechanical counter"
+                          ) +
+                          " matches"
+                        : "mechanical"
                     }
-
                   </div>
 
-                  <div class="counterWhy">
-                    ${escape(reason)}
+                  <div class="why">
+                    ${esc(
+                      explainCounter(
+                        target,
+                        hero
+                      )
+                    )}
                   </div>
 
                 </div>
@@ -3477,61 +5049,794 @@ function renderCounters(
    COUNTER EXPLANATIONS
 ========================================================= */
 
-function counterExplanation(
+function explainCounter(
   target,
-  opponent
+  counter
 ){
 
-  const t =
-    target.localized_name;
+  const key =
+    target.localized_name +
+    "|" +
+    counter.localized_name;
 
-  const o =
-    opponent.localized_name;
 
-  const rules = {
+  const explanations = {
 
     "Broodmother|Earthshaker":
-      "AoE control and Echo Slam punish Broodmother's spider army.",
+      "AoE control and Echo Slam punish the spider army.",
 
     "Broodmother|Sand King":
-      "Burrowstrike + AoE damage give Sand King a strong answer to spider units.",
+      "Burrowstrike and large AoE punish Broodmother's units.",
 
     "Broodmother|Meepo":
-      "Multiple Meepos can clear spider units and contest Broodmother's map pressure.",
-
-    "Broodmother|Necrophos":
-      "Sustained fights and healing reduction make Broodmother's long fights harder.",
+      "Multiple units contest the map and clear spider pressure.",
 
     "Phantom Lancer|Axe":
-      "Counter Helix gives Axe reliable AoE damage into illusion-heavy fights.",
+      "Counter Helix gives Axe reliable value into illusions.",
 
     "Phantom Lancer|Earthshaker":
-      "Earthshaker gets enormous value from repeated illusion units.",
+      "Illusions create huge Echo Slam targets.",
 
     "Naga Siren|Axe":
-      "Axe's AoE and Counter Helix are naturally useful against illusion waves.",
+      "Axe's AoE and Counter Helix scale well into illusion waves.",
 
     "Naga Siren|Earthshaker":
-      "Large illusion groups create excellent Echo Slam targets.",
+      "Mass illusions can turn Echo Slam into a huge teamfight spell.",
 
     "Meepo|Earthshaker":
-      "Multiple Meepo units can create huge Echo Slam value.",
+      "Multiple Meepo units create exceptional Echo Slam value.",
 
-    "Riki|Bloodseeker":
-      "Bloodseeker can reveal and punish Riki's low-health movement patterns.",
+    "Anti-Mage|Huskar":
+      "Huskar's pressure reduces Anti-Mage's comfortable farm window.",
 
-    "Puck|Night Stalker":
-      "Night Stalker can pressure Puck's mobility and punish nighttime fights."
+    "Anti-Mage|Axe":
+      "Axe punishes Anti-Mage's blink-in patterns and mana-heavy fighting.",
+
+    "Enigma|Rubick":
+      "Rubick can steal Black Hole and threaten Enigma's teamfight.",
+
+    "Clockwerk|Naga Siren":
+      "Illusions and Song can punish Clockwerk's single-target initiation.",
+
+    "Mirana|Puck":
+      "Puck's mobility and initiation can punish Mirana's positioning.",
+
+    "Bounty Hunter|Naga Siren":
+      "Illusion pressure makes Track-based pickoffs less reliable."
 
   };
 
-  const key =
-    t + "|" + o;
 
-  if(rules[key])
-    return rules[key];
+  if(
+    explanations[key]
+  )
+    return explanations[key];
 
-  return "Strong matchup signal in the current dataset.";
+
+  return (
+    "Positive matchup signal in the selected statistical source."
+  );
+
+}
+
+
+/* =========================================================
+   META VIEW
+========================================================= */
+
+function showMetaPosition(
+  pos,
+  button
+){
+
+  currentMetaPosition =
+    pos;
+
+  document
+    .querySelectorAll(
+      ".metaTab"
+    )
+    .forEach(
+      x =>
+        x.classList.remove(
+          "active"
+        )
+    );
+
+  if(button)
+    button.classList.add(
+      "active"
+    );
+
+
+  const meta =
+    d2ptMeta[
+      pos
+    ] || {};
+
+
+  const list =
+    Object.entries(
+      meta
+    )
+      .map(
+        ([id,data]) => {
+
+          const hero =
+            heroMap[id];
+
+          if(!hero)
+            return null;
+
+          return {
+            hero,
+            ...data
+          };
+
+        }
+      )
+      .filter(Boolean)
+      .sort(
+        (a,b) =>
+          b.rating -
+          a.rating
+      )
+      .slice(
+        0,
+        20
+      );
+
+
+  const box =
+    document.getElementById(
+      "metaGrid"
+    );
+
+
+  if(!list.length){
+
+    box.innerHTML = `
+      <div class="card metaCard">
+        <div class="emptyBox">
+          D2PT data loading...
+        </div>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  const names = {
+    1:"CARRY",
+    2:"MID",
+    3:"OFFLANE",
+    4:"SUPPORT",
+    5:"HARD SUPPORT"
+  };
+
+
+  box.innerHTML = `
+
+    <section class="card metaCard">
+
+      <h3>
+        ${names[pos]} • D2PT 7.41e
+      </h3>
+
+      ${
+        list
+          .map(
+            (x,i) => `
+
+              <div class="metaHero">
+
+                <img
+                  src="${heroImage(x.hero)}"
+                >
+
+                <div class="metaHeroMain">
+
+                  <div class="metaHeroName">
+                    #${i+1}
+                    ${esc(
+                      x.hero.localized_name
+                    )}
+                  </div>
+
+                  <div class="metaStats">
+                    ${
+                      x.matches
+                        ? format(
+                            x.matches
+                          ) +
+                          " matches • "
+                        : ""
+                    }
+                    ${
+                      x.winRate
+                        ? Number(
+                            x.winRate
+                          ).toFixed(1) +
+                          "% WR"
+                        : ""
+                    }
+                    ${
+                      x.tier
+                        ? " • " +
+                          x.tier
+                        : ""
+                    }
+                  </div>
+
+                </div>
+
+                <div class="rating">
+                  ${
+                    Math.round(
+                      x.rating
+                    )
+                  }
+                </div>
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+    </section>
+
+  `;
+
+}
+
+
+/* =========================================================
+   FINISH DRAFT
+========================================================= */
+
+function finishDraft(){
+
+  const myTeam =
+    Object
+      .values(team)
+      .filter(Boolean);
+
+
+  if(
+    myTeam.length < 5 ||
+    enemies.length < 5
+  ){
+
+    alert(
+      "Для полного анализа нужны 5 ваших героев и 5 героев врага."
+    );
+
+    return;
+
+  }
+
+
+  buildResult();
+
+  showView(
+    "result"
+  );
+
+}
+
+
+/* =========================================================
+   RESULT ANALYSIS
+========================================================= */
+
+function buildResult(){
+
+  const allies =
+    Object
+      .values(team)
+      .filter(Boolean);
+
+
+  /*
+    Synergy matrix
+  */
+
+  let synTotal =
+    0;
+
+  let synCount =
+    0;
+
+
+  allies.forEach(
+    a => {
+
+      allies.forEach(
+        b => {
+
+          if(
+            a.id ===
+            b.id
+          )
+            return;
+
+          const key =
+            pairKey(
+              a,
+              b
+            );
+
+          const value =
+            PRO_SYNERGY[key] ||
+            ANTI_SYNERGY[key] ||
+            0;
+
+          synTotal +=
+            value;
+
+          synCount++;
+
+        }
+      );
+
+    }
+  );
+
+
+  const synergy =
+    clamp(
+      50 +
+      (
+        synCount
+          ? synTotal /
+            synCount *
+            3
+          : 0
+      ),
+      0,
+      100
+    );
+
+
+  /*
+    Counter matrix.
+  */
+
+  let counterTotal =
+    0;
+
+  let counterCount =
+    0;
+
+
+  allies.forEach(
+    ally => {
+
+      enemies.forEach(
+        enemy => {
+
+          const data =
+            matchupCache[
+              enemy.id
+            ];
+
+          if(!data)
+            return;
+
+          const row =
+            data.find(
+              x =>
+                x.opponentId ===
+                ally.id
+            );
+
+          if(row){
+
+            counterTotal +=
+              row.advantage;
+
+            counterCount++;
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+  const counter =
+    counterCount
+      ? clamp(
+          50 +
+          counterTotal /
+          counterCount *
+          4,
+          0,
+          100
+        )
+      : 50;
+
+
+  /*
+    Role quality.
+  */
+
+  let roleTotal =
+    0;
+
+  for(
+    let p=1;
+    p<=5;
+    p++
+  ){
+
+    if(
+      team[p]
+    ){
+
+      roleTotal +=
+        roleScore(
+          team[p],
+          p
+        );
+
+    }
+
+  }
+
+  const role =
+    roleTotal /
+    5;
+
+
+  const draftQuality =
+    clamp(
+      synergy * .30 +
+      counter * .30 +
+      role * .40,
+      0,
+      100
+    );
+
+
+  /*
+    Lane balance is conservative:
+    no fake exact win probability.
+  */
+
+  const lane =
+    clamp(
+      role * .7 +
+      synergy * .3,
+      0,
+      100
+    );
+
+
+  document.getElementById(
+    "resultSynergy"
+  ).textContent =
+    Math.round(
+      synergy
+    );
+
+  document.getElementById(
+    "resultCounter"
+  ).textContent =
+    Math.round(
+      counter
+    );
+
+  document.getElementById(
+    "resultLane"
+  ).textContent =
+    Math.round(
+      lane
+    );
+
+  document.getElementById(
+    "resultDraft"
+  ).textContent =
+    Math.round(
+      draftQuality
+    );
+
+
+  const insight =
+    document.getElementById(
+      "resultInsight"
+    );
+
+
+  let text = "";
+
+
+  if(
+    draftQuality >= 80
+  ){
+
+    text =
+      "Очень цельный драфт: позиции и мета выглядят здорово, а синергия/матчапы не создают очевидной проблемы.";
+
+  }else if(
+    draftQuality >= 68
+  ){
+
+    text =
+      "Хороший драфт, но есть несколько мест, которые можно было улучшить.";
+
+  }else if(
+    draftQuality >= 52
+  ){
+
+    text =
+      "Средний драфт. Есть рабочие герои, но часть решений конфликтует с текущей метой или синергией.";
+
+  }else{
+
+    text =
+      "Драфт выглядит рискованно. Скорее всего, несколько пиков были выбраны из-за одного хорошего matchup, игнорируя позицию и общую композицию.";
+
+  }
+
+
+  insight.innerHTML = `
+    <h3>Draft Coach</h3>
+    <p>
+      ${esc(text)}
+    </p>
+    <p>
+      Важно: это не искусственная «точная вероятность победы».
+      Мы показываем структуру драфта и реальные matchup/meta-сигналы,
+      когда источник их предоставляет.
+    </p>
+  `;
+
+
+  renderSynergyMatrix(
+    allies
+  );
+
+  renderCounterMatrix(
+    allies,
+    enemies
+  );
+
+}
+
+
+/* =========================================================
+   SYNERGY MATRIX
+========================================================= */
+
+function renderSynergyMatrix(
+  allies
+){
+
+  const box =
+    document.getElementById(
+      "synergyMatrix"
+    );
+
+
+  let html =
+    `<table class="matrix">
+      <tr>
+        <th>Hero</th>
+        ${
+          allies
+            .map(
+              h =>
+                `<th>${esc(h.localized_name)}</th>`
+            )
+            .join("")
+        }
+      </tr>`;
+
+
+  allies.forEach(
+    a => {
+
+      html +=
+        `<tr>
+          <th>
+            ${esc(
+              a.localized_name
+            )}
+          </th>`;
+
+
+      allies.forEach(
+        b => {
+
+          if(
+            a.id ===
+            b.id
+          ){
+
+            html +=
+              `<td class="neutral">—</td>`;
+
+            return;
+
+          }
+
+
+          const key =
+            pairKey(
+              a,
+              b
+            );
+
+          const value =
+            PRO_SYNERGY[key] ||
+            ANTI_SYNERGY[key] ||
+            0;
+
+
+          const cls =
+            value > 5
+              ? "good"
+              : value < -4
+                ? "bad"
+                : "neutral";
+
+
+          html += `
+            <td class="${cls}">
+              ${
+                value > 0
+                  ? "+"
+                  : ""
+              }${value}
+            </td>
+          `;
+
+        }
+      );
+
+
+      html +=
+        `</tr>`;
+
+    }
+  );
+
+
+  html +=
+    `</table>`;
+
+
+  box.innerHTML =
+    html;
+
+}
+
+
+/* =========================================================
+   COUNTER MATRIX
+========================================================= */
+
+function renderCounterMatrix(
+  allies,
+  enemies
+){
+
+  const box =
+    document.getElementById(
+      "counterMatrix"
+    );
+
+
+  let html =
+    `<table class="matrix">
+      <tr>
+        <th>OUR HERO</th>
+        ${
+          enemies
+            .map(
+              h =>
+                `<th>${esc(h.localized_name)}</th>`
+            )
+            .join("")
+        }
+      </tr>`;
+
+
+  allies.forEach(
+    ally => {
+
+      html +=
+        `<tr>
+          <th>
+            ${esc(
+              ally.localized_name
+            )}
+          </th>`;
+
+
+      enemies.forEach(
+        enemy => {
+
+          const data =
+            matchupCache[
+              enemy.id
+            ];
+
+
+          if(!data){
+
+            html +=
+              `<td class="neutral">?</td>`;
+
+            return;
+
+          }
+
+
+          const row =
+            data.find(
+              x =>
+                x.opponentId ===
+                ally.id
+            );
+
+
+          if(!row){
+
+            html +=
+              `<td class="neutral">—</td>`;
+
+            return;
+
+          }
+
+
+          const value =
+            row.advantage;
+
+
+          const cls =
+            value > 2
+              ? "good"
+              : value < -2
+                ? "bad"
+                : "neutral";
+
+
+          html += `
+            <td class="${cls}">
+              ${
+                value >= 0
+                  ? "+"
+                  : ""
+              }${value.toFixed(1)}
+            </td>
+          `;
+
+        }
+      );
+
+
+      html +=
+        `</tr>`;
+
+    }
+  );
+
+
+  html +=
+    `</table>`;
+
+
+  box.innerHTML =
+    html;
 
 }
 
@@ -3542,47 +5847,140 @@ function counterExplanation(
 
 function showView(view){
 
-  document.getElementById(
-    "draftView"
-  ).classList.toggle(
-    "active",
-    view === "draft"
+  const ids = [
+    "draft",
+    "counter",
+    "meta",
+    "pro",
+    "result"
+  ];
+
+
+  ids.forEach(
+    id => {
+
+      document
+        .getElementById(
+          id +
+          "View"
+        )
+        .classList.toggle(
+          "active",
+          id === view
+        );
+
+
+      const top =
+        document.getElementById(
+          "nav" +
+          capitalize(id)
+        );
+
+      if(top){
+
+        top.classList.toggle(
+          "active",
+          id === view
+        );
+
+      }
+
+
+      const bottom =
+        document.getElementById(
+          "bottom" +
+          capitalize(id)
+        );
+
+      if(bottom){
+
+        bottom.classList.toggle(
+          "active",
+          id === view
+        );
+
+      }
+
+    }
   );
 
-  document.getElementById(
-    "counterView"
-  ).classList.toggle(
-    "active",
-    view === "counter"
-  );
 
-  document.getElementById(
-    "navDraft"
-  ).classList.toggle(
-    "active",
-    view === "draft"
-  );
+  if(view === "meta"){
 
-  document.getElementById(
-    "navCounter"
-  ).classList.toggle(
-    "active",
-    view === "counter"
-  );
+    showMetaPosition(
+      currentMetaPosition,
+      document.querySelector(
+        ".metaTab.active"
+      )
+    );
 
-  document.getElementById(
-    "bottomDraft"
-  ).classList.toggle(
-    "active",
-    view === "draft"
-  );
+  }
 
-  document.getElementById(
-    "bottomCounter"
-  ).classList.toggle(
-    "active",
-    view === "counter"
-  );
+}
+
+
+/* =========================================================
+   CACHE
+========================================================= */
+
+function writeCache(
+  key,
+  value
+){
+
+  try{
+
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        time:Date.now(),
+        value
+      })
+    );
+
+  }catch(e){}
+
+}
+
+
+function readCache(key){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        key
+      );
+
+    if(!raw)
+      return null;
+
+    const obj =
+      JSON.parse(
+        raw
+      );
+
+    if(
+      Date.now() -
+      obj.time >
+      CACHE_TIME
+    ){
+
+      localStorage.removeItem(
+        key
+      );
+
+      return null;
+
+    }
+
+    return obj.value;
+
+  }catch(e){
+
+    return null;
+
+  }
 
 }
 
@@ -3590,6 +5988,17 @@ function showView(view){
 /* =========================================================
    HELPERS
 ========================================================= */
+
+function capitalize(s){
+
+  return (
+    s.charAt(0)
+      .toUpperCase() +
+    s.slice(1)
+  );
+
+}
+
 
 function clamp(
   n,
@@ -3619,31 +6028,31 @@ function format(n){
 }
 
 
-function strip(html){
+function esc(value){
 
-  const tmp =
-    document.createElement(
-      "div"
+  return String(
+    value
+  )
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
     );
-
-  tmp.innerHTML =
-    html;
-
-  return tmp.textContent
-    .replace(/\s+/g," ")
-    .trim();
-
-}
-
-
-function escape(value){
-
-  return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
 
 }
 
